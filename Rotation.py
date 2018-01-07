@@ -1,13 +1,23 @@
-
+'''
+To render 3d scenes (or even high dimensional), the first thing we need is the ability to rotate the objects we render and view them from different angles.
+This can be done with rotation matrices or quaternions. I favor the former since they are simpler and can be used in spaces of arbitrary dimensionality.
+Rotation matrices are simply collections of orthonormal vectors that form a basis of the space we are in.
+In this module are provided methods to generate various kinds of rotation matrices.
+'''
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 from CubeObjects import *
 
-def yzrotation(j):
+
+'''
+Returns a simple planar rotation matrix that rotates vectors around the x-axis.
+args:
+    theta: The angle by which we will perform the rotation.
+'''
+def yzrotation(theta = np.pi*3/20.0):
     r = np.eye(3)
-    theta = np.pi*j/20.0
     r[1,1] = np.cos(theta)
     r[1,2] = -np.sin(theta)
     r[2,1] = np.sin(theta)
@@ -43,6 +53,11 @@ def axisangle(a, theta):
 
 
 '''
+For a rotation matrix in 3 dimensions (rotations about the origin), we need 4 parameters. 
+An axis about which we are going to rotate and an angle which is the extent of rotation.
+This method takes the rotation matrix in as input and returns an axis and angle combination that would generate that matrix.
+args:
+    m: The rotation matrix (collection of orthonormal vectors in a matrix).
 '''
 def matrix_to_axisangle(m):
     theta = np.arccos(( m[0,0] + m[1,1] + m[2,2] - 1)/2)
