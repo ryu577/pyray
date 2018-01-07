@@ -1,6 +1,7 @@
 '''
-To render 3d scenes (or even high dimensional), the first thing we need is the ability to rotate the objects we render and view them from different angles.
-This can be done with rotation matrices or quaternions. I favor the former since they are simpler and can be used in spaces of arbitrary dimensionality.
+To render 3d scenes (or even high dimensional), the first thing we need is the ability to rotate the objects we render 
+and view them from different angles. This can be done with rotation matrices or quaternions. I favor the former since 
+they are simpler and can be used in spaces of arbitrary dimensionality.
 Rotation matrices are simply collections of orthonormal vectors that form a basis of the space we are in.
 In this module are provided methods to generate various kinds of rotation matrices.
 '''
