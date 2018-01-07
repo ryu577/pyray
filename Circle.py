@@ -1,5 +1,6 @@
 '''
 Draw arbitrary planar circles viewed from any angle in 3d space.
+There are two coordinate systems at play in most of the code. 
 '''
 
 import numpy as np
@@ -7,6 +8,15 @@ from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 
 '''
+Draws a circle as seen from a given angle.
+args:
+	draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
+	center: The center of the circle. Provided in original coordinates (see file header).
+	vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in original coordinates (see file header).
+	radius: the radius of the circle.
+	scale: The amount by which the whole plot is to be scaled.
+	shift: The origin corresponds to this pixel on the images (first two coordinates).
+	rgba: The color of the line.
 '''
 def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50),width=5):
     vec = vec/sum(vec**2)**0.5
@@ -26,6 +36,7 @@ def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.arr
 
 
 '''
+Basically the same as generalized_circle but 
 '''
 def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
     vec = vec/sum(vec**2)**0.5

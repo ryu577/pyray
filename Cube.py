@@ -6,15 +6,30 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 
-
+'''
+A vertex object belonging to a cube.
+'''
 class Vertice():
     def __init__(self, i = 0, n = 4):
+        # The dimensionality of the space the cube will live in.
         self.dim = n
+        # All vertices of the cube have a natural index. For example, the point (0,0,..0) is index 0, (0,0,...,1) is index 1 and so on.
         self.index = i
         self.binary = self.to_binary()
         global scale
 
-    def plot(self,r,draw,rgba,width=3, offset = None, scale=500, shift=np.array([1000,1000,0,0])):
+    '''
+	Plots the vertice.
+	args:
+		r: The rotation matrix that describes what angle the scene is being viewed from.
+		draw: The draw object associated with the image on which we can draw lines, ellipses and planes.
+		rgba: The color we want the vertex.
+		width: The size of the vertex circle.
+		offset: Allows us to add an offset to all points while plotting.
+		scale: How much are we scaling the scene?
+		shift: What point on the image should correspond to the origin (coordinates larger than the second dimension will be 0)?
+    '''
+    def plot(self, r, draw, rgba, width=3, offset = None, scale=500, shift=np.array([1000,1000,0,0])):
         if offset is None:
             vv = np.dot(r,self.binary)
         else:
@@ -22,15 +37,12 @@ class Vertice():
         [vx,vy] = (shift[:self.dim] + scale * vv)[0:2] # Projection on x-y plane
         draw.ellipse( (vx-width,vy-width,vx+width,vy+width), fill = rgba, outline = rgba)
 
-    def plot_vid_ready(self,r,draw,rgba,width=9):
-        dim = r.shape[0]
-        reflection = np.ones(dim)
-        reflection[1] = -1
-        l = new_vector(r, (self.binary*reflection) * scale + shift[:dim] )
-        draw.ellipse((l[0]-width,l[1]-width,l[0]+width,l[1]+width), fill = rgba, outline = rgba)
 
+	'''
+    Obtains the binary representation of the current vertex.
+    '''
     def to_binary(self):
-        raw=np.zeros(self.dim)
+        raw = np.zeros(self.dim)
         temp = self.index
         indx = 0
         while temp > 0:
@@ -39,9 +51,27 @@ class Vertice():
             indx = indx + 1
         return raw
 
-    def rotated(r):
+    '''
+    Returns the rotated coordinates of the vertex after rotation by the associated rotation matrix.
+    args:
+    	r: The rotation matrix for the scene.
+    '''
+    def rotated(self, r):
         return np.dot(r,self.binary)
 
+    '''
+    Legacy method. Can be ignored.
+    '''
+    def plot_vid_ready(self,r,draw,rgba,width=9):
+        dim = r.shape[0]
+        reflection = np.ones(dim)
+        reflection[1] = -1
+        l = new_vector(r, (self.binary*reflection) * scale + shift[:dim] )
+        draw.ellipse((l[0]-width,l[1]-width,l[0]+width,l[1]+width), fill = rgba, outline = rgba)
+
+'''
+The Edge object of the cube. There will be 12 edges.
+'''
 class Edge():
     def __init__(self, v1, v2, is_inter_dim_connector = False):
         self.vertice1 = v1
@@ -64,6 +94,9 @@ class Edge():
         [v2x, v2y] = (shift[:self.dim] + scale * v2)[0:2]
         draw.line((v1x, v1y, v2x, v2y), fill=rgba, width=width)
 
+    '''
+    Legacy method. Can be ignored.
+    '''
     def plot_vid_ready(self,r,draw,rgba,width=2):
         reflection = np.ones(dim)
         reflection[1] = -1
@@ -71,6 +104,9 @@ class Edge():
         v2 = new_vector(r,self.vertice2.binary*reflection * scale + shift[:dim])
         draw.line((v1[0],v1[1],v2[0],v2[1]), fill=rgba, width=width)
 
+'''
+The Face object of the cube. There will be six faces.
+'''
 class Face():
     def __init__(self, vertices, is_inter_dim_connector = False):
         [v1,v2,v3,v4] = vertices
@@ -83,6 +119,12 @@ class Face():
         self.vertice_indices = np.array([v1.index,v2.index,v3.index,v4.index])
         global scale
 
+    '''
+    Adds an offset to the entire face.
+    args:
+    	a: The offset to add to the face.
+    	dim: The dimensionality of the space our cube lives in.
+    '''
     def add(self, a, dim):
         newv1 = Vertice(self.vertice1.index + a, dim)
         newv2 = Vertice(self.vertice2.index + a, dim)
@@ -90,6 +132,11 @@ class Face():
         newv4 = Vertice(self.vertice4.index + a, dim)
         return Face([newv1, newv2, newv3, newv4])
 
+    '''
+    Changes the dimensionality of the underlying cube.
+    args:
+    	dim2: The new dimensionality we want the underlying cube to possess.
+    '''
     def expand_dim(self, dim2):
         vertice1 = Vertice(self.vertice1.index, dim2)
         vertice2 = Vertice(self.vertice2.index, dim2)
@@ -306,6 +353,19 @@ class Cube():
         im.save('Images\\RotatingCube\\im' + str(j) + '.png')
 
 
+'''
+Legacy method. Can be ignored.
+'''
+def new_vector(r, v, dim = 4):
+    translate = np.zeros(dim)
+    translate[0] = 1000
+    translate[1] = 1000
+    v = v - translate #1000,1000 should go to 0,0. 
+    v = v / scale
+    v = np.dot(r,v)
+    v = v * scale
+    v = v + translate
+    return v
 
 
 
