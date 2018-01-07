@@ -2,7 +2,6 @@
 Draw arbitrary planar circles viewed from any angle in 3d space.
 There are two coordinate systems at play in most of the code. 
 '''
-
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
@@ -36,7 +35,7 @@ def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.arr
 
 
 '''
-Basically the same as generalized_circle but 
+Basically the same as generalized_circle but the center and vec are expected in the original coordinates.
 '''
 def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
     vec = vec/sum(vec**2)**0.5
@@ -56,6 +55,7 @@ def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.ar
         pt1 = pt2
 
 '''
+Same as generalized_circle, but instead of drawing the whole circle, only draws a portion of it.
 '''
 def generalized_arc(draw, r, center, vec, point, radius, prcnt = 1, rgba = (255,0,0,100), scale = 200, shift = np.array([1000,1000,0])):
     pt1 = np.dot(r,point)
@@ -68,12 +68,11 @@ def generalized_arc(draw, r, center, vec, point, radius, prcnt = 1, rgba = (255,
         draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]), fill=rgba, width=5)
         pt1 = pt2
 
-
 '''
-A simple wrapper for generalized_circle.
+A simple wrapper for generalized_circle2.
 '''
-def draw_circle():
-	return 0
+def draw_circle(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
+	generalized_circle2(draw, center, vec, radius, r, scale, shift, rgba, width)
 
 
 '''
@@ -99,7 +98,6 @@ def draw_circle(
         #draw.line((pt1[0]*scale + shift1[0], pt1[1]*scale+shift1[1], pt2[0]*scale+shift1[0], pt2[1]*scale+shift1[1]), fill=(153, 153, 255,100), width=5)
         draw.line((pt1[0]*scale + shift1[0], pt1[1]*scale+shift1[1], pt2[0]*scale+shift1[0], pt2[1]*scale+shift1[1]), fill=rgba, width=width)
         pt1 = pt2
-
 
 
 '''

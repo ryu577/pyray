@@ -9,8 +9,8 @@ So far, I've been using this to create YouTube videos for my channel (https://ww
 
 Here are some that demonstrate the abilities of this code - 
 
-Slice a 4d hypercube (Teserracrt).
-https://www.youtube.com/watch?v=57g6nQGBFcY
+Binomial coefficients on hypercubes.
+https://www.youtube.com/watch?v=KuXnrg1YpiY
 
 Why does Gradient descent work?
 https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s
@@ -18,4 +18,6 @@ https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s
 Introduction to Platonic solids
 https://www.youtube.com/watch?v=STkcP5jcJYo
 
+Slice a 4d hypercube (Teserracrt).
+https://www.youtube.com/watch?v=57g6nQGBFcY
 

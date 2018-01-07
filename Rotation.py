@@ -10,7 +10,6 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 
-
 '''
 Returns a simple planar rotation matrix that rotates vectors around the x-axis.
 args:
