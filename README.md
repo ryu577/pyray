@@ -5,7 +5,6 @@ While there certainly is a very long way to go before this can be a reality, it 
 
 Above all else, I want to value simplicity in this library. Minimize the dependence on external libraries so more people can hit the ground running with it and avoid complexity when simplicity will do just fine.
 
-
 So far, I've been using this to create YouTube videos for my channel (https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA).
 
 Here are some that demonstrate the abilities of this code - 

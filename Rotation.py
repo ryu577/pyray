@@ -9,7 +9,6 @@ In this module are provided methods to generate various kinds of rotation matric
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
-from CubeObjects import *
 
 
 '''
