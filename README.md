@@ -8,7 +8,7 @@ Above all else, I want to value simplicity in this library. Minimize the depende
 
 So far, I've been using this to create YouTube videos for my channel (https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA).
 
-These are the ones that demonstrate the abilities of this code - 
+Here are some that demonstrate the abilities of this code - 
 
 Slice a 4d hypercube (Teserracrt).
 https://www.youtube.com/watch?v=57g6nQGBFcY
@@ -18,4 +18,5 @@ https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s
 
 Introduction to Platonic solids
 https://www.youtube.com/watch?v=STkcP5jcJYo
+
 
