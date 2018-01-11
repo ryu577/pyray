@@ -9,7 +9,7 @@ Above all else, I want to emphasize simplicity in this library and minimize the 
 
 
 # Demonstrations
-So far, I've been using this to create YouTube videos for my channel (https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA).
+So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
 
 Here are some that demonstrate the abilities of this code - 
 
@@ -30,6 +30,10 @@ To keep things simple, the program simply writes an image or a series of images 
 
 > ffmpeg -framerate 10 -f image2 -i im%d.png -vb 20M vid.avi
 
-To use it, you can simply run any method tagged @MoneyShot.
+The video can then be converted to a .gif file if required - 
+
+> ffmpeg -i vid.avi -pix_fmt rgb24 -loop 0 out.gif
+
+To check out the capabilities, you can simply run any method tagged @MoneyShot.
 
 
