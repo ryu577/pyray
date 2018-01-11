@@ -37,7 +37,7 @@ The video can then be converted to a .gif file if required -
 
 To check out the capabilities, you can simply run any method tagged @MoneyShot. For example, you can run the following method from Cube.py - 
 
->> General3DCube(7)
+> >>General3DCube(7)
 
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors.
 
