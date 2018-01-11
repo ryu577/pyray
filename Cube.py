@@ -6,6 +6,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 from Rotation import *
+from Misc import *
+from scipy.spatial import ConvexHull
 
 '''
 A vertex object belonging to a cube.
@@ -467,7 +469,6 @@ def General3DCube(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale1 
                 draw.ellipse( (vx-11,vy-11,vx+11,vy+11), fill = rgb, outline = rgb)
         if draw1 is None:
             im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
-        im_ind = im_ind + 1
 
 
 '''

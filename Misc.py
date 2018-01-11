@@ -82,3 +82,16 @@ def two_pt_parabola(pt1,pt2):
     b = -2*a*x1
     return [a,b,c]
 
+
+'''
+Represents a number, n in number system with base b.
+'''
+def GeneralBase(n, b):
+    res = np.zeros(3)
+    indx = 0
+    while(n > 0):
+        res[indx] = (n % b)
+        indx = indx + 1
+        n = n / b
+    return res
+
