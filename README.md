@@ -26,7 +26,9 @@ Slice a 4d hypercube (Teserracrt).
 https://www.youtube.com/watch?v=57g6nQGBFcY
 
 # Usage
-To keep things simple, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool).
+To keep things simple, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool). A series of images can be easily converted to a video using the open source ffmpeg program.
+
+> ffmpeg -framerate 10 -f image2 -i im%d.png -vb 20M vid.avi
 
 To use it, you can simply run any method tagged @MoneyShot.
 
