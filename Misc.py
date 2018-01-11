@@ -66,3 +66,19 @@ args:
 def move_angle_to_angle(theta1, theta2, p):
     return theta1 + (theta2-theta1) * p
 
+
+
+'''
+Given two points, gives us the coefficients for a parabola.
+args:
+	pt1: The first point.
+	pt2: The second point.
+'''
+def two_pt_parabola(pt1,pt2):
+    [x1, y1] = pt1 * 1.0
+    [x2, y2] = pt2 * 1.0
+    a = (y2-y1)/(x2-x1)**2
+    c = y1 + a*x1*x1
+    b = -2*a*x1
+    return [a,b,c]
+
