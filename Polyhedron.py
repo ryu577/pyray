@@ -49,11 +49,11 @@ def icosahedron_planes(draw, r, scale = 300, shift = np.array([1000,1000,0])):
                 smat = sum(mat1)
                 forward_face = np.dot(smat, np.array([0,0,1])) > -1e-3
                 face_angle = np.dot(smat/np.sqrt(sum(smat**2)), np.array([0,0.01,0.99]))
-                #angles.append(face_angle)
                 if forward_face:
                     poly = [(mat1[i][0],mat1[i][1]) for i in range(len(mat1))]
                     rgba = colorFromAngle2(face_angle,h=215,s=128,maxx=0.25)
                     draw.polygon(poly, rgba)
+                    #uncomment if you want to plot edges
                     #for line in range(len(mat1)):
                     #    draw.line((mat1[line][0],mat1[line][1],mat1[(line+1)%3][0],mat1[(line+1)%3][1]), fill = (0,255,0,255), width = 5)
                 #else:
@@ -77,11 +77,11 @@ def icosahedron_planes(draw, r, scale = 300, shift = np.array([1000,1000,0])):
                 smat = sum(mat1)
                 forward_face = np.dot(smat, np.array([0,0,1])) > -1e-3
                 face_angle = np.dot(smat/np.sqrt(sum(smat**2)), np.array([0,0.01,0.99]))
-                #angles.append(face_angle)
                 if forward_face:
                     poly = [(mat1[i][0],mat1[i][1]) for i in range(len(mat1))]
                     rgba = colorFromAngle2(face_angle,h=215,s=128,maxx=0.25)
                     draw.polygon(poly, rgba)
+                    #uncomment if you want to plot edges.
                     #for line in range(len(mat1)):
                     #    draw.line((mat1[line][0],mat1[line][1],mat1[(line+1)%3][0],mat1[(line+1)%3][1]), fill = (0,255,0,255), width = 5)
                 #else:

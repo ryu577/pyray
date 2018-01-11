@@ -2,7 +2,7 @@ import numpy as np
 
 
 '''
-    Returns a triangular function oscillating between an upper and lower bound (hard coded for now).
+Returns a triangular function oscillating between an upper and lower bound (hard coded for now).
 '''
 def zigzag(x):
     if x < 1:
@@ -14,7 +14,8 @@ def zigzag(x):
     else:
         return zigzag(x%22)
 
-
+'''
+'''
 def scatter(n = 8, l = 5):
     res = np.ones(l) * int(n/l)
     excess = n - sum(res)
@@ -28,6 +29,9 @@ def scatter(n = 8, l = 5):
         i = i + 1
     return res
 
+'''
+
+'''
 def assign(n = 10, level = 3):
     res = np.zeros(n)
     res[n-1] = level-1
@@ -41,12 +45,24 @@ def assign(n = 10, level = 3):
             k = k + 1
     return res
 
-
+'''
+Move an angle, theta towards the target it is closest to in an array of angles. The extent of movement is dedicated by p.
+args:
+	theta: Angles that is to be moved.
+	tri: Array of angles. The closest one is chosen and theta moves towards it.
+	p: The extent to which the movement happens. 1 means full movement to the element of tri.
+'''
 def move_to_closest(theta, tri, p):
     final = tri[np.argmin((tri-theta)**2)]
     return theta + (final - theta) * p
 
-
+'''
+Move a number towards another number (here, the numbers were angles).
+args:
+	theta1: The first number
+	theta2: The second number
+	p: The extent of movement. 1 means full movement.
+'''
 def move_angle_to_angle(theta1, theta2, p):
     return theta1 + (theta2-theta1) * p
 

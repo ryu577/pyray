@@ -2,6 +2,7 @@ import numpy as np
 
 
 '''
+Draws an x-z plane on the draw object of an image.
 '''
 def xzplane(draw, r, y):
     extent = 2.8
@@ -19,6 +20,7 @@ def xzplane(draw, r, y):
 
 
 '''
+Draws an x-y plane on the draw object of an image.
 '''
 def xyplane(draw, r, x):
     extent = 2.8
