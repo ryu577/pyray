@@ -34,7 +34,14 @@ You can run any method tagged @MoneyShot to see how this works. For example, you
 ```python
 General3DCube(7)
 ```
-and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors. You can now create a series of them using the following code - 
+and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY
+" target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/im0.png" 
+alt="Image formed by above method" width="240" height="180" border="10" /></a>
+
+
+You can now create a series of them using the following code - 
 
 ```python
 for i in range(3, 15):
@@ -50,7 +57,4 @@ The video can then be converted to a .gif file if required -
 > ffmpeg -i vid.avi -pix_fmt rgb24 -loop 0 out.gif
 
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY
-" target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/im0.png" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
