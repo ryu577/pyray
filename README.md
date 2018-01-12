@@ -23,8 +23,7 @@ Here are some that demonstrate the abilities of this code -
 
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
-Python Imaging Library (PIL), numpy and scipy.
-
+Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. 
 
 # Usage
 To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool). 
@@ -51,4 +50,7 @@ The video can then be converted to a .gif file if required -
 > ffmpeg -i vid.avi -pix_fmt rgb24 -loop 0 out.gif
 
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY
+" target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/im0.png" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
