@@ -23,11 +23,26 @@ Here are some that demonstrate the abilities of this code -
 
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
-Python Imaging Library
+Python Imaging Library (PIL), numpy and scipy.
 
 
 # Usage
-To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool). A series of images can be easily converted to a video using the open source <a href="https://ffmpeg.org/download.html">ffmpeg program</a>. Just run the command below once you have ffmpeg installed (set the frame rate as required).
+To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool). 
+
+
+You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from Cube.py - 
+
+```python
+General3DCube(7)
+```
+and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors. You can now create a series of them using the following code - 
+
+```python
+for i in range(3, 15):
+	General3DCube(numTerms = i, im_ind = i-3)
+```
+
+The series of images can then be easily converted to a video using the open source <a href="https://ffmpeg.org/download.html">ffmpeg program</a>. For example
 
 > ffmpeg -framerate 10 -f image2 -i im%d.png -vb 20M vid.avi
 
@@ -35,12 +50,5 @@ The video can then be converted to a .gif file if required -
 
 > ffmpeg -i vid.avi -pix_fmt rgb24 -loop 0 out.gif
 
-To check out the capabilities, you can simply run any method tagged @MoneyShot. For example, you can run the following method from Cube.py - 
-
-```python
-General3DCube(7)
-```
-
-and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors.
 
 
