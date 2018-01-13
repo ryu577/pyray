@@ -4,9 +4,9 @@ All kinds of polyhedra. Like Platonic solids, Archimedean solids, Tetartoids, et
 
 import numpy as np
 from scipy.spatial import ConvexHull
-from Misc import *
-from Rotation import *
-from Color import *
+from misc import *
+from rotation import *
+from color import *
 
 
 '''
