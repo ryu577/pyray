@@ -4,11 +4,13 @@ import colorsys
 
 
 '''
+Converts numbers into colors for shading effects.
 '''
 def colorFromAngle(angle):
     return (int(230*(angle/450)), int(230*(angle/450)), 250)
 
 '''
+Converts simple numbers into colors using HSL color scale. This can be used to shade surfaces more exposed to light brighter.
 '''
 def colorFromAngle2(angle, h=136, s=118, maxx = 0.8):
     l = 96+64*angle/maxx #/450
