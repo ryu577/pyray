@@ -1,7 +1,7 @@
 # Introduction
 
 I'm creating this repository in January 2018 and it is crazy that the best open source option for rendering 3d scenes remains POV ray.
-Now, POV ray is a great program, but why can't we have that functionality in Python, a language that is perhaps the most widely used already and only growing in popularity?
+Now, POV ray is a great program, but why can't we have that functionality (rendering 2d, 3d and higher dimensional objects and scenes) in Python, a language that is perhaps the most widely used already and only growing in popularity?
 This code is a first step towards that goal - have the ability to do everything POV ray does - rendering complex 3d objects and scenes, animations and much more in plain, vanilla Python. I imagine this would find applications in creating videos, video games, physical simulations or just pretty pictures.
 
 While there certainly is a very long way to go before this can be a reality, it won't happen without taking a first step. And of course, I could use help :)
