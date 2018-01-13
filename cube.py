@@ -5,8 +5,8 @@ Renders cubes of arbitrary dimensinoality and allows you to view them from diffe
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
-from Rotation import *
-from Misc import *
+from rotation import *
+from misc import *
 from scipy.spatial import ConvexHull
 
 '''
