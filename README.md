@@ -1,8 +1,9 @@
 # Introduction
 
 I'm creating this repository in January 2018 and it is crazy that the best open source option for rendering 3d scenes remains POV ray.
-Now, POV ray is a great program, but why can't we have that functionality in Python, a language that is perhaps the most widely used and only growing in popularity?
-This code is a first step towards that goal - have the ability to do everything POV ray does - rendering complex 3d objects and scenes, animations and much more in plain, vanilla Python.
+Now, POV ray is a great program, but why can't we have that functionality in Python, a language that is perhaps the most widely used already and only growing in popularity?
+This code is a first step towards that goal - have the ability to do everything POV ray does - rendering complex 3d objects and scenes, animations and much more in plain, vanilla Python. I imagine this would find applications in creating videos, video games, physical simulations or just pretty pictures.
+
 While there certainly is a very long way to go before this can be a reality, it won't happen without taking a first step. And of course, I could use help :)
 
 Above all else, I want to emphasize simplicity in this library and minimize the dependence on external libraries so more people can hit the ground running with it.
@@ -11,7 +12,7 @@ Above all else, I want to emphasize simplicity in this library and minimize the 
 # Demonstrations
 So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
 
-Here are some that demonstrate the abilities of this code - 
+Here are some that demonstrate the abilities of this code (also see below for some images created with it) - 
 
 1. <a href="https://www.youtube.com/watch?v=KuXnrg1YpiY">Binomial coefficients on hypercubes.</a>
 
@@ -23,16 +24,15 @@ Here are some that demonstrate the abilities of this code -
 
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
-Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. 
+Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with pip.
 
 # Usage
 To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool). 
 
-
 You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from Cube.py - 
 
 ```python
-General3DCube(7)
+cube_with_cuttingplanes(7)
 ```
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
 
@@ -45,7 +45,7 @@ You can now create a series of them using the following code -
 
 ```python
 for i in range(3, 15):
-	General3DCube(numTerms = i, im_ind = i-3)
+	cube_with_cuttingplanes(numTerms = i, im_ind = i-3)
 ```
 
 The series of images can then be easily converted to a video using the open source <a href="https://ffmpeg.org/download.html">ffmpeg program</a>. For example

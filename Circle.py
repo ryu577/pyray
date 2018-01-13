@@ -1,6 +1,12 @@
 '''
 Draw arbitrary planar circles viewed from any angle in 3d space.
-There are two coordinate systems at play in most of the code. 
+There are two coordinate systems at play in most of the code. The first is original coordinates. 
+These are the coordinates in which the objects we are drawing are easiest to think of mathematically. 
+For example, a unit cube will have a side of length 1. However, when we plot the cube on an image, we can't have it's side only one pixel.
+So, we scale each side up and shift the coordinates so that one of the vertices of the cube (or its center) is in the center of the image.
+We might also want to rotate the cube to see it from a different angle before plotting on the image. 
+The coordinate system which is ready for plotting directly on the image is called "image coordinates". When we just rotate the cube but don't scale and shift it,
+the coordinate system is called "rotated coordinates".
 '''
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
@@ -35,7 +41,15 @@ def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.arr
 
 
 '''
-Basically the same as generalized_circle but the center and vec are expected in the original coordinates.
+Basically the same as generalized_circle but the center and vec are expected in the rotated coordinates (image coordinates).
+args:
+	draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
+	center: The center of the circle. Provided in image coordinates (see file header).
+	vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in image coordinates (see file header).
+	radius: the radius of the circle.
+	scale: The amount by which the whole plot is to be scaled.
+	shift: The origin corresponds to this pixel on the images (first two coordinates).
+	rgba: The color of the line. 
 '''
 def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
     vec = vec/sum(vec**2)**0.5
@@ -44,13 +58,11 @@ def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.ar
     else:
         orthogonal_vec = np.array([vec[0], -vec[1], 0]) 
     orthogonal_vec = orthogonal_vec/sum(orthogonal_vec**2)**0.5
-    pt1 = np.dot(r,center) + radius * np.dot(r,orthogonal_vec)
-    #pt1 = np.dot(r,pt1)
+    pt1 = np.dot(r, center) + radius * np.dot(r, orthogonal_vec)
     theta = np.pi * 2.0 / 80.0
     r1 = general_rotation(np.dot(r,vec),theta)
     for j in range(0,80):       
         pt2 = np.dot(r1,pt1)
-        #draw.ellipse( (pt2[0]-2,pt2[1]-2,pt2[0]+2,pt2[1]+2), fill = (68,193,195), outline = (68,193,195))
         draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]), fill=rgba, width=width)
         pt1 = pt2
 

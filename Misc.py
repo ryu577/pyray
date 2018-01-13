@@ -15,6 +15,10 @@ def zigzag(x):
         return zigzag(x%22)
 
 '''
+Scatters n points among l objects, filling the ends of the array first.
+args:
+	n: The number of points to be scattered.
+	l: The number of objects the points are scattered among.
 '''
 def scatter(n = 8, l = 5):
     res = np.ones(l) * int(n/l)
@@ -30,7 +34,10 @@ def scatter(n = 8, l = 5):
     return res
 
 '''
-
+Assigns each point of an array to a level, where the total levels is an argument. Makes sure the extreme levels appear only once at the ends.
+args:
+	n: The number of elements in the output array.
+	level: The number of levels.
 '''
 def assign(n = 10, level = 3):
     res = np.zeros(n)

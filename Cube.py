@@ -434,7 +434,7 @@ args:
     pos: The position on the image where the leftmost edge of the cube should be.
     draw1: The draw object of the image. If nor provided, new images are created.
 '''
-def General3DCube(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale1 = 300):
+def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale1 = 300):
     global scale
     scale = scale1
     for j in range(30,31):
@@ -477,7 +477,6 @@ def General3DCube(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale1 
 '''
 def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.array([1000,1000,0,0,0])):
     c1 = Cube(4)
-    #for j in range(45,46):
     r = np.eye(4)
     r[:3,:3] = rotation(3, np.pi*2*27/80.0)
     r1 = rotation(4, np.pi*2*im_ind/80.0)
