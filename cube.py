@@ -12,7 +12,6 @@ from geometric import *
 from color import *
 from scipy.spatial import ConvexHull
 
-
 class Vertice():
     """
     A vertex object belonging to a cube.
@@ -24,7 +23,6 @@ class Vertice():
         self.index = i
         self.binary = self.to_binary()
         global scale
-
     
     def plot(self, r, draw, rgba, width=3, offset = None, scale=500, shift=np.array([1000,1000,0,0])):
         """
@@ -57,7 +55,6 @@ class Vertice():
             temp = temp/2
             indx = indx + 1
         return raw
-
     
     def rotated(self, r):
         """
@@ -77,7 +74,6 @@ class Vertice():
         l = new_vector(r, (self.binary*reflection) * scale + shift[:dim] )
         draw.ellipse((l[0]-width,l[1]-width,l[0]+width,l[1]+width), fill = rgba, outline = rgba)
 
-
 class Edge():
     """
     The Edge object of the cube. There will be 12 edges.
@@ -88,7 +84,6 @@ class Edge():
         self.is_inter_dim_connector = is_inter_dim_connector
         self.dim = v1.dim
         global scale
-
     
     def plot(self, r, draw, rgba, width = 3, offset = None, scale=500, shift = np.array([1000,1000,1000,1000])):
         """
@@ -103,7 +98,6 @@ class Edge():
         [v1x, v1y] = (shift[:self.dim] + scale * v1)[0:2]
         [v2x, v2y] = (shift[:self.dim] + scale * v2)[0:2]
         draw.line((v1x, v1y, v2x, v2y), fill=rgba, width=width)
-
     
     def plot_vid_ready(self,r,draw,rgba,width=2):
         """
@@ -174,7 +168,6 @@ class Face():
         composed_face3 = Face([original_face.vertice3, original_face.vertice4, Vertice(original_face.vertice3.index + 2**(curr_dim), curr_dim+1), Vertice(original_face.vertice4.index+ 2**(curr_dim), curr_dim+1)])
         composed_face4 = Face([original_face.vertice1, original_face.vertice3, Vertice(original_face.vertice1.index + 2**(curr_dim), curr_dim+1), Vertice(original_face.vertice3.index+ 2**(curr_dim), curr_dim+1)])
         return Body([original_face, new_face, composed_face1, composed_face2, composed_face3, composed_face4])
-
     
     def plot(self, r, draw, rgba, highlightPoints = False):
         """
@@ -226,7 +219,6 @@ class Body():
         newf5 = self.face5.add(a, dim)
         newf6 = self.face6.add(a, dim)
         return Body([newf1,newf2,newf3,newf4,newf5,newf6])
-
     
     def plot(self, r, draw, rgba):
         """
@@ -238,7 +230,6 @@ class Body():
         self.face4.plot(r, draw, rgba, True)
         self.face5.plot(r, draw, rgba, True)
         self.face6.plot(r, draw, rgba, True)
-
 
 class Cube():    
     """
@@ -334,7 +325,6 @@ class Cube():
             for i in previous_faces:
                 bodies = np.insert(bodies, len(bodies), i.expand_to_body(n-1))
             return bodies
-
     
     def generate_sequential_edges(self):
         """
@@ -343,7 +333,6 @@ class Cube():
         self.sequential_edges = []
         for i in range(len(self.vertices) - 1):
             self.sequential_edges.append(Edge(self.vertices[i], self.vertices[i+1]))
-
     
     def generate_classic_edges(self):
         """
@@ -353,7 +342,6 @@ class Cube():
         for i in self.edges:
             self.classic_edges.append(np.array([i.vertice1.binary, i.vertice2.binary]))
         self.classic_edges = np.array(self.classic_edges)
-
     
     def plot_edges(self, r = None, seq = False, j = 0):
         """
@@ -374,7 +362,6 @@ class Cube():
             [v2x,v2y] = (shift[:self.dim] + scale * v2)[0:2]
             draw.line((v1x, v1y, v2x, v2y), fill=(255,165,0), width=2)
         return [im, draw]
-
 
     def plot_edges2(self, draw, r = None, seq = False, offset = None,fill=(255,165,5),scale=500,shift=np.array([1000,1000,0,0])):
         """
@@ -421,8 +408,6 @@ class Cube():
                 body.plot(r, draw, colors[bi])
                 indx = indx + 1
         im.save('Images\\RotatingCube\\im' + str(j) + '.png')
-
-
 
 def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale = 300):
     """
@@ -515,4 +500,3 @@ def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.arr
     v2 = rotated_vertices[15]
     draw.line((v1[0], v1[1], v2[0], v2[1]), fill = (255,255,255), width=2)
     im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
-
