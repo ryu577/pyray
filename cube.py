@@ -484,7 +484,7 @@ def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.arr
     try:
         draw.polygon(jarvis_convex_hull(sqr1), (255,0,0,60))
     except:
-        print "err"
+        print("err")
     for ver in c1.vertices[c1.vertice_coordinate_sums == 3]:
         ver.plot(r, draw, (255,0,0), 10)
         for ver1 in c1.vertices[c1.vertice_coordinate_sums == 3]:
@@ -493,7 +493,7 @@ def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.arr
     try:
         draw.polygon(jarvis_convex_hull(hexag), (0,255,0,30))
     except:
-        print "err"
+        print("err")
     
     for ver in c1.vertices[c1.vertice_coordinate_sums == 1]:
         ver.plot(r, draw, (0,0,255), 10)
@@ -510,7 +510,7 @@ def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.arr
     try:
         draw.polygon(jarvis_convex_hull(sqr2), (0,0,255,60))
     except:
-        print "err"
+        print("err")
     v1 = rotated_vertices[0]
     v2 = rotated_vertices[15]
     draw.line((v1[0], v1[1], v2[0], v2[1]), fill = (255,255,255), width=2)
