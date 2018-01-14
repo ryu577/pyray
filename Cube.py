@@ -434,7 +434,7 @@ args:
     pos: The position on the image where the leftmost edge of the cube should be.
     draw1: The draw object of the image. If nor provided, new images are created.
 '''
-def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale1 = 300):
+def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale1 = 300, popup=False):
     global scale
     scale = scale1
     for j in range(30,31):
@@ -468,6 +468,8 @@ def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = Non
                 [vx,vy] = vv[:2]
                 draw.ellipse( (vx-11,vy-11,vx+11,vy+11), fill = rgb, outline = rgb)
         if draw1 is None:
+            if popup:
+                im.show()
             im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
 
 

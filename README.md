@@ -32,7 +32,7 @@ To keep things simple and the dependencies minimal, the program simply writes an
 You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from Cube.py - 
 
 ```python
-cube_with_cuttingplanes(7)
+cube_with_cuttingplanes(7, popup=True)
 ```
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
 
