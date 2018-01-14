@@ -3,6 +3,11 @@ import numpy as np
 from PIL import Image
 import sympy
 
+try:
+    xrange          # Python 2
+except NameError:
+    xrange = range  # Python 3
+
 
 def writeLatex(im, lat, coordn = (50,50), color = (120,80,200), flip_im = False):
     """
