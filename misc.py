@@ -94,7 +94,7 @@ def two_pt_parabola(pt1,pt2):
     return [a,b,c]
 
 
-def GeneralBase(n, b):
+def general_base(n, b):
     """
     Represents a number, n in number system with base b.
     """
