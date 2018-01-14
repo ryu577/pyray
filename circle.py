@@ -11,6 +11,7 @@ the coordinate system is called "rotated coordinates".
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
+from rotation import general_rotation
 
 '''
 Draws a circle as seen from a given angle.
