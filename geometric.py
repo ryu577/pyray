@@ -1,12 +1,13 @@
 import numpy as np
 
 
-'''
+
+def jarvis_convex_hull(points):
+"""
 Returns points in the order required for a convex hull. A native alternative to scipy.spatial.ConvexHull
 args:
     points: An array of numpy arrays representing the points to be convex hulled in any order.
-'''
-def jarvis_convex_hull(points):
+"""
     start_indx = np.argmax(points[:,0]) #Point with the highest y-coordinate
     res = []
     res.append( (points[start_indx][0], points[start_indx][1]) )
@@ -41,12 +42,13 @@ def jarvis_convex_hull(points):
             return res
 
 
-'''
+
+def dist(pt1,pt2):
+"""
 Simple 2d euclidean distances between two points.
 args:
-	pt1: The first point.
-	pt2: The second point.
-'''
-def dist(pt1,pt2):
+    pt1: The first point.
+    pt2: The second point.
+"""
     return (pt1[0]-pt2[0])**2 + (pt1[1]-pt2[1])**2
 

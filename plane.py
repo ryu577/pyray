@@ -1,10 +1,11 @@
 import numpy as np
 
 
-'''
-Draws an x-z plane on the draw object of an image.
-'''
+
 def xzplane(draw, r, y):
+"""
+Draws an x-z plane on the draw object of an image.
+"""
     extent = 2.8
     pln = np.array(
             [
@@ -19,10 +20,10 @@ def xzplane(draw, r, y):
     draw.polygon([(pln[0][0],pln[0][1]),(pln[1][0],pln[1][1]),(pln[2][0],pln[2][1]),(pln[3][0],pln[3][1])], (0,102,255,70))
 
 
-'''
-Draws an x-y plane on the draw object of an image.
-'''
 def xyplane(draw, r, x):
+"""
+Draws an x-y plane on the draw object of an image.
+"""
     extent = 2.8
     pln = np.array(
             [

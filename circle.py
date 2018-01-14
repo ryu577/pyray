@@ -13,18 +13,19 @@ from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 from rotation import general_rotation
 
-'''
+
+def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50),width=5):
+"""
 Draws a circle as seen from a given angle.
 args:
-	draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
-	center: The center of the circle. Provided in original coordinates (see file header).
-	vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in original coordinates (see file header).
-	radius: the radius of the circle.
-	scale: The amount by which the whole plot is to be scaled.
-	shift: The origin corresponds to this pixel on the images (first two coordinates).
-	rgba: The color of the line.
-'''
-def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50),width=5):
+    draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
+    center: The center of the circle. Provided in original coordinates (see file header).
+    vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in original coordinates (see file header).
+    radius: the radius of the circle.
+    scale: The amount by which the whole plot is to be scaled.
+    shift: The origin corresponds to this pixel on the images (first two coordinates).
+    rgba: The color of the line.
+"""
     vec = vec/sum(vec**2)**0.5
     if vec[0] == 0 and vec[1] == 0:
         orthogonal_vec = np.array([1,1,0])
@@ -41,18 +42,18 @@ def generalized_circle(draw, center, vec, radius, r, scale = 200, shift = np.arr
         pt1 = pt2
 
 
-'''
+def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
+"""
 Basically the same as generalized_circle but the center and vec are expected in the rotated coordinates (image coordinates).
 args:
-	draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
-	center: The center of the circle. Provided in image coordinates (see file header).
-	vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in image coordinates (see file header).
-	radius: the radius of the circle.
-	scale: The amount by which the whole plot is to be scaled.
-	shift: The origin corresponds to this pixel on the images (first two coordinates).
-	rgba: The color of the line. 
-'''
-def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
+    draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
+    center: The center of the circle. Provided in image coordinates (see file header).
+    vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in image coordinates (see file header).
+    radius: the radius of the circle.
+    scale: The amount by which the whole plot is to be scaled.
+    shift: The origin corresponds to this pixel on the images (first two coordinates).
+    rgba: The color of the line. 
+"""
     vec = vec/sum(vec**2)**0.5
     if vec[0] == 0 and vec[1] == 0:
         orthogonal_vec = np.array([1,1,0])
@@ -67,10 +68,11 @@ def generalized_circle2(draw, center, vec, radius, r, scale = 200, shift = np.ar
         draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]), fill=rgba, width=width)
         pt1 = pt2
 
-'''
-Same as generalized_circle, but instead of drawing the whole circle, only draws a portion of it.
-'''
+
 def generalized_arc(draw, r, center, vec, point, radius, prcnt = 1, rgba = (255,0,0,100), scale = 200, shift = np.array([1000,1000,0])):
+"""
+Same as generalized_circle, but instead of drawing the whole circle, only draws a portion of it.
+"""
     pt1 = np.dot(r,point)
     vec = vec/sum(vec**2)**0.5
     theta = np.pi * 2.0 / 80.0 * prcnt
@@ -81,23 +83,24 @@ def generalized_arc(draw, r, center, vec, point, radius, prcnt = 1, rgba = (255,
         draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]), fill=rgba, width=5)
         pt1 = pt2
 
-'''
-A simple wrapper for generalized_circle2.
-'''
+
 def draw_circle(draw, center, vec, radius, r, scale = 200, shift = np.array([1000,1000,0]), rgba = (255,122,0,50), width=5):
+"""
+A simple wrapper for generalized_circle2.
+"""
 	generalized_circle2(draw, center, vec, radius, r, scale, shift, rgba, width)
 
 
-'''
-Draws a circle in the x-y plane.
-args:
-    center : The center of the circle in original coordinate system.
-    radius : The radius of the circle in original coordinate system.
-'''
 def draw_circle(
         draw, r, center=np.array([1,1]), radius=1, 
         start = np.array([0.0, 1.0, 0.0]), arcExtent = 180.0, rgba = (102,255,51,100), width = 5,
         shift = np.array([1000,1000,0]), scale=200):
+"""
+Draws a circle in the x-y plane.
+args:
+    center : The center of the circle in original coordinate system.
+    radius : The radius of the circle in original coordinate system.
+"""
     if len(center) == 2:
         center = np.concatenate((center, np.array([0])), axis=0)
     center = np.dot(r, center) * scale
@@ -113,7 +116,11 @@ def draw_circle(
         pt1 = pt2
 
 
-'''
+def project_circle_on_plane(
+        draw, r, center=np.array([1,1]), radius=1, plane = np.array([4.5,4.5,4.5]), 
+        start = np.array([0.0, 1.0, 0.0]), arcExtent = 180.0,
+        shift = np.array([1000,1000,0]), scale=200):
+"""
 Draws the projection of a circle onto a plane.
 args:
     center : The center of the circle in original coordinate system.
@@ -121,11 +128,7 @@ args:
     plane : The intercepts of the plane on the x, y and z axes.
     start : The point at which to start drawing the arc. It should be ensured that this point lies on the circle.
     arcEctent : The angle the arc is to make.
-'''
-def project_circle_on_plane(
-        draw, r, center=np.array([1,1]), radius=1, plane = np.array([4.5,4.5,4.5]), 
-        start = np.array([0.0, 1.0, 0.0]), arcExtent = 180.0,
-        shift = np.array([1000,1000,0]), scale=200):
+"""
     [a,b,c] = plane
     center = np.concatenate((center, np.array([0])), axis=0)
     center1 = np.dot(r, center) * scale
@@ -151,10 +154,11 @@ def project_circle_on_plane(
         pt1 = pt2
         pt1Up = pt2Up
 
-'''
-Draws the projection of a circle onto an arbitrary surface defined by the function, fn.
-'''
+
 def project_circle_on_surface(draw, r, fn, center=np.array([0,0]), radius=0.75, start = np.array([0.0, 0.75, 0.0]), arcExtent = 180.0, shift = np.array([1000,1000,0]), scale=300):
+"""
+Draws the projection of a circle onto an arbitrary surface defined by the function, fn.
+"""
     center = np.concatenate((center, np.array([0])), axis=0)
     center1 = np.dot(r, center) * scale
     shift1 = shift[:3] + center1
@@ -170,7 +174,7 @@ def project_circle_on_surface(draw, r, fn, center=np.array([0,0]), radius=0.75, 
         [x,y] = pt2Orig[:2]
         z = fn(np.matrix([x,y]))
         pt2Up = np.dot(r, np.array([x,y,z]))
-        if sum((pt1Up - pt2Up)**2 ) < 0.1:
+        if sum((pt1Up - pt2Up)**2) < 0.1:
             draw.line((pt1Up[0]*scale + shift[0], pt1Up[1]*scale+shift[1], pt2Up[0]*scale+shift[0], pt2Up[1]*scale+shift[1]), fill=(102, 102, 255,100), width=7)
         # The vertical lines clibing up.
         draw.line((pt2[0]*scale + shift1[0], pt2[1]*scale+shift1[1], pt2Up[0]*scale+shift[0], pt2Up[1]*scale+shift[1]), fill=(51, 102, 255,100), width=8)

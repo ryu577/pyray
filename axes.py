@@ -3,11 +3,13 @@ Methods for drawing primitive constructs like axes, grids, arrows, etc.
 '''
 
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont, ImageMath
 
-'''
-Draws four axes in 4d space. If the fourth row and fourth column of the rotation matrix, r are identity-like (0,0,0,1), you will not see the fourth axis.
-'''
+
 def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np.array([1000,1000,0])):
+"""
+Draws four axes in 4d space. If the fourth row and fourth column of the rotation matrix, r are identity-like (0,0,0,1), you will not see the fourth axis.
+"""
     shift2 = -shift + np.array([1000,1000,0])
     x_axis_start = new_vector_4d(r, np.array([0, 1000, 0, 0]))
     x_axis_end = new_vector_4d(r, np.array([2048, 1000, 0, 0]))
@@ -22,10 +24,38 @@ def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np
     draw.line((z_axis_start[0]-shift2[0],z_axis_start[1]-shift2[1],z_axis_end[0]-shift2[0],z_axis_end[1]-shift2[1]), fill="silver", width=width)
     draw.line((w_axis_start[0],w_axis_start[1],w_axis_end[0],w_axis_end[1]), fill="gold", width=width)
 
-'''
-Deprecated method, use drawXYGrid.
-'''
+
+
+def new_vector(r, v, dim = 4):
+"""
+Legacy method. Can be ignored.
+"""
+    translate = np.zeros(dim)
+    translate[0] = 1000
+    translate[1] = 1000
+    v = v - translate #1000,1000 should go to 0,0. 
+    v = v / scale
+    v = np.dot(r,v)
+    v = v * scale
+    v = v + translate
+    return v
+
+def new_vector_4d(r, v, shift = np.array([1000, 1000, 0, 0]), scale = 300):
+"""
+Given a 4d vector; rotates, scales and shifts it.
+"""
+    v = v - shift #1000,1000 should go to 0,0. 
+    v = v / scale
+    v = np.dot(r,v)
+    v = v * scale
+    v = v + shift
+    return v
+
+
 def render_xy_plane(draw, r = np.eye(4), width = 5):
+"""
+Deprecated method, use drawXYGrid.
+"""
     for i in np.arange(0,2000,100)*1.0:
         x_axis_start = new_vector_4d(r, np.array([0, i, 0, 0]))
         x_axis_end = new_vector_4d(r, np.array([2048, i, 0, 0]))
@@ -35,10 +65,10 @@ def render_xy_plane(draw, r = np.eye(4), width = 5):
         draw.line((y_axis_start[0],y_axis_start[1],y_axis_end[0],y_axis_end[1]), fill=(248,50,0,70), width=width)
 
 
-'''
-Draws an x-y grid over the x-y plane
-'''
 def drawXYGrid(draw, r, meshLen = 0.5, extent = 1.0, shift = np.array([1000.0,1000.0,0.0]),scale=200.0):
+"""
+Draws an x-y grid over the x-y plane
+"""
     upper = 5.5*extent
     #First, draw some lines parallel to the x-axis
     for x in np.arange(-5.0,upper,meshLen):
@@ -51,10 +81,10 @@ def drawXYGrid(draw, r, meshLen = 0.5, extent = 1.0, shift = np.array([1000.0,10
         draw.line((pt1[0],pt1[1],pt2[0],pt2[1]),(102,255,51, 120),width=2)
 
 
-'''
-Draws a 3d arrow from start point to end point.
-'''
 def arrowV1(draw, r, start, end, rgb = (0,255,0), scale=200, shift=np.array([1000,1000,0])):
+"""
+Draws a 3d arrow from start point to end point.
+"""
     rgba = rgb + (150,)
     [cx,cy,cz] = start + (end-start) * 0.8 # The base of the arrow.
     c_vec = np.dot(r, np.array([cx,cy,cz])) * scale + shift[:3]
@@ -82,10 +112,11 @@ def arrowV1(draw, r, start, end, rgb = (0,255,0), scale=200, shift=np.array([100
         draw.line((xyz[0],xyz[1],end[0],end[1]), fill = rgba, width=5)
     draw.line((start[0],start[1],end[0],end[1]),fill=rgb,width=5)
 
-'''
-Used by arrowV1 in an edge case. Not to be used directly.
-'''
+
 def arrowV2(draw, r, start, end, rgb = (0,255,0), scale = 200, shift = np.array([1000,1000,0])):
+"""
+Used by arrowV1 in an edge case. Not to be used directly.
+"""
     rgba = rgb + (150,)
     [cx,cy,cz] = start + (end-start) * 0.8 # The base of the arrow.
     c_vec = np.dot(r, np.array([cx,cy,cz])) * scale + shift[:3]
@@ -112,10 +143,11 @@ def arrowV2(draw, r, start, end, rgb = (0,255,0), scale = 200, shift = np.array(
         draw.line((xyz[0],xyz[1],end[0],end[1]), fill = rgba, width=5)
     draw.line((start[0],start[1],end[0],end[1]),fill=rgb,width=5)
 
-'''
-Used by arrowV2 in an edge case. Not to be used directly.
-'''
+
 def arrowV3(draw, r, start, end, rgb = (0,255,0), scale = 200, shift = np.array([1000,1000,0])):
+"""
+Used by arrowV2 in an edge case. Not to be used directly.
+"""
     rgba = rgb + (150,)
     [cx,cy,cz] = start + (end-start) * 0.8 # The base of the arrow.
     c_vec = np.dot(r, np.array([cx,cy,cz])) * scale + shift[:3]
@@ -138,15 +170,16 @@ def arrowV3(draw, r, start, end, rgb = (0,255,0), scale = 200, shift = np.array(
     draw.line((start[0],start[1],end[0],end[1]),fill=rgb,width=5)
 
 
-'''
+
+def writeStaggeredText(txt, draw, im_ind, pos = (250,200)):
+"""
 Types text onto an image, filling part by part to give the impression of it being typed.
 args:
     txt: The text to be typed onto the image.
     im: The image object.
     im_ind: How far in the animation are we?
     pos: The position in the image at which the text is to be typed.
-'''
-def writeStaggeredText(txt, draw, im_ind, pos = (250,200)):
+"""
     font = ImageFont.truetype("arial.ttf", 78)
     draw.text(pos, txt[:min(im_ind*2, len(txt))], (255,255,255), font=font)
 
