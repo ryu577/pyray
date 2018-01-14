@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
 import sympy
 
 
@@ -28,6 +30,3 @@ def writeLatex(im, lat, coordn = (50,50), color = (120,80,200), flip_im = False)
     #coordn = (coordn[0] - im_math.size[0]/2.0, coordn[1] - im_math.size[1]/2.0)
     pasteImage(im_math,im,coordn,True)
     plt.close()
-
-
-
