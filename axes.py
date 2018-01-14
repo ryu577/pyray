@@ -2,7 +2,7 @@
 Methods for drawing primitive constructs like axes, grids, arrows, etc.
 '''
 
-import numpy np
+import numpy as np
 
 '''
 Draws four axes in 4d space. If the fourth row and fourth column of the rotation matrix, r are identity-like (0,0,0,1), you will not see the fourth axis.
