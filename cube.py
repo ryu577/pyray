@@ -466,7 +466,6 @@ def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = Non
         if draw1 is None:
             im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
 
-
 def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.array([1000,1000,0,0,0])):
     """
     @MoneyShot

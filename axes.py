@@ -25,7 +25,7 @@ def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np
 
 
 
-def new_vector(r, v, dim = 4):
+def new_vector(r, v, dim = 4, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
     Legacy method. Can be ignored.
     """

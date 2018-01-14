@@ -2,7 +2,7 @@ import numpy as np
 
 
 
-def xzplane(draw, r, y):
+def xzplane(draw, r, y, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
     Draws an x-z plane on the draw object of an image.
     """
@@ -20,7 +20,7 @@ def xzplane(draw, r, y):
     draw.polygon([(pln[0][0],pln[0][1]),(pln[1][0],pln[1][1]),(pln[2][0],pln[2][1]),(pln[3][0],pln[3][1])], (0,102,255,70))
 
 
-def xyplane(draw, r, x):
+def xyplane(draw, r, x, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
     Draws an x-y plane on the draw object of an image.
     """
