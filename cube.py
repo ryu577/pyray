@@ -9,6 +9,7 @@ from rotation import *
 from misc import *
 from axes import *
 from geometric import *
+from color import *
 from scipy.spatial import ConvexHull
 
 
@@ -441,9 +442,9 @@ def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = Non
             draw = draw1
         r = rotation(3, j/80.0 * np.pi*2)
         ## Vertices
-        vertices = [general_base(i,numTerms) for i in range(numTerms**3)]
+        vertices = [general_base(i, numTerms) for i in range(numTerms**3)]
         rotated_vertices = np.transpose(np.dot(r,np.transpose(vertices))) * 150 + pos
-        colors = [(120,80,200),(200,80,100),(0,255,128),(0,0,255),(255,153,31),(51,153,255),(0,255,0),(255,255,255),(255,255,0),(255,153,153),(174,87,209),(100,149,237),(210,105,30),(176,196,202)]
+        #colors = [(120,80,200),(200,80,100),(0,255,128),(0,0,255),(255,153,31),(51,153,255),(0,255,0),(255,255,255),(255,255,0),(255,153,153),(174,87,209),(100,149,237),(210,105,30),(176,196,202)]
         # Draw edges.
         for i in range(len(vertices)):
             for dim in range(3):

@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def zigzag(x):
     """
     Returns a triangular function oscillating between an upper and lower bound (hard coded for now).
@@ -13,7 +12,6 @@ def zigzag(x):
         return -17 + x
     else:
         return zigzag(x%22)
-
 
 def scatter(n = 8, l = 5):
     """
@@ -53,7 +51,6 @@ def assign(n = 10, level = 3):
             k = k + 1
     return res
 
-
 def move_to_closest(theta, tri, p):
     """
     Move an angle, theta towards the target it is closest to in an array of angles. The extent of movement is dedicated by p.
@@ -65,7 +62,6 @@ def move_to_closest(theta, tri, p):
     final = tri[np.argmin((tri-theta)**2)]
     return theta + (final - theta) * p
 
-
 def move_angle_to_angle(theta1, theta2, p):
     """
     Move a number towards another number (here, the numbers were angles).
@@ -75,9 +71,6 @@ def move_angle_to_angle(theta1, theta2, p):
         p: The extent of movement. 1 means full movement.
     """
     return theta1 + (theta2-theta1) * p
-
-
-
 
 def two_pt_parabola(pt1,pt2):
     """
@@ -92,7 +85,6 @@ def two_pt_parabola(pt1,pt2):
     c = y1 + a*x1*x1
     b = -2*a*x1
     return [a,b,c]
-
 
 def general_base(n, b):
     """
