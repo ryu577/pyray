@@ -13,9 +13,9 @@ from scipy.spatial import ConvexHull
 
 
 class Vertice():
-"""
-A vertex object belonging to a cube.
-"""
+    """
+    A vertex object belonging to a cube.
+    """
     def __init__(self, i = 0, n = 4):
         # The dimensionality of the space the cube will live in.
         self.dim = n
@@ -26,17 +26,17 @@ A vertex object belonging to a cube.
 
     
     def plot(self, r, draw, rgba, width=3, offset = None, scale=500, shift=np.array([1000,1000,0,0])):
-    """
-    Plots the vertice.
-    args:
-        r: The rotation matrix that describes what angle the scene is being viewed from.
-        draw: The draw object associated with the image on which we can draw lines, ellipses and planes.
-        rgba: The color we want the vertex.
-        width: The size of the vertex circle.
-        offset: Allows us to add an offset to all points while plotting.
-        scale: How much are we scaling the scene?
-        shift: What point on the image should correspond to the origin (coordinates larger than the second dimension will be 0)?
-    """
+        """
+        Plots the vertice.
+        args:
+            r: The rotation matrix that describes what angle the scene is being viewed from.
+            draw: The draw object associated with the image on which we can draw lines, ellipses and planes.
+            rgba: The color we want the vertex.
+            width: The size of the vertex circle.
+            offset: Allows us to add an offset to all points while plotting.
+            scale: How much are we scaling the scene?
+            shift: What point on the image should correspond to the origin (coordinates larger than the second dimension will be 0)?
+        """
         if offset is None:
             vv = np.dot(r,self.binary)
         else:
@@ -45,9 +45,9 @@ A vertex object belonging to a cube.
         draw.ellipse( (vx-width,vy-width,vx+width,vy+width), fill = rgba, outline = rgba)
 
     def to_binary(self):
-    """
-    Obtains the binary representation of the current vertex.
-    """
+        """
+        Obtains the binary representation of the current vertex.
+        """
         raw = np.zeros(self.dim)
         temp = self.index
         indx = 0
@@ -59,17 +59,17 @@ A vertex object belonging to a cube.
 
     
     def rotated(self, r):
-    """
-    Returns the rotated coordinates of the vertex after rotation by the associated rotation matrix.
-    args:
-        r: The rotation matrix for the scene.
-    """
+        """
+        Returns the rotated coordinates of the vertex after rotation by the associated rotation matrix.
+        args:
+            r: The rotation matrix for the scene.
+        """
         return np.dot(r,self.binary)
 
     def plot_vid_ready(self,r,draw,rgba,width=9):
-    """
-    Legacy method. Can be ignored.
-    """
+        """
+        Legacy method. Can be ignored.
+        """
         dim = r.shape[0]
         reflection = np.ones(dim)
         reflection[1] = -1
@@ -78,9 +78,9 @@ A vertex object belonging to a cube.
 
 
 class Edge():
-"""
-The Edge object of the cube. There will be 12 edges.
-"""
+    """
+    The Edge object of the cube. There will be 12 edges.
+    """
     def __init__(self, v1, v2, is_inter_dim_connector = False):
         self.vertice1 = v1
         self.vertice2 = v2
@@ -90,11 +90,11 @@ The Edge object of the cube. There will be 12 edges.
 
     
     def plot(self, r, draw, rgba, width = 3, offset = None, scale=500, shift = np.array([1000,1000,1000,1000])):
-    """
-    Plots the edge
-    args:
-        offset: The amount by which the whole edge should be shifted in primitive coordinates.
-    """
+        """
+        Plots the edge
+        args:
+            offset: The amount by which the whole edge should be shifted in primitive coordinates.
+        """
         if offset is None:
             [v1, v2] = [np.dot(r, self.vertice1.binary), np.dot(r, self.vertice2.binary)]
         else:
@@ -105,9 +105,9 @@ The Edge object of the cube. There will be 12 edges.
 
     
     def plot_vid_ready(self,r,draw,rgba,width=2):
-    """
-    Legacy method. Can be ignored.
-    """
+        """
+        Legacy method. Can be ignored.
+        """
         reflection = np.ones(dim)
         reflection[1] = -1
         v1 = new_vector(r,self.vertice1.binary*reflection * scale + shift[:dim])
@@ -115,9 +115,9 @@ The Edge object of the cube. There will be 12 edges.
         draw.line((v1[0],v1[1],v2[0],v2[1]), fill=rgba, width=width)
 
 class Face():
-"""
-The Face object of the cube. There will be six faces.
-"""
+    """
+    The Face object of the cube. There will be six faces.
+    """
     def __init__(self, vertices, is_inter_dim_connector = False):
         [v1,v2,v3,v4] = vertices
         self.vertice1 = v1
@@ -130,12 +130,12 @@ The Face object of the cube. There will be six faces.
         global scale
 
     def add(self, a, dim):
-    """
-    Adds an offset to the entire face.
-    args:
-        a: The offset to add to the face.
-        dim: The dimensionality of the space our cube lives in.
-    """
+        """
+        Adds an offset to the entire face.
+        args:
+            a: The offset to add to the face.
+            dim: The dimensionality of the space our cube lives in.
+        """
         newv1 = Vertice(self.vertice1.index + a, dim)
         newv2 = Vertice(self.vertice2.index + a, dim)
         newv3 = Vertice(self.vertice3.index + a, dim)
@@ -143,11 +143,11 @@ The Face object of the cube. There will be six faces.
         return Face([newv1, newv2, newv3, newv4])
 
     def expand_dim(self, dim2):
-    """
-    Changes the dimensionality of the underlying cube.
-    args:
-        dim2: The new dimensionality we want the underlying cube to possess.
-    """
+        """
+        Changes the dimensionality of the underlying cube.
+        args:
+            dim2: The new dimensionality we want the underlying cube to possess.
+        """
         vertice1 = Vertice(self.vertice1.index, dim2)
         vertice2 = Vertice(self.vertice2.index, dim2)
         vertice3 = Vertice(self.vertice3.index, dim2)
@@ -155,12 +155,12 @@ The Face object of the cube. There will be six faces.
         return Face([vertice1, vertice2, vertice3, vertice4])
 
     def expand_to_body(self, n = 0):
-    """
-    Expands the current face into a cube body. Does this by extending the four edges of the face along a direction perpendicular to this face until they form own faces.
-    Basically extrudes the face into a cube body.
-    args:
-        The dimensionality of the space in which we want our face and cube to live.
-    """
+        """
+        Expands the current face into a cube body. Does this by extending the four edges of the face along a direction perpendicular to this face until they form own faces.
+        Basically extrudes the face into a cube body.
+        args:
+            The dimensionality of the space in which we want our face and cube to live.
+        """
         if n == 0:
             curr_dim = len(self.vertice1.binary)
         else:
@@ -176,9 +176,9 @@ The Face object of the cube. There will be six faces.
 
     
     def plot(self, r, draw, rgba, highlightPoints = False):
-    """
-    Plots the current face on the image whose draw object is passed.
-    """
+        """
+        Plots the current face on the image whose draw object is passed.
+        """
         rotated_face = np.transpose(np.dot(r, np.transpose(self.face_matrix)))
         [v1,v2,v3,v4] = shift + scale * rotated_face
         draw.polygon([(v1[0], v1[1]), (v2[0], v2[1]), (v4[0], v4[1]), (v3[0], v3[1])], rgba) #First v4 then v3 because edges are not in increasing order
@@ -192,9 +192,9 @@ The Face object of the cube. There will be six faces.
             Edge(self.vertice1, self.vertice3).plot(r,draw,rgba,5)
 
     def plot_vid_ready(self, r, draw, rgba):
-    """
-    Legacy method can be ignored.
-    """
+        """
+        Legacy method can be ignored.
+        """
         dim = r.shape[0]
         reflection = np.ones(dim)
         reflection[1] = -1
@@ -205,9 +205,9 @@ The Face object of the cube. There will be six faces.
         draw.polygon([(v1[0],v1[1]), (v2[0],v2[1]), (v4[0],v4[1]), (v3[0],v3[1])], rgba)
 
 class Body():
-"""
-Body object for the cube, strictly 3d.
-"""
+    """
+    Body object for the cube, strictly 3d.
+    """
     def __init__(self, faces):
         [f1,f2,f3,f4,f5,f6] = faces
         self.face1 = f1
@@ -228,9 +228,9 @@ Body object for the cube, strictly 3d.
 
     
     def plot(self, r, draw, rgba):
-    """
-    Plots all 2d faces of the 3d body.
-    """
+        """
+        Plots all 2d faces of the 3d body.
+        """
         self.face1.plot(r, draw, rgba, True)
         self.face2.plot(r, draw, rgba, True)
         self.face3.plot(r, draw, rgba, True)
@@ -240,9 +240,9 @@ Body object for the cube, strictly 3d.
 
 
 class Cube():    
-"""
-Hypercube object that lives in space of arbitrary dimensionality.
-"""
+    """
+    Hypercube object that lives in space of arbitrary dimensionality.
+    """
     def __init__(self, n = 4, r = None):
         self.dim = n
         if r == None:
@@ -258,9 +258,9 @@ Hypercube object that lives in space of arbitrary dimensionality.
         global scale
 
     def generate_vertice_matrix(self):
-    """
-    Generates a matrix with each row being a vertex of the cube.
-    """
+        """
+        Generates a matrix with each row being a vertex of the cube.
+        """
         self.vertice_matrix = []
         self.vertice_coordinate_sums = []
         for v in self.vertices:
@@ -270,11 +270,11 @@ Hypercube object that lives in space of arbitrary dimensionality.
         self.vertice_coordinate_sums = np.array(self.vertice_coordinate_sums)
 
     def generate_edges(self,n):
-    """
-    Generates all the edges of the cube.
-    args:
-        n: The dimensionality of the space we want the cube to live in.
-    """
+        """
+        Generates all the edges of the cube.
+        args:
+            n: The dimensionality of the space we want the cube to live in.
+        """
         if n == 1:
             v1 = Vertice(0, self.dim)
             v2 = Vertice(1, self.dim)
@@ -292,11 +292,11 @@ Hypercube object that lives in space of arbitrary dimensionality.
             return {'vertices' : vertices, 'edges' : edges}
 
     def generate_faces(self, n):
-    """
-    Generate the faces of the hypercube.
-    args:
-        n: The dimensionality of the space we want the cube to live in.
-    """
+        """
+        Generate the faces of the hypercube.
+        args:
+            n: The dimensionality of the space we want the cube to live in.
+        """
         if n < 2:
             return None
         elif n == 2:
@@ -315,11 +315,11 @@ Hypercube object that lives in space of arbitrary dimensionality.
             return faces
 
     def generate_bodies(self, n):
-    """
-    If the cube is of dimensionality 3 or higher, this method will return the bodies (3d cubes) within the larger hypercube.
-    args:
-        n: The dimensionality of the space our hypercube lives in.
-    """
+        """
+        If the cube is of dimensionality 3 or higher, this method will return the bodies (3d cubes) within the larger hypercube.
+        args:
+            n: The dimensionality of the space our hypercube lives in.
+        """
         if n < 3:
             return None
         elif n == 3:
@@ -336,18 +336,18 @@ Hypercube object that lives in space of arbitrary dimensionality.
 
     
     def generate_sequential_edges(self):
-    """
-    All vertices of the cube have a natrural index. This method generates the edges in order of the indices.
-    """
+        """
+        All vertices of the cube have a natrural index. This method generates the edges in order of the indices.
+        """
         self.sequential_edges = []
         for i in range(len(self.vertices) - 1):
             self.sequential_edges.append(Edge(self.vertices[i], self.vertices[i+1]))
 
     
     def generate_classic_edges(self):
-    """
-    Generates the edges of the hypercube.
-    """
+        """
+        Generates the edges of the hypercube.
+        """
         self.classic_edges = []
         for i in self.edges:
             self.classic_edges.append(np.array([i.vertice1.binary, i.vertice2.binary]))
@@ -355,9 +355,9 @@ Hypercube object that lives in space of arbitrary dimensionality.
 
     
     def plot_edges(self, r = None, seq = False, j = 0):
-    """
-    Plots all the edges of the hypercube.
-    """
+        """
+        Plots all the edges of the hypercube.
+        """
         if r == None:
             r = rotation(self.dim)
         im = Image.new("RGB", (2048, 2048), (1,1,1))
@@ -376,9 +376,9 @@ Hypercube object that lives in space of arbitrary dimensionality.
 
 
     def plot_edges2(self, draw, r = None, seq = False, offset = None,fill=(255,165,5),scale=500,shift=np.array([1000,1000,0,0])):
-    """
-    Same as plot_edges, but allows for an offset.
-    """
+        """
+        Same as plot_edges, but allows for an offset.
+        """
         if offset is None:
             offset = np.zeros(self.dim)
         if r == None:
@@ -400,9 +400,9 @@ Hypercube object that lives in space of arbitrary dimensionality.
             draw.line((v1x, v1y, v2x, v2y), fill=fill, width=4)
 
     def plot_faces(self, r = None, j = 0, body_indice = None):
-    """
-    Plots all the 2d faces of the hypercube.
-    """
+        """
+        Plots all the 2d faces of the hypercube.
+        """
         if r == None:
             r = rotation(self.dim)
         im = Image.new("RGB", (2048, 2048), "black")
@@ -424,15 +424,15 @@ Hypercube object that lives in space of arbitrary dimensionality.
 
 
 def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale = 300):
-"""
-@MoneyShot
-Generates larger and larger cubes showing their cutting planes representing polynomial terms.
-args:
-    numTerms: The number of values each dimension can take.
-    im_ind: The index of the image in the video (will affect file name of dumped image).
-    pos: The position on the image where the leftmost edge of the cube should be.
-    draw1: The draw object of the image. If nor provided, new images are created.
-"""
+    """
+    @MoneyShot
+    Generates larger and larger cubes showing their cutting planes representing polynomial terms.
+    args:
+        numTerms: The number of values each dimension can take.
+        im_ind: The index of the image in the video (will affect file name of dumped image).
+        pos: The position on the image where the leftmost edge of the cube should be.
+        draw1: The draw object of the image. If nor provided, new images are created.
+    """
     for j in range(30,31):
         if draw1 is None:
             im = Image.new("RGB", (2048, 2048), "black")
@@ -468,10 +468,10 @@ args:
 
 
 def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.array([1000,1000,0,0,0])):
-"""
-@MoneyShot
-    Draws a four dimensional teserract with two tetrahedral and one octahedral planes visible.
-"""
+    """
+    @MoneyShot
+        Draws a four dimensional teserract with two tetrahedral and one octahedral planes visible.
+    """
     c1 = Cube(4)
     r = np.eye(4)
     r[:3,:3] = rotation(3, np.pi*2*27/80.0)

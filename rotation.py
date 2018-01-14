@@ -11,11 +11,11 @@ from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
 
 def yzrotation(theta = np.pi*3/20.0):
-"""
-Returns a simple planar rotation matrix that rotates vectors around the x-axis.
-args:
-    theta: The angle by which we will perform the rotation.
-"""
+    """
+    Returns a simple planar rotation matrix that rotates vectors around the x-axis.
+    args:
+        theta: The angle by which we will perform the rotation.
+    """
     r = np.eye(3)
     r[1,1] = np.cos(theta)
     r[1,2] = -np.sin(theta)
@@ -25,12 +25,12 @@ args:
 
 
 def general_rotation(a, theta):
-"""
-Returns a three dimensional rotation matrix given the axis to rotate about and the angle to rotate by.
-args:
-    a: The axis to rotate about
-    theta: The angle to rotate by.
-"""    
+    """
+    Returns a three dimensional rotation matrix given the axis to rotate about and the angle to rotate by.
+    args:
+        a: The axis to rotate about
+        theta: The angle to rotate by.
+    """
     c = np.cos(theta)
     s = np.sin(theta)
     a = a/sum(a**2)**0.5
@@ -44,24 +44,24 @@ args:
 
 
 def axisangle(a, theta):
-"""
-A wrapper to general_rotation named more appropriately. Returns a rotation matrix that rotates about an axis by an angle.
-args:
-    a: The axis to rotate about
-    theta: The angle to rotate by. 
-"""
+    """
+    A wrapper to general_rotation named more appropriately. Returns a rotation matrix that rotates about an axis by an angle.
+    args:
+        a: The axis to rotate about
+        theta: The angle to rotate by. 
+    """
     return general_rotation(a,theta)
 
 
 
 def matrix_to_axisangle(m):
-"""
-For a rotation matrix in 3 dimensions (rotations about the origin), we need 4 parameters. 
-An axis about which we are going to rotate and an angle which is the extent of rotation.
-This method takes the rotation matrix in as input and returns an axis and angle combination that would generate that matrix.
-args:
-    m: The rotation matrix (collection of orthonormal vectors in a matrix).
-"""
+    """
+    For a rotation matrix in 3 dimensions (rotations about the origin), we need 4 parameters. 
+    An axis about which we are going to rotate and an angle which is the extent of rotation.
+    This method takes the rotation matrix in as input and returns an axis and angle combination that would generate that matrix.
+    args:
+        m: The rotation matrix (collection of orthonormal vectors in a matrix).
+    """
     theta = np.arccos(( m[0,0] + m[1,1] + m[2,2] - 1)/2)
     x = (m[2,1] - m[1,2])/np.sqrt((m[2,1] - m[1,2])**2+(m[0,2] - m[2,0])**2+(m[1,0] - m[0,1])**2)
     y = (m[0,2] - m[2,0])/np.sqrt((m[2,1] - m[1,2])**2+(m[0,2] - m[2,0])**2+(m[1,0] - m[0,1])**2)
@@ -70,12 +70,12 @@ args:
 
 
 def rotation(n, theta = np.pi/3):
-"""
-Returns an general rotation matrix of any dimensionality. This is acheived by a sequence of succesive 2d rotations.
-args:
-    n : The dimensionality of the space in which we are going to rotate things.
-    theta: The angle of rotation for each of the planar 2-d rotation matrices.
-"""
+    """
+    Returns an general rotation matrix of any dimensionality. This is acheived by a sequence of succesive 2d rotations.
+    args:
+        n : The dimensionality of the space in which we are going to rotate things.
+        theta: The angle of rotation for each of the planar 2-d rotation matrices.
+    """
     r = np.eye(n)
     for i in range(n):
         for j in range(i+1,n):
@@ -89,25 +89,25 @@ args:
 
 
 def rotation_transition(i = 0, oldr = general_rotation(np.array([1,0,0]),np.pi/2), newr = rotation(3,2*np.pi*4/30.0)):
-"""
-A sequence of intermediate rotations that take the system from an initial rotated state (oldr) to a final one (newr).
-args:
-    i: 1 means complete rotation to new coordinates, 0 means old rotation.
-    oldr: Old rotation matrix.
-    newr: New rotation matrix.
-"""
+    """
+    A sequence of intermediate rotations that take the system from an initial rotated state (oldr) to a final one (newr).
+    args:
+        i: 1 means complete rotation to new coordinates, 0 means old rotation.
+        oldr: Old rotation matrix.
+        newr: New rotation matrix.
+    """
     transn = np.dot(newr,np.transpose(oldr))
     (theta, vec) = matrix_to_axisangle(transn)
     r = general_rotation(vec, i*theta)
     return np.dot(r, oldr)
 
 def rotate_vec2vec(oldvec, newvec):
-"""
-What rotation matrix is needed to rotate an old vector to a new vector.
-args:
-    oldvec: The vector we are starting with.
-    newvec: The vector to which we are rotating.
-"""
+    """
+    What rotation matrix is needed to rotate an old vector to a new vector.
+    args:
+        oldvec: The vector we are starting with.
+        newvec: The vector to which we are rotating.
+    """
     axis = np.cross(oldvec, newvec)
     oldvec1 = oldvec / np.sqrt(sum(oldvec**2))
     newvec1 = newvec / np.sqrt(sum(newvec**2))

@@ -8,13 +8,13 @@ from misc import *
 from rotation import *
 from color import *
 
-# A global variable used for investigating 
+# A global variable used for investigating the angles the faces of polyhedons make with a light source. This is later used to shade them appropriately.
 angles = []
 
 def plot_polyhedron(draw, tet_orig, r, shift, scale = 300, thresh = 1.24):
-"""
-Plots all the vertices of a polyhedron.
-"""
+    """
+    Plots all the vertices of a polyhedron.
+    """
     font = ImageFont.truetype("arial.ttf", 25)
     tet = np.dot(tet_orig, r)
     j = 0
@@ -27,9 +27,9 @@ Plots all the vertices of a polyhedron.
 
 
 def octahedron(draw, r, shift = [1000,1000,0], scale = 300):
-"""
-Draws the vertices, edges and faces of an Octahedron.
-"""
+    """
+    Draws the vertices, edges and faces of an Octahedron.
+    """
     tet_orig = np.array([
             [0,0,0],
             [1,0,0],
@@ -61,9 +61,9 @@ Draws the vertices, edges and faces of an Octahedron.
                 draw.polygon(poly, rgba)
 
 def tetrahedron(draw, r, im, theta = np.pi/12, shift = np.array([1000,1000,0]), scale = 150, rgb = (216,52,52), ind = 0):
-"""
-Draws the vertices, edges and faces of a Tetrahedron.
-"""
+    """
+    Draws the vertices, edges and faces of a Tetrahedron.
+    """
     im_sun = Image.open('C:\\Users\\rohit\\Documents\\GitHub\\base\\numerical\\python\\visualization\\Animation\\Images\\Misc\\Sun' + str(ind%2) + '.jpg')
     im_sun.thumbnail((150,150), Image.ANTIALIAS)
     tet_orig = np.array([
@@ -92,9 +92,9 @@ Draws the vertices, edges and faces of a Tetrahedron.
 
 
 def icosahedron(draw, r, shift = [1000,1000,0], scale = 300):
-"""
-Plots the vertices of an Icosahedron and the faces along with edges.
-"""
+    """
+    Plots the vertices of an Icosahedron and the faces along with edges.
+    """
     phi = (1+np.sqrt(5))/2
     tet_orig = []
     for i in [-1, 1]:
@@ -106,9 +106,9 @@ Plots the vertices of an Icosahedron and the faces along with edges.
 
 
 def icosahedron_planes(draw, r, scale = 300, shift = np.array([1000,1000,0])):
-"""
-Draws the planes (or faces) of an Icosahedron.
-"""
+    """
+    Draws the planes (or faces) of an Icosahedron.
+    """
     cind = -1
     phi = (1 + np.sqrt(5)) / 2.0
     mat_orig = np.array([
@@ -176,9 +176,9 @@ Draws the planes (or faces) of an Icosahedron.
 
 
 def dodecahedron(draw, r, shift = [1000,1000,0], scale = 300):
-"""
-Draws the vertices, faces and edges of a dodecahedron.
-"""
+    """
+    Draws the vertices, faces and edges of a dodecahedron.
+    """
     phi = (1+np.sqrt(5)) / 2
     tet_orig = []
     for i in [-1,1]:
@@ -196,9 +196,9 @@ Draws the vertices, faces and edges of a dodecahedron.
 
 
 def dodecahedron_planes(draw, r, tet_orig, scale = 300, shift = np.array([1000,1000,0])):
-"""
-Draws all the faces of a Dodecahedron.
-"""
+    """
+    Draws all the faces of a Dodecahedron.
+    """
     phi = (1+np.sqrt(5)) / 2
     cind = -1
     for pm1 in [-1,1]:
@@ -229,10 +229,10 @@ Draws all the faces of a Dodecahedron.
                     #        draw.line((vv1[0],vv1[1],vv2[0],vv2[1]), fill = (0,255,0,255), width = 3)
 
 def platonic_solids():
-"""
-@MoneyShot
-Draws out an Icosahedron and Dodecahedron.
-"""
+    """
+    @MoneyShot
+    Draws out an Icosahedron and Dodecahedron.
+    """
     for i in range(0,11):
         im = Image.new("RGB", (2048, 2048), (1,1,1))
         draw = ImageDraw.Draw(im,'RGBA')

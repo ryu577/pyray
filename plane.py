@@ -3,9 +3,9 @@ import numpy as np
 
 
 def xzplane(draw, r, y):
-"""
-Draws an x-z plane on the draw object of an image.
-"""
+    """
+    Draws an x-z plane on the draw object of an image.
+    """
     extent = 2.8
     pln = np.array(
             [
@@ -21,9 +21,9 @@ Draws an x-z plane on the draw object of an image.
 
 
 def xyplane(draw, r, x):
-"""
-Draws an x-y plane on the draw object of an image.
-"""
+    """
+    Draws an x-y plane on the draw object of an image.
+    """
     extent = 2.8
     pln = np.array(
             [
