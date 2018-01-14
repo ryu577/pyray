@@ -27,11 +27,12 @@ I've made every effort to keep the requirements for this project to the bare min
 Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with pip.
 
 # Usage
-To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder ./Images/RotatingCube (this was the first object that was animated with this tool). 
+To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder `./Images/RotatingCube` (this was the first object that was animated with this tool). 
 
-You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from Cube.py - 
+You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from cube.py - 
 
 ```python
+from cube import *
 cube_with_cuttingplanes(7)
 ```
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
