@@ -95,6 +95,6 @@ def general_base(n, b):
     while(n > 0):
         res[indx] = (n % b)
         indx = indx + 1
-        n = n / b
+        n = int(n / b)
     return res
 
