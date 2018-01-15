@@ -1,5 +1,6 @@
 '''
-Renders cubes of arbitrary dimensinoality and allows you to view them from different angles.
+Renders cubes of arbitrary dimensinoality and allows you to view them from
+different angles.
 '''
 
 import numpy as np
@@ -12,36 +13,45 @@ from geometric import *
 from color import *
 from scipy.spatial import ConvexHull
 
+
 class Vertice():
     """
     A vertex object belonging to a cube.
     """
-    def __init__(self, i = 0, n = 4):
+    def __init__(self, i=0, n=4):
         # The dimensionality of the space the cube will live in.
         self.dim = n
-        # All vertices of the cube have a natural index. For example, the point (0,0,..0) is index 0, (0,0,...,1) is index 1 and so on.
+        # All vertices of the cube have a natural index.
+        # For example, the point (0,0,..0) is index 0, (0,0,...,1) is index 1
+        # and so on.
         self.index = i
         self.binary = self.to_binary()
         global scale
-    
-    def plot(self, r, draw, rgba, width=3, offset = None, scale=500, shift=np.array([1000,1000,0,0])):
+
+    def plot(self, r, draw, rgba, width=3, offset=None, scale=500,
+             shift=np.array([1000, 1000, 0, 0])):
         """
         Plots the vertice.
         args:
-            r: The rotation matrix that describes what angle the scene is being viewed from.
-            draw: The draw object associated with the image on which we can draw lines, ellipses and planes.
+            r: The rotation matrix that describes what angle the scene is
+               being viewed from.
+            draw: The draw object associated with the image on which we can
+                  draw lines, ellipses and planes.
             rgba: The color we want the vertex.
             width: The size of the vertex circle.
             offset: Allows us to add an offset to all points while plotting.
             scale: How much are we scaling the scene?
-            shift: What point on the image should correspond to the origin (coordinates larger than the second dimension will be 0)?
+            shift: What point on the image should correspond to the origin
+                (coordinates larger than the second dimension will be 0)?
         """
         if offset is None:
-            vv = np.dot(r,self.binary)
+            vv = np.dot(r, self.binary)
         else:
-            vv = np.dot(r,self.binary + offset[:self.dim])
-        [vx,vy] = (shift[:self.dim] + scale * vv)[0:2] # Projection on x-y plane
-        draw.ellipse( (vx-width,vy-width,vx+width,vy+width), fill = rgba, outline = rgba)
+            vv = np.dot(r, self.binary + offset[:self.dim])
+        # Projection on x-y plane
+        [vx, vy] = (shift[:self.dim] + scale * vv)[0:2]
+        draw.ellipse((vx - width, vy - width, vx + width, vy + width),
+                     fill=rgba, outline=rgba)
 
     def to_binary(self):
         """
@@ -51,77 +61,92 @@ class Vertice():
         temp = self.index
         indx = 0
         while temp > 0:
-            raw[indx] = temp%2
-            temp = temp/2
+            raw[indx] = temp % 2
+            temp = temp / 2
             indx = indx + 1
         return raw
-    
+
     def rotated(self, r):
         """
-        Returns the rotated coordinates of the vertex after rotation by the associated rotation matrix.
+        Returns the rotated coordinates of the vertex after rotation by the
+        associated rotation matrix.
         args:
             r: The rotation matrix for the scene.
         """
-        return np.dot(r,self.binary)
+        return np.dot(r, self.binary)
 
-    def plot_vid_ready(self,r,draw,rgba,width=9):
+    def plot_vid_ready(self, r, draw, rgba, width=9):
         """
         Legacy method. Can be ignored.
         """
         dim = r.shape[0]
         reflection = np.ones(dim)
         reflection[1] = -1
-        l = new_vector(r, (self.binary*reflection) * scale + shift[:dim] )
-        draw.ellipse((l[0]-width,l[1]-width,l[0]+width,l[1]+width), fill = rgba, outline = rgba)
+        l = new_vector(r, (self.binary * reflection) * scale + shift[:dim])
+        draw.ellipse((l[0] - width, l[1] - width, l[0] + width, l[1] + width),
+                     fill=rgba, outline=rgba)
+
 
 class Edge():
     """
     The Edge object of the cube. There will be 12 edges.
     """
-    def __init__(self, v1, v2, is_inter_dim_connector = False):
+    def __init__(self, v1, v2, is_inter_dim_connector=False):
         self.vertice1 = v1
         self.vertice2 = v2
         self.is_inter_dim_connector = is_inter_dim_connector
         self.dim = v1.dim
         global scale
-    
-    def plot(self, r, draw, rgba, width = 3, offset = None, scale=500, shift = np.array([1000,1000,1000,1000])):
+
+    def plot(self, r, draw, rgba, width=3, offset=None, scale=500,
+             shift=np.array([1000, 1000, 1000, 1000])):
         """
         Plots the edge
         args:
-            offset: The amount by which the whole edge should be shifted in primitive coordinates.
+            offset: The amount by which the whole edge should be shifted in
+            primitive coordinates.
         """
         if offset is None:
-            [v1, v2] = [np.dot(r, self.vertice1.binary), np.dot(r, self.vertice2.binary)]
+            [v1, v2] = [np.dot(r, self.vertice1.binary),
+                        np.dot(r, self.vertice2.binary)]
         else:
-            [v1, v2] = [np.dot(r, self.vertice1.binary+offset), np.dot(r, self.vertice2.binary+offset)]
+            [v1, v2] = [np.dot(r, self.vertice1.binary+offset),
+                        np.dot(r, self.vertice2.binary+offset)]
         [v1x, v1y] = (shift[:self.dim] + scale * v1)[0:2]
         [v2x, v2y] = (shift[:self.dim] + scale * v2)[0:2]
         draw.line((v1x, v1y, v2x, v2y), fill=rgba, width=width)
-    
-    def plot_vid_ready(self,r,draw,rgba,width=2):
+
+    def plot_vid_ready(self, r, draw, rgba, width=2):
         """
         Legacy method. Can be ignored.
         """
         reflection = np.ones(dim)
         reflection[1] = -1
-        v1 = new_vector(r,self.vertice1.binary*reflection * scale + shift[:dim])
-        v2 = new_vector(r,self.vertice2.binary*reflection * scale + shift[:dim])
-        draw.line((v1[0],v1[1],v2[0],v2[1]), fill=rgba, width=width)
+        v1 = new_vector(r,
+                        self.vertice1.binary * reflection * scale +
+                        shift[:dim])
+        v2 = new_vector(r,
+                        self.vertice2.binary * reflection * scale +
+                        shift[:dim])
+        draw.line((v1[0], v1[1], v2[0], v2[1]), fill=rgba, width=width)
+
 
 class Face():
     """
     The Face object of the cube. There will be six faces.
     """
-    def __init__(self, vertices, is_inter_dim_connector = False):
-        [v1,v2,v3,v4] = vertices
+    def __init__(self, vertices, is_inter_dim_connector=False):
+        [v1, v2, v3, v4] = vertices
         self.vertice1 = v1
         self.vertice2 = v2
         self.vertice3 = v3
         self.vertice4 = v4
         self.is_inter_dim_connector = is_inter_dim_connector
-        self.face_matrix = np.array([v1.binary, v2.binary, v3.binary, v4.binary]) # We can rotate the whole face in one shot.
-        self.vertice_indices = np.array([v1.index,v2.index,v3.index,v4.index])
+        # We can rotate the whole face in one shot.
+        self.face_matrix = np.array([v1.binary, v2.binary,
+                                     v3.binary, v4.binary])
+        self.vertice_indices = np.array([v1.index, v2.index,
+                                         v3.index, v4.index])
         global scale
 
     def add(self, a, dim):
@@ -141,7 +166,8 @@ class Face():
         """
         Changes the dimensionality of the underlying cube.
         args:
-            dim2: The new dimensionality we want the underlying cube to possess.
+            dim2: The new dimensionality we want the underlying cube to
+            possess.
         """
         vertice1 = Vertice(self.vertice1.index, dim2)
         vertice2 = Vertice(self.vertice2.index, dim2)
@@ -149,12 +175,15 @@ class Face():
         vertice4 = Vertice(self.vertice4.index, dim2)
         return Face([vertice1, vertice2, vertice3, vertice4])
 
-    def expand_to_body(self, n = 0):
+    def expand_to_body(self, n=0):
         """
-        Expands the current face into a cube body. Does this by extending the four edges of the face along a direction perpendicular to this face until they form own faces.
-        Basically extrudes the face into a cube body.
+        Expands the current face into a cube body. Does this by extending the
+        four edges of the face along a direction perpendicular to this face
+        until they form own faces. Basically extrudes the face into a
+        cube body.
         args:
-            The dimensionality of the space in which we want our face and cube to live.
+            The dimensionality of the space in which we want our face and cube
+            to live.
         """
         if n == 0:
             curr_dim = len(self.vertice1.binary)
@@ -163,19 +192,33 @@ class Face():
         original_face = self
         original_face = self.expand_dim(curr_dim + 1)
         new_face = original_face.add(2**curr_dim, curr_dim+1)
-        composed_face1 = Face([original_face.vertice1, original_face.vertice2, Vertice(original_face.vertice1.index + 2**(curr_dim), curr_dim+1), Vertice(original_face.vertice2.index+ 2**(curr_dim), curr_dim+1)])
-        composed_face2 = Face([original_face.vertice2, original_face.vertice4, Vertice(original_face.vertice2.index + 2**(curr_dim), curr_dim+1), Vertice(original_face.vertice4.index+ 2**(curr_dim), curr_dim+1)])
-        composed_face3 = Face([original_face.vertice3, original_face.vertice4, Vertice(original_face.vertice3.index + 2**(curr_dim), curr_dim+1), Vertice(original_face.vertice4.index+ 2**(curr_dim), curr_dim+1)])
-        composed_face4 = Face([original_face.vertice1, original_face.vertice3, Vertice(original_face.vertice1.index + 2**(curr_dim), curr_dim+1), Vertice(original_face.vertice3.index+ 2**(curr_dim), curr_dim+1)])
-        return Body([original_face, new_face, composed_face1, composed_face2, composed_face3, composed_face4])
-    
+        composed_face1 = Face([original_face.vertice1, original_face.vertice2,
+                              Vertice(original_face.vertice1.index +
+                                      2**(curr_dim), curr_dim+1),
+                              Vertice(original_face.vertice2.index +
+                                      2**(curr_dim), curr_dim+1)])
+        composed_face2 = Face([original_face.vertice2, original_face.vertice4,
+                               Vertice(original_face.vertice2.index +
+                                       2**(curr_dim), curr_dim+1),
+                               Vertice(original_face.vertice4.index +
+                                       2**(curr_dim), curr_dim+1)])
+        composed_face3 = Face([original_face.vertice3, original_face.vertice4,
+            Vertice(original_face.vertice3.index + 2**(curr_dim), curr_dim+1),
+            Vertice(original_face.vertice4.index+ 2**(curr_dim), curr_dim+1)])
+        composed_face4 = Face([original_face.vertice1, original_face.vertice3,
+            Vertice(original_face.vertice1.index + 2**(curr_dim), curr_dim+1),
+            Vertice(original_face.vertice3.index+ 2**(curr_dim), curr_dim+1)])
+        return Body([original_face, new_face, composed_face1, composed_face2,
+            composed_face3, composed_face4])
+
     def plot(self, r, draw, rgba, highlightPoints = False):
         """
         Plots the current face on the image whose draw object is passed.
         """
         rotated_face = np.transpose(np.dot(r, np.transpose(self.face_matrix)))
         [v1,v2,v3,v4] = shift + scale * rotated_face
-        draw.polygon([(v1[0], v1[1]), (v2[0], v2[1]), (v4[0], v4[1]), (v3[0], v3[1])], rgba) #First v4 then v3 because edges are not in increasing order
+        #First v4 then v3 because edges are not in increasing order
+        draw.polygon([(v1[0], v1[1]), (v2[0], v2[1]), (v4[0], v4[1]), (v3[0], v3[1])], rgba)
         if highlightPoints:
             for vv in [v1, v2, v3, v4]:
                 [vx,vy] = vv[:2]
@@ -210,7 +253,7 @@ class Body():
         self.face4 = f4
         self.face5 = f5
         self.face6 = f6
-    
+
     def add(self, a, dim):
         newf1 = self.face1.add(a, dim)
         newf2 = self.face2.add(a, dim)
@@ -218,8 +261,8 @@ class Body():
         newf4 = self.face4.add(a, dim)
         newf5 = self.face5.add(a, dim)
         newf6 = self.face6.add(a, dim)
-        return Body([newf1,newf2,newf3,newf4,newf5,newf6])
-    
+        return Body([newf1, newf2, newf3, newf4, newf5, newf6])
+
     def plot(self, r, draw, rgba):
         """
         Plots all 2d faces of the 3d body.
@@ -270,7 +313,7 @@ class Cube():
         if n == 1:
             v1 = Vertice(0, self.dim)
             v2 = Vertice(1, self.dim)
-            return { 'vertices': np.array([v1, v2]), 'edges': np.array([Edge(v1, v2)]) }
+            return {'vertices': np.array([v1, v2]), 'edges': np.array([Edge(v1, v2)])}
         else:
             previous = self.generate_edges(n-1)
             vertices = previous['vertices']
@@ -280,7 +323,8 @@ class Cube():
                 vertices = np.insert(vertices, len(vertices), v_new )
                 edges = np.insert(edges,len(edges),Edge(i, v_new))
             for i in previous['edges']: #Loop through edges
-                edges = np.insert(edges, len(edges), (Edge(vertices[i.vertice1.index + 2**(n-1)], vertices[i.vertice2.index + 2**(n-1)])) )
+                edges = np.insert(edges, len(edges), 
+                        (Edge(vertices[i.vertice1.index + 2**(n-1)], vertices[i.vertice2.index + 2**(n-1)])) )
             return {'vertices' : vertices, 'edges' : edges}
 
     def generate_faces(self, n):
@@ -325,7 +369,7 @@ class Cube():
             for i in previous_faces:
                 bodies = np.insert(bodies, len(bodies), i.expand_to_body(n-1))
             return bodies
-    
+
     def generate_sequential_edges(self):
         """
         All vertices of the cube have a natrural index. This method generates the edges in order of the indices.
@@ -333,7 +377,7 @@ class Cube():
         self.sequential_edges = []
         for i in range(len(self.vertices) - 1):
             self.sequential_edges.append(Edge(self.vertices[i], self.vertices[i+1]))
-    
+
     def generate_classic_edges(self):
         """
         Generates the edges of the hypercube.
@@ -342,7 +386,7 @@ class Cube():
         for i in self.edges:
             self.classic_edges.append(np.array([i.vertice1.binary, i.vertice2.binary]))
         self.classic_edges = np.array(self.classic_edges)
-    
+
     def plot_edges(self, r = None, seq = False, j = 0):
         """
         Plots all the edges of the hypercube.
@@ -409,11 +453,10 @@ class Cube():
                 indx = indx + 1
         im.save('Images\\RotatingCube\\im' + str(j) + '.png')
 
-
-'''
-Legacy method. Can be ignored.
-'''
 def new_vector(r, v, dim = 4):
+    """
+    Legacy method. Can be ignored.
+    """
     translate = np.zeros(dim)
     translate[0] = 1000
     translate[1] = 1000
@@ -424,7 +467,8 @@ def new_vector(r, v, dim = 4):
     v = v + translate
     return v
 
-def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale = 300, popup=False):
+def cube_with_cuttingplanes(numTerms, im_ind=0, pos = [300, 700, 0],
+                            draw1 = None, scale = 300, popup=False):
     """
     @MoneyShot
     Generates larger and larger cubes showing their cutting planes representing polynomial terms.
@@ -444,7 +488,6 @@ def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = Non
         ## Vertices
         vertices = [general_base(i, numTerms) for i in range(numTerms**3)]
         rotated_vertices = np.transpose(np.dot(r,np.transpose(vertices))) * 150 + pos
-        #colors = [(120,80,200),(200,80,100),(0,255,128),(0,0,255),(255,153,31),(51,153,255),(0,255,0),(255,255,255),(255,255,0),(255,153,153),(174,87,209),(100,149,237),(210,105,30),(176,196,202)]
         # Draw edges.
         for i in range(len(vertices)):
             for dim in range(3):
@@ -457,7 +500,8 @@ def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = Non
         for power in range(1, (numTerms-1)*3):
             rgb = colors[(power-1)%14]
             rgba = colors[(power-1)%14] + (100,)
-            sqr1 = rotated_vertices[np.array(range(len(vertices)))[np.array([sum(i)==power for i in vertices])]]
+            sqr1 = rotated_vertices[np.array(range(len(vertices)))
+                [np.array([sum(i) == power for i in vertices])]]
             hull = ConvexHull([i[:2] for i in sqr1]).vertices
             poly = [(sqr1[i][0],sqr1[i][1]) for i in hull]
             draw.polygon(poly, rgba)
@@ -496,7 +540,6 @@ def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.arr
         draw.polygon(jarvis_convex_hull(hexag), (0,255,0,30))
     except:
         print("err")
-    
     for ver in c1.vertices[c1.vertice_coordinate_sums == 1]:
         ver.plot(r, draw, (0,0,255), 10)
         for ver1 in c1.vertices[c1.vertice_coordinate_sums == 1]:
