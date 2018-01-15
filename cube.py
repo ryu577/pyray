@@ -524,13 +524,14 @@ def cube_with_cuttingplanes(numTerms, im_ind=0, pos=[300, 700, 0],
         r = rotation(3, j/80.0 * np.pi*2)
         # Vertices
         vertices = [general_base(i, numTerms, 3) for i in range(numTerms**3)]
-        rotated_vertices = np.transpose(np.dot(r, np.transpose(vertices))) *
-        scale + pos
+        rotated_vertices = (np.transpose(np.dot(r, np.transpose(vertices))) *
+                            scale +
+                            pos)
         # Draw edges.
         for i in range(len(vertices)):
             for dim in range(3):
-                if vertices[i][dim] < (numTerms - 1) and
-                i + numTerms**dim <= len(vertices) - 1:
+                if (vertices[i][dim] < (numTerms - 1) and
+                   i + numTerms**dim <= len(vertices) - 1):
                     v1 = rotated_vertices[i]
                     v2 = rotated_vertices[i + numTerms**dim]
                     draw.line((v1[0], v1[1], v2[0], v2[1]),
