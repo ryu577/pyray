@@ -86,13 +86,26 @@ def two_pt_parabola(pt1,pt2):
     b = -2*a*x1
     return [a,b,c]
 
-def general_base(n, b):
+def general_base(n, b, dim = None):
     """
-    Represents a number, n in number system with base b.
+    Represents a number, n in number system with base b. 
+    For example, if you pass n as 7 and b as 2, it will convert it to [1,1,1]
+    Passing a dim will mean you don't want arrays of larger dimensionality than dim.
+    And if the array is smaller, you want to pad zeros at the end to make it dim.
+    This effectively means an upper bound on the binary number. 
+    So, then we get the modulus of n with that upper bound.
+    args:
+        n: The number number to be represented in the base system of choice.
+        b: The base system in which to represent n.
+        dim: The dimensionality of the output vector you want. 
+        If None, it will be the minimum digits required to express the number.
     """
-    res = np.zeros(3)
+    if dim is None:
+        res = np.zeros(int(np.log(n)/np.log(b)) + 1)
+    else:
+        res = np.zeros(dim)
     indx = 0
-    while(n > 0):
+    while(n > 0 and indx < len(res)):
         res[indx] = (n % b)
         indx = indx + 1
         n = int(n / b)
