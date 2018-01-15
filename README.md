@@ -33,7 +33,7 @@ You can run any method tagged @MoneyShot to see how this works. For example, you
 
 ```python
 from cube import *
-cube_with_cuttingplanes(7)
+cube_with_cuttingplanes(7, popup=True)
 ```
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
 

@@ -409,7 +409,22 @@ class Cube():
                 indx = indx + 1
         im.save('Images\\RotatingCube\\im' + str(j) + '.png')
 
-def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale = 300):
+
+'''
+Legacy method. Can be ignored.
+'''
+def new_vector(r, v, dim = 4):
+    translate = np.zeros(dim)
+    translate[0] = 1000
+    translate[1] = 1000
+    v = v - translate #1000,1000 should go to 0,0. 
+    v = v / scale
+    v = np.dot(r,v)
+    v = v * scale
+    v = v + translate
+    return v
+
+def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = None, scale = 300, popup=False):
     """
     @MoneyShot
     Generates larger and larger cubes showing their cutting planes representing polynomial terms.
@@ -450,6 +465,8 @@ def cube_with_cuttingplanes(numTerms, im_ind = 0, pos = [300,700,0], draw1 = Non
                 [vx,vy] = vv[:2]
                 draw.ellipse( (vx-11,vy-11,vx+11,vy+11), fill = rgb, outline = rgb)
         if draw1 is None:
+            if popup:
+                im.show()
             im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
 
 def teserract_body_diagonal(width = 15, im_ind = 70, scale = 500, shift = np.array([1000,1000,0,0,0])):
