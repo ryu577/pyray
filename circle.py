@@ -11,16 +11,15 @@ import sys
 from rotation import general_rotation
 
 
-def generalized_circle(draw, center, vec, radius, r, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
+def draw_sphere_only(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
     """
-    Draws a circle as seen from a given angle.
+    Draws a sphere as seen from a given angle.
     args:
         draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
         center: The center of the circle. Provided in original coordinates (see file header). Example: [0,0,0]
-        vec: The vector that passes through the center and is perpendicular to the plane of the circle. 
+        vec: The vector that passes through the center and is perpendicular to the plane of the circles of the sphere. 
              Provided in original coordinates (see file header). Example: [0,0,1]
         radius: the radius of the circle.
-        r: rotation matrix
         scale: The amount by which the whole plot is to be scaled.
         shift: The origin corresponds to this pixel on the images (first two coordinates).
         rgba: The color of the line.
@@ -37,11 +36,51 @@ def generalized_circle(draw, center, vec, radius, r, scale=200, shift=np.array([
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
     # We are drawing the circle from the rotation_starting_point
     rotation_starting_point = center + radius * orthogonal_vec
-    rotation_starting_point = np.dot(r, rotation_starting_point)
+    rotation_starting_point = np.dot(rotation_matrix, rotation_starting_point)
+    # step size
+    theta_step = np.pi / 20.0
+    # runner is a 3-dimensional rotation matrix that rotates by incremental amount.
+    # runner = general_rotation(np.dot(rotation_matrix, vec), theta)
+    for j in range(0, 20):
+        radius_runner = radius * np.sin(theta_step*j)
+        center = np.array( [0,0, radius * np.cos(theta_step*j)])
+        draw_circle(draw, center, vec, radius_runner, rotation_matrix)
+        
+
+
+
+
+
+def generalized_circle(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
+    """
+    Draws a circle as seen from a given angle.
+    args:
+        draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
+        center: The center of the circle. Provided in original coordinates (see file header). Example: [0,0,0]
+        vec: The vector that passes through the center and is perpendicular to the plane of the circle. 
+             Provided in original coordinates (see file header). Example: [0,0,1]
+        radius: the radius of the circle.
+        scale: The amount by which the whole plot is to be scaled.
+        shift: The origin corresponds to this pixel on the images (first two coordinates).
+        rgba: The color of the line.
+    """
+    # Make the vec a unit vector by dividing it by its length
+    vec = vec / sum(vec**2)**0.5
+    if vec[0] == 0 and vec[1] == 0:
+        # Let's say vec is [0, 0, z]. [0, 0, z]*[1, 1, 0] will be always [0, 0, 0].
+        orthogonal_vec = np.array([1, 1, 0])
+    else:
+        # For example, the orthogonal vector of [2, 1, 0] is [-1, 2, 0].
+        orthogonal_vec = np.array([vec[1], -vec[0], 0])
+    # Normalizing
+    orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
+    # We are drawing the circle from the rotation_starting_point
+    rotation_starting_point = center + radius * orthogonal_vec
+    rotation_starting_point = np.dot(rotation_matrix, rotation_starting_point)
     # We complete drawing the circle with 80 steps
     theta = np.pi * 2.0 / 80.0
     # runner is a 3-dimensional rotation matrix that rotates by incremental amount.
-    runner = general_rotation(np.dot(r, vec), theta)
+    runner = general_rotation(np.dot(rotation_matrix, vec), theta)
     for j in range(0, 80):
         rotation_ending_point = np.dot(runner, rotation_starting_point)
         draw.line((rotation_starting_point[0] * scale + shift[0], rotation_starting_point[1] * scale + shift[1], 
@@ -94,15 +133,15 @@ def generalized_arc(draw, r, center, vec, point, radius, prcnt=1, rgba=(255, 0, 
         pt1 = pt2
 
 
-def draw_circle(draw, center, vec, radius, r, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
+def draw_circle(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
     """
     A simple wrapper for generalized_circle2.
     """
     generalized_circle2(draw, center, vec, radius,
-                        r, scale, shift, rgba, width)
+                        rotation_matrix, scale, shift, rgba, width)
 
 
-def draw_circle(
+def draw_circle_x_y(
         draw, r, center=np.array([1, 1]), radius=1,
         start=np.array([0.0, 1.0, 0.0]), arcExtent=180.0, rgba=(102, 255, 51, 100), width=5,
         shift=np.array([1000, 1000, 0]), scale=200):
