@@ -16,18 +16,22 @@ def generalized_circle(draw, center, vec, radius, r, scale=200, shift=np.array([
     Draws a circle as seen from a given angle.
     args:
         draw: The draw object associated with image we are plotting on. Used to make lines, ellipses and planes on it.
-        center: The center of the circle. Provided in original coordinates (see file header).
-        vec: The vector that passes through the center and is perpendicular to the plane of the circle. Provided in original coordinates (see file header).
+        center: The center of the circle. Provided in original coordinates (see file header). Example: [0,0,0]
+        vec: The vector that passes through the center and is perpendicular to the plane of the circle. 
+             Provided in original coordinates (see file header). Example: [0,0,1]
         radius: the radius of the circle.
         scale: The amount by which the whole plot is to be scaled.
         shift: The origin corresponds to this pixel on the images (first two coordinates).
         rgba: The color of the line.
     """
+    # Make the vec a unit vector by dividing it by its length
     vec = vec / sum(vec**2)**0.5
     if vec[0] == 0 and vec[1] == 0:
+        # Let's say vec is [0, 0, z]. [0, 0, z]*[1, 1, 0] will be always [0, 0, 0].
         orthogonal_vec = np.array([1, 1, 0])
     else:
-        orthogonal_vec = np.array([vec[0], -vec[1], 0])
+        # For example, the orthogonal vector of [2, 1, 0] is [-1, 2, 0].
+        orthogonal_vec = np.array([vec[1], -vec[0], 0])
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
     pt1 = center + radius * orthogonal_vec
     pt1 = np.dot(r, pt1)
