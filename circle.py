@@ -102,7 +102,7 @@ def draw_circle(draw, center, vec, radius, r, scale=200, shift=np.array([1000, 1
                         r, scale, shift, rgba, width)
 
 
-def draw_circle(
+def draw_circle_x_y(
         draw, r, center=np.array([1, 1]), radius=1,
         start=np.array([0.0, 1.0, 0.0]), arcExtent=180.0, rgba=(102, 255, 51, 100), width=5,
         shift=np.array([1000, 1000, 0]), scale=200):
