@@ -62,7 +62,7 @@ class Vertice():
         indx = 0
         while temp > 0:
             raw[indx] = temp % 2
-            temp = temp / 2
+            temp = int(temp / 2)
             indx = indx + 1
         return raw
 
@@ -615,4 +615,89 @@ def teserract_body_diagonal(width=15, im_ind=70, scale=500,
     v1 = rotated_vertices[0]
     v2 = rotated_vertices[15]
     draw.line((v1[0], v1[1], v2[0], v2[1]), fill=(255, 255, 255), width=2)
+    im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
+
+
+def teserract_body_diagonal2(im_ind=70, width=15, scale=500,
+                            shift1=np.array([1000,1000,0,0,0]), move=0.0):
+    '''
+    @MoneyShot
+    Draws a four dimensional teserract with two tetrahedral and one
+    octahedral planes visible.
+    '''
+    c1 = Cube(4)
+    r = np.eye(4)
+    r[:3,:3] = rotation(3, np.pi*2*(27.0-im_ind)/80.0)
+    newr = general_rotation(np.array([1,-1,0]), (np.pi/2 + np.arccos(np.sqrt(0.666666)))*4.35/10.0)
+    oldr = rotation(3, np.pi*2*(27.0)/80.0)
+    r[:3,:3] = oldr
+    im = Image.new("RGB", (2048, 2048), (1,1,1))
+    draw = ImageDraw.Draw(im,'RGBA')
+    rotated_vertices = np.transpose(np.dot(r, np.transpose(c1.vertice_matrix))) * scale + shift1[:4]
+    body_diag = (c1.vertices[0].to_binary() - c1.vertices[15].to_binary())
+    frst = [1,2,4]
+    scnd = [3,5,6]
+    for e in c1.edges:
+        if e.vertice1.index == 0 and e.vertice2.index in frst:
+            pt1 = rotated_vertices[e.vertice1.index]
+            pt2 = rotated_vertices[e.vertice2.index]
+            center = (pt1 + pt2)/2.0
+            p = im_ind/10.0
+            pp1 = (1-p)*pt1 + p*pt2
+            p = p + 0.08
+            pp2 = (1-p)*pt1 + p*pt2
+            draw.line((pp1[0], pp1[1], pp2[0], pp2[1]), fill=(200,220,5), width = 10)
+    tri = []
+    for j in frst:
+        tri.append((rotated_vertices[j][0], rotated_vertices[j][1]))
+    sqr1 = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 3]]] + (rotated_vertices[0] - rotated_vertices[15]) * -move
+    sqr1_orig = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 3]]]
+    draw.polygon(jarvis_convex_hull(sqr1), (255,0,0,int(65)))
+    i = 0
+    a = list(range(4))
+    a.pop(i)
+    tri = []
+    tri_orig = []
+    for j in a:
+        tri.append((sqr1[j][0], sqr1[j][1]))
+        tri_orig.append((sqr1_orig[j][0], sqr1_orig[j][1]))
+    #draw.polygon(tri, (255,150,0,60))
+    #draw.polygon(tri_orig, (255,150,0,70))
+    for ver in c1.vertices[c1.vertice_coordinate_sums == 3]:
+        ver.plot(r, draw, (255,0,0), 10, offset = -body_diag * move, scale=scale, shift=shift1)
+        for ver1 in c1.vertices[c1.vertice_coordinate_sums == 3]:
+            e = Edge(ver,ver1)
+            e.plot(r,draw,(255,0,0), width=2, offset = -body_diag * move, scale=scale, shift=shift1)
+    hexag = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 2]]]
+    for ed in [(5,3),(5,6),(5,9),(5,12),(10,3),(10,6),(10,9),(10,12),(3,6),(3,9),(12,6),(12,9)]:
+        v1 = rotated_vertices[ed[0]]
+        v2 = rotated_vertices[ed[1]]
+        draw.line((v1[0], v1[1], v2[0], v2[1]), fill = (0,255,0), width=4)
+        #draw.line((v1[0], v1[1], v2[0], v2[1]), fill = (255-im_ind*10,165+im_ind,0), width=4)
+    for ver in c1.vertices[c1.vertice_coordinate_sums==2]:
+        ver.plot(r, draw, (0,255,0), 10,scale=scale,shift=shift1)
+        #ver.plot(r, draw, (255-im_ind*25,im_ind*25,0), 10, scale=scale1, shift=shift1)
+    draw.polygon(jarvis_convex_hull(hexag), (0,255,0,int(65)))
+    for ver in c1.vertices[c1.vertice_coordinate_sums == 1]:
+        #ver.plot(r, draw, (0,0,255), 10, offset = body_diag * move)
+        ver.plot(r, draw, (255,0,0), 10, offset = body_diag * move,scale=scale, shift=shift1)
+        #ver.plot(r, draw, (0,0,255), 10)
+        for ver1 in c1.vertices[c1.vertice_coordinate_sums == 1]:
+            e = Edge(ver,ver1)
+            e.plot(r,draw,(0,0,255), offset = body_diag * move,scale=scale, shift=shift1)
+            #e.plot(r,draw,(255-im_ind*16,165-im_ind*13,im_ind*25), offset = body_diag * move,scale=scale1, shift=shift1)
+
+    sqr2 = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 1]]] + (rotated_vertices[0] - rotated_vertices[15]) * move
+    sqr2_orig = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 1]]]
+    draw.polygon(jarvis_convex_hull(sqr2), (0,0,255,int(65)))
+    i = 3
+    a = list(range(4))
+    a.pop(i)
+    tri = []
+    tri_orig = []
+    for j in a:
+        tri.append((sqr2[j][0], sqr2[j][1]))
+        tri_orig.append((sqr2_orig[j][0], sqr2_orig[j][1]))
+    v1 = rotated_vertices[0]
+    v2 = rotated_vertices[15]
     im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
