@@ -1,12 +1,9 @@
 '''
 Draw arbitrary planar circles viewed from any angle in 3d space.
-There are two coordinate systems at play in most of the code. The first is original coordinates. 
-These are the coordinates in which the objects we are drawing are easiest to think of mathematically. 
-For example, a unit cube will have a side of length 1. However, when we plot the cube on an image, we can't have it's side only one pixel.
-So, we scale each side up and shift the coordinates so that one of the vertices of the cube (or its center) is in the center of the image.
-We might also want to rotate the cube to see it from a different angle before plotting on the image. 
-The coordinate system which is ready for plotting directly on the image is called "image coordinates". When we just rotate the cube but don't scale and shift it,
-the coordinate system is called "rotated coordinates".
+I use two different coordinate systems in most of the code. The first is original coordinates. These are the coordinates in which the objects we are drawing are easiest to think of mathematically. For example, a unit cube will have a side of length 1. However, when we plot the cube on an image, we can't have its side only one pixel. Because then the cube will be so small!
+Therefore, we scale each side up and shift the coordinates so that one of the vertices of the cube, or its center, can be in the center of the image. (This is the second cordinate systems.)
+We might also want to rotate the cube to see it from a different angle before plotting on the image. (rotation.py) 
+The coordinate system which is ready for plotting directly on the image is called "image coordinates". When we just rotate the cube but don't scale and shift it, then the coordinate system is called "rotated coordinates".
 '''
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
