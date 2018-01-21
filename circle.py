@@ -20,6 +20,7 @@ def generalized_circle(draw, center, vec, radius, r, scale=200, shift=np.array([
         vec: The vector that passes through the center and is perpendicular to the plane of the circle. 
              Provided in original coordinates (see file header). Example: [0,0,1]
         radius: the radius of the circle.
+        r: rotation matrix
         scale: The amount by which the whole plot is to be scaled.
         shift: The origin corresponds to this pixel on the images (first two coordinates).
         rgba: The color of the line.
@@ -32,16 +33,21 @@ def generalized_circle(draw, center, vec, radius, r, scale=200, shift=np.array([
     else:
         # For example, the orthogonal vector of [2, 1, 0] is [-1, 2, 0].
         orthogonal_vec = np.array([vec[1], -vec[0], 0])
+    # Normalizing
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
-    pt1 = center + radius * orthogonal_vec
-    pt1 = np.dot(r, pt1)
+    # We are drawing the circle from the rotation_starting_point
+    rotation_starting_point = center + radius * orthogonal_vec
+    rotation_starting_point = np.dot(r, rotation_starting_point)
+    # We complete drawing the circle with 80 steps
     theta = np.pi * 2.0 / 80.0
-    r1 = general_rotation(np.dot(r, vec), theta)
+    # runner is a 3-dimensional rotation matrix that rotates by incremental amount.
+    runner = general_rotation(np.dot(r, vec), theta)
     for j in range(0, 80):
-        pt2 = np.dot(r1, pt1)
-        draw.line((pt1[0] * scale + shift[0], pt1[1] * scale + shift[1], pt2[0]
-                   * scale + shift[0], pt2[1] * scale + shift[1]), fill=rgba, width=width)
-        pt1 = pt2
+        rotation_ending_point = np.dot(runner, rotation_starting_point)
+        draw.line((rotation_starting_point[0] * scale + shift[0], rotation_starting_point[1] * scale + shift[1], 
+                    rotation_ending_point[0] * scale + shift[0], rotation_ending_point[1] * scale + shift[1]), 
+                    fill=rgba, width=width)
+        rotation_starting_point = rotation_ending_point
 
 
 def generalized_circle2(draw, center, vec, radius, r, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
