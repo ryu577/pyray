@@ -1,10 +1,18 @@
 '''
 Draw arbitrary planar circles viewed from any angle in 3d space.
-I use two different coordinate systems in most of the code. The first is original coordinates. These are the coordinates in which the objects we are drawing are easiest to think of mathematically. For example, a unit cube will have a side of length 1. However, when we plot the cube on an image, we can't have its side only one pixel. Because then the cube will be so small!
-Therefore, we scale each side up and shift the coordinates so that one of the vertices of the cube, or its center, can be in the center of the image. (This is the second cordinate systems.)
+
+We use two different coordinate systems in most of the code. 
+The first is original coordinates. These are easiest to think of mathematically. 
+
+For example, a unit cube will have a side of length 1. However, when we plot the cube on an image, 
+we can't make its side only one pixel because then the cube will be so small. Therefore, 
+we scale up each side and shift the coordinates so that one of the vertices of the cube, or its center, 
+can be in the center of the image. (This is the second cordinate systems.)
+
 We might also want to rotate the cube to see it from a different angle before plotting on the image. (rotation.py) 
 The coordinate system which is ready for plotting directly on the image is called "image coordinates". When we just rotate the cube but don't scale and shift it, then the coordinate system is called "rotated coordinates".
 '''
+
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
@@ -12,8 +20,7 @@ from rotation import general_rotation
 
 
 
-
-def generalized_circle(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 50), width=5):
+def generalized_circle(draw, center, vec, radius, rotation_matrix, scale=100, shift=np.array([1000, 1000, 0]), rgba=(255, 122, 0, 100), width=5):
     """
     Draws a circle as seen from a given angle.
     args:
@@ -51,7 +58,7 @@ def generalized_circle(draw, center, vec, radius, rotation_matrix, scale=200, sh
         rotation_starting_point = rotation_ending_point
 
 
-def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 20, 147, 100), width=5):
+def draw_sphere(draw, center, vec, radius,  rotation_matrix, num_circle, scale=200, shift=np.array([250, 250, 0]), rgba=(255, 255, 255, 1), width=10):
     """
     Draws a sphere as seen from a given angle.
     args:
@@ -79,13 +86,13 @@ def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, scale=20
     theta_step = np.pi / num_circle
     # 20 is arbitrary number. You can increase the number of circles to make it a denser sphere.
     for j in range(0, num_circle):
-        radius_runner = radius * np.sin(theta_step*j)
+        radius_runner = radius * np.sin(theta_step*j) 
         # drawing a sphere with multiple circles by changing the z-axis 
         center = np.array([0,0, radius * np.cos(theta_step*j)])
-        draw_circle(draw, center, vec, radius_runner, rotation_matrix, rgba=rgba)
+        draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
 
 
-def generalized_circle2(draw, center, vec, radius, r, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 20, 147, 100), width=5):
+def generalized_circle2(draw, center, vec, radius, r, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 20, 147, 250), width=5):
     """
     Basically the same as generalized_circle but the center and vec are expected in the rotated coordinates (image coordinates).
     args:
@@ -104,12 +111,15 @@ def generalized_circle2(draw, center, vec, radius, r, scale=200, shift=np.array(
         orthogonal_vec = np.array([vec[0], -vec[1], 0])
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
     pt1 = np.dot(r, center) + radius * np.dot(r, orthogonal_vec)
-    theta = np.pi * 2.0 / 80.0
+    # Make the parameter 10000 smaller for grainy drawing
+    theta = np.pi * 2.0 / 10000.0
     r1 = general_rotation(np.dot(r, vec), theta)
-    for j in range(0, 80):
+    for j in range(0, 10000):
         pt2 = np.dot(r1, pt1)
-        draw.line((pt1[0] * scale + shift[0], pt1[1] * scale + shift[1], pt2[0]
-                   * scale + shift[0], pt2[1] * scale + shift[1]), fill=rgba, width=width)
+        draw.line((pt1[0] * scale + shift[0], 
+                    pt1[1] * scale + shift[1], 
+                    pt2[0] * scale + shift[0], 
+                    pt2[1] * scale + shift[1]), fill=rgba, width=width)
         pt1 = pt2
 
 
