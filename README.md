@@ -63,3 +63,10 @@ For example, somthing like this:
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/GradientAscent/which_direction.gif" 
 alt="Image formed by above method" width="240" height="180" border="10" /></a>
 
+
+# Super Simple Example
+
+>python examples.py
+
+This will create a rotating pink sphere in `Images` folder.
+
