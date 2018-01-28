@@ -51,7 +51,7 @@ def generalized_circle(draw, center, vec, radius, rotation_matrix, scale=200, sh
         rotation_starting_point = rotation_ending_point
 
 
-def draw_sphere(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 20, 147, 100), width=5):
+def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, scale=200, shift=np.array([1000, 1000, 0]), rgba=(255, 20, 147, 100), width=5):
     """
     Draws a sphere as seen from a given angle.
     args:
@@ -60,6 +60,7 @@ def draw_sphere(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.
         vec: The vector that passes through the center and is perpendicular to the plane of the circles of the sphere. 
              Provided in original coordinates (see file header). Example: np.array([0,0,1])
         radius: the radius of the sphere.
+        num_circle: the number of circles that consist of the sphere
         scale: The amount by which the whole plot is to be scaled.
         shift: The origin corresponds to this pixel on the images (first two coordinates).
         rgba: The color of the line.
@@ -74,13 +75,10 @@ def draw_sphere(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.
         orthogonal_vec = np.array([vec[1], -vec[0], 0])
     # Normalizing
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
-    # We are drawing the circle from the rotation_starting_point
-    rotation_starting_point = center + radius * orthogonal_vec
-    rotation_starting_point = np.dot(rotation_matrix, rotation_starting_point)
     # theta is the angle that ranges from 0 to 180 degrees and is used to draw multiple different sized circles that consist of the sphere
-    theta_step = np.pi / 20.0 
+    theta_step = np.pi / num_circle
     # 20 is arbitrary number. You can increase the number of circles to make it a denser sphere.
-    for j in range(0, 20):
+    for j in range(0, num_circle):
         radius_runner = radius * np.sin(theta_step*j)
         # drawing a sphere with multiple circles by changing the z-axis 
         center = np.array([0,0, radius * np.cos(theta_step*j)])
