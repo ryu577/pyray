@@ -1,14 +1,16 @@
 '''
-To render 3d scenes (or even high dimensional), the first thing we need is the ability to rotate the objects we render 
-and view them from different angles. This can be done with rotation matrices or quaternions. I favor the former since 
-they are simpler and can be used in spaces of arbitrary dimensionality.
+To render 3d scenes (or even high dimensional), the first thing we need is 
+the ability to rotate the objects we render and view them from different angles. 
+This can be done with rotation matrices or quaternions. 
+I favor the rotation matrix since they are simpler and can be used in spaces of arbitrary dimensionality.
 Rotation matrices are simply collections of orthonormal vectors that form a basis of the space we are in.
-In this module are provided methods to generate various kinds of rotation matrices.
+This module provides methods to generate various kinds of rotation matrices.
 '''
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
+
 
 def yzrotation(theta = np.pi*3/20.0):
     """
@@ -53,7 +55,6 @@ def axisangle(a, theta):
     return general_rotation(a,theta)
 
 
-
 def matrix_to_axisangle(m):
     """
     For a rotation matrix in 3 dimensions (rotations about the origin), we need 4 parameters. 
@@ -71,10 +72,11 @@ def matrix_to_axisangle(m):
 
 def rotation(n, theta = np.pi/3):
     """
-    Returns an general rotation matrix of any dimensionality. This is acheived by a sequence of succesive 2d rotations.
+    Returns a general rotation matrix of any dimensionality. This is acheived by a sequence of succesive 2d rotations.
+    http://www.continuummechanics.org/rotationmatrix.html
     args:
         n : The dimensionality of the space in which we are going to rotate things.
-        theta: The angle of rotation for each of the planar 2-d rotation matrices.
+        theta: The angle of rotation for each of the planar 2-d rotation matrices. 
     """
     r = np.eye(n)
     for i in range(n):
@@ -100,6 +102,7 @@ def rotation_transition(i = 0, oldr = general_rotation(np.array([1,0,0]),np.pi/2
     (theta, vec) = matrix_to_axisangle(transn)
     r = general_rotation(vec, i*theta)
     return np.dot(r, oldr)
+
 
 def rotate_vec2vec(oldvec, newvec):
     """
