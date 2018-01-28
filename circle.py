@@ -69,7 +69,9 @@ def draw_sphere(draw, center, vec, radius,  rotation_matrix, num_circle, scale=2
         radius: the radius of the sphere.
         num_circle: the number of circles that consist of the sphere
         scale: The amount by which the whole plot is to be scaled.
-        shift: The origin corresponds to this pixel on the images (first two coordinates).
+        shift: The origin corresponds to this pixel on the images. 
+               Specifically in this method, it is set as [250, 250, 0] because in example.py, 
+               we create the smaller canvas whose size is [500, 500]
         rgba: The color of the line.
     """
     # Make the vec a unit vector by dividing it by its length
