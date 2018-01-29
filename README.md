@@ -70,3 +70,7 @@ alt="Image formed by above method" width="240" height="180" border="10" /></a>
 
 This will create a rotating pink sphere in `Images` folder.
 
+
+# Contributing
+
+We welcome any kind of contribution, bug report, suggestion, new module, etc. Anything is welcome.
