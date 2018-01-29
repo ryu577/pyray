@@ -60,7 +60,8 @@ def generalized_circle(draw, center, vec, radius, rotation_matrix, scale=100, sh
 
 def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, wavy_index=-1, scale=200, shift=np.array([250, 250, 0]), rgba=(255, 255, 255, 1), width=10):
     """
-    Draws a sphere as seen from a given angle.
+    Draws one (1) sphere as seen from a given angle.
+    To make an animation of a sphere, you need to call this function multiple times.
     args:
         draw: The draw object associated with image we are plotting on. 
         center: The center of the sphere. Provided in original coordinates (see file header). Example: [0,0,0]
@@ -86,7 +87,7 @@ def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, wavy_ind
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
     # theta is the angle that ranges from 0 to 180 degrees and is used to draw multiple different sized circles that consist of the sphere
     theta_step = np.pi / num_circle
-    # Non-wavy sphere
+    # One Non-wavy sphere
     if wavy_index == -1:
         for j in range(0, num_circle):
             radius_runner = radius * np.sin(theta_step*j) 
@@ -94,14 +95,14 @@ def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, wavy_ind
             center = np.array([0,0, radius * np.cos(theta_step*j)])
             draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
     
-    # Wavy sphere
+    # One sphere with one ring
     else:
         for j in range(0, num_circle):
             if j == wavy_index:
                 # Making wavy by adding 0.1
-                radius_runner = radius * (np.sin(theta_step*j) + 0.05)
+                radius_runner = radius*(np.sin(theta_step*j) + 0.05)
             else:
-                radius_runner = radius * np.sin(theta_step*j) 
+                radius_runner = radius*np.sin(theta_step*j) 
             # drawing a sphere with multiple circles by changing the z-axis 
             center = np.array([0,0, radius * np.cos(theta_step*j)])
             draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
@@ -112,7 +113,8 @@ def draw_sphere(draw, center, vec, radius, rotation_matrix, num_circle, wavy_ind
 
 def draw_sphere2(draw, center, vec, radius, rotation_matrix, num_circle, wavy_index=-1, scale=200, shift=np.array([250, 250, 0]), rgba=(255, 255, 255, 1), width=10):
     """
-    The only difference between draw_sphere2 and draw_sphere is draw_sphere2 accelerates the 
+    The only difference between draw_sphere2 and draw_sphere is draw_sphere2 accelerates the waves at the end.
+    This is a bad code design. MUST refactor later. I'm on a roll in creating gifs so I'll just keep going.
     """
     # Make the vec a unit vector by dividing it by its length
     vec = vec / sum(vec**2)**0.5
@@ -134,19 +136,39 @@ def draw_sphere2(draw, center, vec, radius, rotation_matrix, num_circle, wavy_in
             center = np.array([0,0, radius * np.cos(theta_step*j)])
             draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
     
-    # Wavy sphere
+    # One sphere with one ring (with acceleration)
     else:
-        for j in range(0, num_circle):
-            if j == wavy_index:
-                # Making wavy by adding 0.1
-                radius_runner = radius * (np.sin(theta_step*j) + 0.05)
-            else:
-                radius_runner = radius * np.sin(theta_step*j) 
-            # drawing a sphere with multiple circles by changing the z-axis 
-            center = np.array([0,0, radius * np.cos(theta_step*j)])
-            draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
-            # Make the radius smaller again.
-            radius_runner -= 0.1
+        if (wavy_index > 0.6*num_circle and wavy_index%3==0): # When it accelerates and waves
+            # Drawing one sphere by creating n number of circles.
+            for j in range(0, num_circle):
+                if j == wavy_index:
+                    # Making wavy by adding 0.1
+                    radius_runner = radius*(np.sin(theta_step*j) + 0.05)
+                else:
+                    radius_runner = radius*np.sin(theta_step*j) 
+                # drawing a sphere with multiple circles by changing the z-axis 
+                center = np.array([0,0, radius * np.cos(theta_step*j)])
+                draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
+                # Make the radius smaller again.
+                radius_runner -= 0.1
+
+        elif (wavy_index > 0.6*num_circle and wavy_index%3!=0): 
+            # Do nothing (Later remove this line. I added as instructional purpose)
+            pass
+        else: # same as normal wavy shpere
+            # Drawing one sphere by creating n number of circles.
+            for j in range(0, num_circle):
+                if j == wavy_index:
+                    # Making wavy by adding 0.1
+                    radius_runner = radius*(np.sin(theta_step*j) + 0.05)
+                else:
+                    radius_runner = radius*np.sin(theta_step*j) 
+                # drawing a sphere with multiple circles by changing the z-axis 
+                center = np.array([0,0, radius * np.cos(theta_step*j)])
+                draw_circle(draw, center, vec, radius_runner, rotation_matrix, shift=shift, rgba = rgba, width = width)
+                # Make the radius smaller again.
+                radius_runner -= 0.1
+
 
 
 
