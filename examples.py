@@ -22,7 +22,7 @@ def draw_rotating_hot_pink_sphere(save_dir, number_of_circles):
         im.save(file_name)
 
 
-def draw_oscillating_shere(save_dir, number_of_circles):
+def draw_oscillating_sphere(save_dir, number_of_circles):
     # Craete total 60 images
     for i in np.arange(60):
         # 2.5 is an angle of Z axis
@@ -34,7 +34,7 @@ def draw_oscillating_shere(save_dir, number_of_circles):
         # Sphere's center is np.array([0,0,0])
         # The vector that passes through the center is np.array([0,0,1])
         # Radius is oscillating: 1 + 0.1 * np.sin(np.pi/10.0*i)
-        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1 + 0.4 * np.sin(np.pi/10.0*i), r, num_circle = number_of_circles, rgba=(182, 183, 186, 255), width = 1)
+        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1 * np.random.uniform(0.75,1) + 0.4 * np.sin(np.pi/10.0*i), r, num_circle = number_of_circles, rgba=(182, 183, 186, 255), width = 1)
         file_name = save_dir + str(i) + '.png'
         im.save(file_name)
 
@@ -53,4 +53,4 @@ if __name__ == "__main__":
     #draw_rotating_hot_pink_sphere('Images\\RotatingSphereLight\\im', 20)
 
     # Oscillating sphere: Draw the sphere that consist of n circles
-    draw_oscillating_shere('Images\\RotatingOscillatingSphere\\im', 20)
+    draw_oscillating_sphere('Images\\RotatingOscillatingSphere\\im', 20)
