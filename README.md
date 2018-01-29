@@ -38,7 +38,7 @@ cube_with_cuttingplanes(7, popup=True)
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
-target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/im0.png" 
+target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/cube_planes.png" 
 alt="Image formed by above method" width="240" height="180" border="10" /></a>
 
 
@@ -74,4 +74,6 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 
 >python examples.py
 
-This will create a rotating pink sphere in `Images` folder.
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
+target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/WavySphere.png" 
+alt="Image formed by above method" width="240" height="180" border="10" /></a>
