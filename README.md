@@ -64,13 +64,14 @@ target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master
 alt="Image formed by above method" width="240" height="180" border="10" /></a>
 
 
-# Super Simple Example
-
->python examples.py
-
-This will create a rotating pink sphere in `Images` folder.
 
 
 # Contributing
 
 We welcome any kind of contribution, bug report, suggestion, new module, etc. Anything is welcome.
+
+# Other examples
+
+>python examples.py
+
+This will create a rotating pink sphere in `Images` folder.
