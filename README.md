@@ -24,8 +24,7 @@ Here are some that demonstrate the abilities of this code (also see below for so
 
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
-Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with pip.
-
+Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with p
 # Usage
 To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder `./Images/RotatingCube` (this was the first object that was animated with this tool). 
 
@@ -38,7 +37,7 @@ cube_with_cuttingplanes(7, popup=True)
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
-target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/cube_planes.png" 
+target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/cube_planes.png" 
 alt="Image formed by above method" width="240" height="180" border="10" /></a>
 
 
@@ -75,5 +74,5 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 >python examples.py
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
-target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/RotatingCube/WavySphere.png" 
+target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.png" 
 alt="Image formed by above method" width="240" height="180" border="10" /></a>
