@@ -113,10 +113,10 @@ def generalized_circle2(draw, center, vec, radius, r, scale=200, shift=np.array(
         orthogonal_vec = np.array([vec[0], -vec[1], 0])
     orthogonal_vec = orthogonal_vec / sum(orthogonal_vec**2)**0.5
     pt1 = np.dot(r, center) + radius * np.dot(r, orthogonal_vec)
-    # Make the parameter 10000 smaller for grainy drawing
-    theta = np.pi * 2.0 / 10000.0
+    # Make the parameter 30000 smaller for grainy drawing
+    theta = np.pi * 2.0 / 30000.0
     r1 = general_rotation(np.dot(r, vec), theta)
-    for j in range(0, 10000):
+    for j in range(0, 30000):
         pt2 = np.dot(r1, pt1)
         draw.line((pt1[0] * scale + shift[0], 
                     pt1[1] * scale + shift[1], 
