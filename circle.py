@@ -153,7 +153,7 @@ def draw_sphere2(draw, center, vec, radius, rotation_matrix, num_circle, wavy_in
                 radius_runner -= 0.1
 
         elif (wavy_index > 0.6*num_circle and wavy_index%3!=0): 
-            # Do nothing (Later remove this line. I added as instructional purpose)
+            # Do nothing (Later remove this condition. I added this for an instructional purpose.)
             pass
         else: # same as normal wavy shpere
             # Drawing one sphere by creating n number of circles.
