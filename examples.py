@@ -60,7 +60,7 @@ def draw_wavy_sphere_acceleration_wrapper(save_dir, number_of_circles, line_thic
     # Create n images (frames) where n = number_of_circles
     for i in np.arange(number_of_circles):
         wavy_index = i % number_of_circles
-        if (wavy_index > 0.6*number_of_circles and wavy_index%3!=0):
+        if (wavy_index > 0.65*number_of_circles and wavy_index%2!=0):
             pass
         else:
             # 2.52 is an angle of Z axis (Why do I choose 2.52? For an aesthetic reason:))
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     draw_oscillating_sphere('Images\\RotatingOscillatingSphere\\im', 20, 2)
 
     # Wavy sphere
-    draw_wavy_sphere_wrapper('Images\\WavySphere\\im', 90, 1)
+    draw_wavy_sphere_wrapper('Images\\WavySphere\\im', 66, 1)
 
     # Wavy sphere with acceleration
-    draw_wavy_sphere_acceleration_wrapper('Images\\WavySphere_A\\im', 90, 1)
+    draw_wavy_sphere_acceleration_wrapper('Images\\WavySphere_A\\im', 66, 1)
