@@ -82,13 +82,13 @@ if __name__ == "__main__":
         if not os.path.exists(path):
             os.makedirs(path)
 
-    # Dense sphere: Draw the sphere that consist of 40 circles
+    # Dense sphere: Draw the sphere that consist of 40 circles with line thickness 1
     draw_rotating_sphere('Images\\RotatingSphereDense\\im', 40, 1)
 
-    # Light sphere: Draw the sphere that consist of 20 circles
+    # Light sphere: Draw the sphere that consist of 20 circles with line thickness 1
     draw_rotating_sphere('Images\\RotatingSphereLight\\im', 20, 1)
 
-    # Oscillating sphere: Draw the sphere that consist of n circles
+    # Oscillating sphere: Draw the sphere that consist of n circles with line thickness 2
     draw_oscillating_sphere('Images\\RotatingOscillatingSphere\\im', 20, 2)
 
     # Curvy sphere
