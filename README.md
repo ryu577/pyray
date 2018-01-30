@@ -73,6 +73,9 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 
 >python examples.py
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
-target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
-alt="Image formed by above method" width="240" height="180" border="10" /></a>
+<img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
+alt="Image formed by above method" width="500" height="500" border="10" /></a>
+
+
+<img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
+alt="Image formed by above method" width="500" height="500" border="10" /></a>
