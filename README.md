@@ -24,7 +24,8 @@ Here are some that demonstrate the abilities of this code (also see below for so
 
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
-Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with p
+Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with `pip install -r requirements.txt`
+
 # Usage
 To keep things simple and the dependencies minimal, the program simply writes an image or a series of images to the folder `./Images/RotatingCube` (this was the first object that was animated with this tool). 
 
