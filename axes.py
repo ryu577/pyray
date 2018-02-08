@@ -24,7 +24,6 @@ def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np
     draw.line((w_axis_start[0],w_axis_start[1],w_axis_end[0],w_axis_end[1]), fill="gold", width=width)
 
 
-
 def new_vector(r, v, dim = 4, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
     Legacy method. Can be ignored.
@@ -38,6 +37,7 @@ def new_vector(r, v, dim = 4, shift = np.array([1000, 1000, 0, 0]), scale = 300)
     v = v * scale
     v = v + translate
     return v
+
 
 def new_vector_4d(r, v, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
@@ -127,7 +127,6 @@ def arrowV2(draw, r, start, end, rgb = (0,255,0), scale = 200, shift = np.array(
     end = np.dot(r, end) * scale + shift[:3]
     d = 0.08
     x1_range = abs(d * ey / (ex**2 + ey**2)**0.5)
-
     for x1 in np.arange(-x1_range, x1_range, x1_range/30):
         y1 = -ex/ey * x1
         z1 = max( (d**2 - x1**2*(1+ex**2/ey**2)), 0) **0.5
@@ -168,6 +167,43 @@ def arrowV3(draw, r, start, end, rgb = (0,255,0), scale = 200, shift = np.array(
         draw.line((xyz[0],xyz[1],end[0],end[1]), fill = rgba, width=5)
     draw.line((start[0],start[1],end[0],end[1]),fill=rgb,width=5)
 
+
+def drawDoubleArrow(draw, xy, span):
+    '''
+    Draws a double arrow between two points.
+    '''
+    arrow_size = min(40,span)
+    draw.line((xy[0],xy[1],xy[0],xy[1]+arrow_size),fill="white",width=3)
+    draw.line((xy[0],xy[1]+arrow_size/2,xy[0]+arrow_size/2,xy[1]),fill="white",width=3) #first diagonal
+    draw.line((xy[0],xy[1]+arrow_size/2,xy[0]+arrow_size/2,xy[1]+arrow_size),fill="white",width=3) #first diagonal
+    draw.line((xy[0]+span,xy[1]+arrow_size/2,xy[0]+span-arrow_size/2,xy[1]),fill="white",width=3) #second diagonal
+    draw.line((xy[0]+span,xy[1]+arrow_size/2,xy[0]+span-arrow_size/2,xy[1]+arrow_size),fill="white",width=3) #second diagonal
+    draw.line((xy[0],xy[1]+arrow_size/2,xy[0]+span,xy[1]+arrow_size/2),fill="white",width=3)
+    draw.line((xy[0]+span,xy[1],xy[0]+span,xy[1]+arrow_size),fill="white",width=3)
+
+
+def drawDoubleArrowVer(draw, xy, span):
+    arrow_size = min(40,span)
+    draw.line((xy[0],xy[1],xy[0]-arrow_size,xy[1]),fill="white", width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1],xy[0],xy[1]-arrow_size/2),fill="white", width=3) #first diagonal
+    draw.line((xy[0]-arrow_size/2,xy[1],xy[0]-arrow_size,xy[1]-arrow_size/2),fill="white", width=3) #first diagonal
+    draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0],xy[1]-span+arrow_size/2),fill="white", width=3) #second diagonal
+    draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0]-arrow_size,xy[1]-span+arrow_size/2),fill="white",width=3) #second diagonal
+    draw.line((xy[0]-arrow_size/2,xy[1],xy[0]-arrow_size/2,xy[1]-span),fill="white",width=3)
+    draw.line((xy[0],xy[1]-span,xy[0]-arrow_size,xy[1]-span),fill="white",width=3)
+
+
+def drawDoubleArrowRevVer(draw, xy, span):
+    arrow_size = 40
+    draw.line((xy[0],xy[1],xy[0]-arrow_size,xy[1]), fill = "white",width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1],xy[0],xy[1]+arrow_size/2), fill = "white",width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1],xy[0]-arrow_size,xy[1]+arrow_size/2), fill = "white",width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1],xy[0]-arrow_size/2,xy[1]+70), fill = "white",width=3)
+    #
+    draw.line((xy[0],xy[1]-span,xy[0]-arrow_size,xy[1]-span), fill = "white", width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0],xy[1]-span-arrow_size/2), fill = "white", width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0]-arrow_size,xy[1]-span-arrow_size/2), fill = "white", width=3)
+    draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0]-arrow_size/2,xy[1]-span-70), fill = "white",width=3)
 
 
 def writeStaggeredText(txt, draw, im_ind, pos = (250,200)):

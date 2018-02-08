@@ -661,8 +661,6 @@ def teserract_body_diagonal2(im_ind=70, width=15, scale=500,
     for j in a:
         tri.append((sqr1[j][0], sqr1[j][1]))
         tri_orig.append((sqr1_orig[j][0], sqr1_orig[j][1]))
-    #draw.polygon(tri, (255,150,0,60))
-    #draw.polygon(tri_orig, (255,150,0,70))
     for ver in c1.vertices[c1.vertice_coordinate_sums == 3]:
         ver.plot(r, draw, (255,0,0), 10, offset = -body_diag * move, scale=scale, shift=shift1)
         for ver1 in c1.vertices[c1.vertice_coordinate_sums == 3]:
@@ -686,7 +684,6 @@ def teserract_body_diagonal2(im_ind=70, width=15, scale=500,
             e = Edge(ver,ver1)
             e.plot(r,draw,(0,0,255), offset = body_diag * move,scale=scale, shift=shift1)
             #e.plot(r,draw,(255-im_ind*16,165-im_ind*13,im_ind*25), offset = body_diag * move,scale=scale1, shift=shift1)
-
     sqr2 = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 1]]] + (rotated_vertices[0] - rotated_vertices[15]) * move
     sqr2_orig = rotated_vertices[[i.index for i in c1.vertices[c1.vertice_coordinate_sums == 1]]]
     draw.polygon(jarvis_convex_hull(sqr2), (0,0,255,int(65)))
@@ -701,3 +698,4 @@ def teserract_body_diagonal2(im_ind=70, width=15, scale=500,
     v1 = rotated_vertices[0]
     v2 = rotated_vertices[15]
     im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
+

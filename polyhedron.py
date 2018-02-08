@@ -90,7 +90,6 @@ def tetrahedron(draw, r, im, theta = np.pi/12, shift = np.array([1000,1000,0]), 
             draw.line((ver1prime[0],ver1prime[1],ver2prime[0],ver2prime[1]), fill = rgb, width = 2)
     draw_plane(draw, scale)
 
-
 def icosahedron(draw, r, shift = [1000,1000,0], scale = 300):
     """
     Plots the vertices of an Icosahedron and the faces along with edges.
@@ -240,5 +239,7 @@ def platonic_solids():
         dodecahedron(draw, r, shift = np.array([370, 1270,0]), scale = 150)
         icosahedron(draw, r, shift = np.array([1470,1270,0]), scale = 150)
         im.save('Images\\RotatingCube\\im' + str(i) + '.png')
+
+
 
 
