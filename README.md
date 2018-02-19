@@ -72,6 +72,7 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 
 # Other examples
 
+To create a bouncy sphere or a wavy sphere, run 
 >python examples.py
 
 <img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
