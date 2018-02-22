@@ -57,7 +57,7 @@ The video can then be converted to a .gif file if required -
 
 > ffmpeg -i vid.avi -pix_fmt rgb24 -loop 0 out.gif
 
-For example, somthing like this:
+For example, something like this:
 
 <a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/GradientAscent/which_direction.gif" 
