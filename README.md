@@ -76,8 +76,8 @@ To create a bouncy sphere or a wavy sphere, run
 >python examples.py
 
 <img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
-alt="Image formed by above method" width="500" height="500" border="10" /></a>
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 <img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
-alt="Image formed by above method" width="500" height="500" border="10" /></a>
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
