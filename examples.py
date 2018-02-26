@@ -5,7 +5,7 @@ import circle
 import rotation 
 
 ####################################################################################
-# If you read the comment carefully, you will probably understand what's going on. #
+# To understand what's going on, read the comments carefully _ Josephus 20:21 #
 ####################################################################################
 
 def draw_rotating_sphere(save_dir, number_of_circles, line_thickness):

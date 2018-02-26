@@ -4,6 +4,8 @@ Methods for drawing primitive constructs like axes, grids, arrows, etc.
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
+import rotation as rot
+from functionalforms import *
 
 def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np.array([1000,1000,0])):
     """
@@ -80,7 +82,8 @@ def drawXYGrid(draw, r, meshLen = 0.5, extent = 1.0, shift = np.array([1000.0,10
         draw.line((pt1[0],pt1[1],pt2[0],pt2[1]),(102,255,51, 120),width=2)
 
 
-def arrowV1(draw, r, start, end, rgb = (0,255,0), scale=200, shift=np.array([1000,1000,0])):
+
+def arrowV1(draw, r, start, end, rgb=(0,255,0), scale=200, shift=np.array([1000,1000,0])):
     """
     Draws a 3d arrow from start point to end point.
     """
@@ -217,4 +220,5 @@ def writeStaggeredText(txt, draw, im_ind, pos = (250,200)):
     """
     font = ImageFont.truetype("arial.ttf", 78)
     draw.text(pos, txt[:min(im_ind*2, len(txt))], (255,255,255), font=font)
+
 

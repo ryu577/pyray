@@ -229,7 +229,7 @@ def draw_circle(draw, center, vec, radius, rotation_matrix, scale=200, shift=np.
 
 def draw_circle_x_y(
         draw, r, center=np.array([1, 1]), radius=1,
-        start=np.array([0.0, 1.0, 0.0]), arcExtent=180.0, rgba=(102, 255, 51, 100), width=5,
+        start=np.array([0.0, 1.0, 0.0]), arcExtent=180.0, rgba=(102, 255, 51), width=5,
         shift=np.array([1000, 1000, 0]), scale=200):
     """
     Draws a circle in the x-y plane.
@@ -237,6 +237,7 @@ def draw_circle_x_y(
         center : The center of the circle in original coordinate system.
         radius : The radius of the circle in original coordinate system.
     """
+    start = start * radius
     if len(center) == 2:
         center = np.concatenate((center, np.array([0])), axis=0)
     center = np.dot(r, center) * scale
@@ -245,11 +246,11 @@ def draw_circle_x_y(
     ##
     theta = np.pi * 2.0 / 180.0
     rot = general_rotation(np.dot(r, np.array([0, 0, 1])), theta)
-    for j in range(0, arcExtent):
+    for j in range(0, int(arcExtent)):
         pt2 = np.dot(rot, pt1)
         #draw.line((pt1[0]*scale + shift1[0], pt1[1]*scale+shift1[1], pt2[0]*scale+shift1[0], pt2[1]*scale+shift1[1]), fill=(153, 153, 255,100), width=5)
-        draw.line((pt1[0] * scale + shift1[0], pt1[1] * scale + shift1[1], pt2[0]
-                   * scale + shift1[0], pt2[1] * scale + shift1[1]), fill=rgba, width=width)
+        draw.line((pt1[0] * scale + shift1[0], pt1[1] * scale + shift1[1], 
+                   pt2[0] * scale + shift1[0], pt2[1] * scale + shift1[1]), fill=rgba, width=width)
         pt1 = pt2
 
 
