@@ -39,7 +39,7 @@ and this will generate a colorful 3d cube with diagonal cutting planes shaded in
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
 target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/cube_planes.png" 
-alt="Image formed by above method" width="240" height="180" border="10" align="center"/></a>
+alt="Image formed by above method" width="240" height="240" border="10" align="center"/></a>
 
 
 You can now create a series of them using the following code - 
@@ -61,7 +61,7 @@ For example, something like this:
 
 <a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/GradientAscent/which_direction.gif" 
-alt="Image formed by above method" width="240" height="180" border="10" /></a>
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 
