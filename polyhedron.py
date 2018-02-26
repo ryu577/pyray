@@ -228,9 +228,10 @@ def dodecahedron_planes(draw, r, tet_orig, scale = 300, shift = np.array([1000,1
                     #        draw.line((vv1[0],vv1[1],vv2[0],vv2[1]), fill = (0,255,0,255), width = 3)
 
 
-def tetartoid(s=0.2, t=0.5):
+def tetartoid(draw, r, s=0.3, t=0.04, scale=500, shift=np.array([1000.0, 1000.0, 0])):
     '''
-    Draws a tetartoid. Based on the answer by Arentino here - https://math.stackexchange.com/questions/1393370/what-are-the-rules-for-a-tetartoid-pentagon
+    Draws a tetartoid. Based on the answer by Arentino here - 
+    https://math.stackexchange.com/questions/1393370/what-are-the-rules-for-a-tetartoid-pentagon
     args:
         s: 0 <= s <= 0.5. 
     '''
@@ -242,7 +243,8 @@ def tetartoid(s=0.2, t=0.5):
         ])
     # Make it a tetrahedron with unit edges.
     tet_orig = tet_orig/2/np.sqrt(2)
-    v = tet_orig
+    v = np.dot(r, np.transpose(tet_orig)) * scale
+    v = np.transpose(v) + shift[:3]
     # For each edge V_i V_j, construct two points P_ij and P_ji having a fixed distance s from V_i and V_j.
     p = np.zeros((4,4,3))
     for i in range(4):
@@ -252,37 +254,68 @@ def tetartoid(s=0.2, t=0.5):
     # Join the center C_ijk of every face V_i V_j V_k with P_ij, P_jk and P_ik.
     c = np.zeros((4, 3))
     for i in range(4):
-        face = [r for r in range(4) if r != i] #TODO: Is there a better way to exclude indices?
+        face = [f for f in range(4) if f != i] #TODO: Is there a better way to exclude indices?
         c[i] = sum(v[face]) / 3
     # Now let o be the tetartoid center.
-    o = np.array([0, 0, 0])
+    o = shift
     # Consider the six planes o v_i v_j passing through the center and each edge.
     # From point p_ij, draw the perpendicular line to o v_i v_j and take on it
     # a point q_ij such that p_ij q_ij = t.
     q = np.zeros((4, 4, 3))
     for i in range(4):
         for j in range(i+1, 4):
-            directn = np.cross(v[i], v[j])
+            directn = np.cross(v[i]-o, v[j]-o)
             directn = directn / np.sqrt(sum(directn**2))
-            q[i, j] = p[i, j] + directn * t
-            q[j, i] = p[j, i] - directn * t
-    for i in range(4):
-        for j in range(i+1,4):
-            for k in range(j+1,4):
-                c_ijk = c[[n for n in range(4) if (n!=i and n!=j and n!=k)][0]]
-                p_ij = p[i, j]
-                p_ji = p[j, i]
-                v_j = v[j]
-                p_jk = p[j, k]
+            q[i, j] = p[i, j] + directn * t * scale
+            q[j, i] = p[j, i] - directn * t * scale
+    
+    planes = [
+        [c[3], q[2,0], q[0,2], v[0], q[0,1]],
+        [c[3], q[1,2], q[2,1], v[2], q[2,0]],
+        [c[3], q[0,1], q[1,0], v[1], q[1,2]],
+        
+        [c[1], q[0,2], q[2,0], v[2], q[2,3]],
+        [c[1], q[2,3], q[3,2], v[3], q[3,0]],
+        [c[1], q[3,0], q[0,3], v[0], q[0,2]],
+        
+        [c[2], q[1,0], q[0,1], v[0], q[0,3]],
+        [c[2], q[3,1], q[1,3], v[1], q[1,0]],
+        [c[2], q[0,3], q[3,0], v[3], q[3,1]],
+        
+        [c[0], q[2,1], q[1,2], v[1], q[1,3]],
+        [c[0], q[1,3], q[1,3], v[3], q[3,2]],
+        [c[0], q[3,2], q[2,3], v[2], q[2,1]]
+    ]
+    planes = np.array(planes)
+    for plane in planes:
+        cprime = line_plane_intersection(o, plane[0], plane[1], plane[2], plane[4])
+        vprime = line_plane_intersection(o, plane[3], plane[1], plane[2], plane[4])
+        plane[0] = cprime
+        plane[3] = vprime
+        smat = sum(plane - o)
+        face_angle = np.dot(smat/np.sqrt(sum(smat**2)), np.array([0,0.01,0.99]))
+        rgba = colorFromAngle2(face_angle,h=153,s=120,maxx=0.60)
+        poly = [(i[0], i[1]) for i in plane]
+        draw.polygon(poly, fill=rgba)
 
 
 def line_plane_intersection(pt1, pt2, pl1, pl2, pl3):
     '''
-    Finds the intersection of line given by two points with a plane given by three points.
+    In 3d space, finds the intersection of line given by two points 
+    with a plane given by three points.
+    args:
+        pt1: The first point of the line.
+        pt2: The second point of the line.
+        pl1: The first of three points from the plane.
+        pl2: The second of three points from the plane.
+        pl3: The third of three points from the plane.
     '''
-    avec = np.cross((pl1 - pl2), (pl2 - pl3))
+    avec = np.cross((pl1 - pl2), (pl1 - pl3))
     d = np.dot(avec, pl1)
-    p = (d - np.dot(avec, pt1)) / (np.dot(avec, (pt2 - pt1)))
+    if np.dot(avec, (pt2 - pt1)) > 1e-4:
+        p = (d - np.dot(avec, pt1)) / (np.dot(avec, (pt2 - pt1)))
+    else:
+        p = 0.0
     return (1-p)*pt1 + p*pt2
 
 
@@ -291,14 +324,25 @@ def platonic_solids():
     @MoneyShot
     Draws out an Icosahedron and Dodecahedron.
     """
-    for i in range(0, 11):
+    for i in range(0, 31):
         im = Image.new("RGB", (2048, 2048), (1,1,1))
         draw = ImageDraw.Draw(im,'RGBA')
-        r = np.transpose(rotation(3,np.pi*(9+i)/60)) #i=9
-        dodecahedron(draw, r, shift = np.array([370, 1270, 0]), scale = 150)
-        icosahedron(draw, r, shift = np.array([1470, 1270, 0]), scale = 150)
+        r = np.transpose(rotation(3,np.pi*(9+i)/15)) #i=9
+        #dodecahedron(draw, r, shift = np.array([370, 1270, 0]), scale = 150)
+        #icosahedron(draw, r, shift = np.array([1470, 1270, 0]), scale = 150)
+        tetartoid(draw, r, t=0.1)
         im.save('Images\\RotatingCube\\im' + str(i) + '.png')
 
 
-
+def draw_tetartoid():
+    """
+    @MoneyShot
+    Draws out a Tetartoid.
+    """
+    for i in range(0, 31):
+        im = Image.new("RGB", (2048, 2048), (1,1,1))
+        draw = ImageDraw.Draw(im,'RGBA')
+        r = np.transpose(rotation(3,np.pi*(9+i)/15)) #i=9
+        tetartoid(draw, r, t=0.1)
+        im.save('Images\\RotatingCube\\im' + str(i) + '.png')
 
