@@ -72,7 +72,7 @@ def matrix_to_axisangle(m):
 
 def rotation(n, theta = np.pi/3):
     """
-    Returns a general rotation matrix of any dimensionality. This is acheived by a sequence of succesive 2d rotations.
+    Returns a general rotation matrix of any dimensionality. This is achieved by a sequence of successive 2d rotations.
     http://www.continuummechanics.org/rotationmatrix.html
     args:
         n : The dimensionality of the space in which we are going to rotate things.

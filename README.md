@@ -39,7 +39,7 @@ and this will generate a colorful 3d cube with diagonal cutting planes shaded in
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
 target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/cube_planes.png" 
-alt="Image formed by above method" width="240" height="180" border="10" /></a>
+alt="Image formed by above method" width="240" height="180" border="10" align="center"/></a>
 
 
 You can now create a series of them using the following code - 
@@ -57,7 +57,7 @@ The video can then be converted to a .gif file if required -
 
 > ffmpeg -i vid.avi -pix_fmt rgb24 -loop 0 out.gif
 
-For example, somthing like this:
+For example, something like this:
 
 <a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/GradientAscent/which_direction.gif" 
@@ -72,11 +72,23 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 
 # Other examples
 
+To create a bouncy sphere or a wavy sphere, run 
 >python examples.py
 
 <img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
-alt="Image formed by above method" width="500" height="500" border="10" /></a>
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 <img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
-alt="Image formed by above method" width="500" height="500" border="10" /></a>
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
+
+
+```python
+from functionalforms import *
+draw_paraboloids()
+```
+
+<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/paraboloids.gif" 
+alt="Image formed by above method" width="240" height="180" border="10" /></a>
+
