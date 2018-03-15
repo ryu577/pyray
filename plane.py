@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def xzplane(draw, r, y, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
     Draws an x-z plane on the draw object of an image.

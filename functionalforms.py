@@ -40,13 +40,21 @@ def paraboloid():
             im_ind = im_ind + 1
 
 
-def drawFunctionalXYGrid(draw, r, shift=np.array([1000.0, 1000.0, 0.0]), scale=200.0, rgba=(0,255,0,120), fn=None):
+def drawFunctionalXYGrid(draw, r, shift=np.array([1000.0, 1000.0, 0.0]), 
+        scale=200.0, rgba=(0,255,0,120), fn=None, extent=10,
+        saperatingPlane=np.array([-1,-1,4]), rgba2=None):
     '''
+    args:
+        saperatingPlane: Take the dot product of this plane with [x,y,1]. If <0, draw lighter planes.
+        rgba2: The color of the lighter portion of the plane.
     '''
-    for i in range(-10, 10, 1):
-        for j in range(-10, 10, 1):
+    for i in range(-extent, extent, 1):
+        for j in range(-extent, extent, 1):
             poly = gridSquarePolygon(i, j, r, shift, scale, fn)
-            draw.polygon(poly, rgba)
+            if np.dot(np.array([i, j, 1]), saperatingPlane) > 0 or rgba2 is None:
+                draw.polygon(poly, rgba)
+            else:
+                draw.polygon(poly, rgba2)
 
 
 def gridSquarePolygon(i, j, r, shift=np.array([1000.0, 1000.0, 0.0]), scale=200.0, fn=None):
@@ -85,7 +93,7 @@ def paraboloid_intersection(draw, r, x1, y1, coeff, intercept, shift=np.array([1
     for i in range(1, 161):
         t += 1/10.0
         pt2 = np.dot(r, parametrized_pt(t, x1, y1, coeff, intercept)) * scale + shift[:3]
-        draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=rgba, width=5)
+        draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=rgba, width=10)
         pt1 = pt2
 
 
@@ -99,13 +107,16 @@ def draw_paraboloids():
             im = Image.new("RGB", (2048, 2048), (1, 1, 1))
             draw = ImageDraw.Draw(im, 'RGBA')
             render_scene_4d_axis(draw, r1, 4)
-            fn = lambda x, y : paraboloid(x, y, coeff=i*0.05, intercept=i)
-            drawFunctionalXYGrid(draw, r, scale=25, fn=fn)
-            shift1 = np.dot(r, np.array([4,4,0]))*25 + np.array([1000.0, 1000.0, 0])
-            drawFunctionalXYGrid(draw, r, scale=25, fn=fn, shift=shift1, rgba=(202,200,20,150))
-            draw_circle_x_y(draw, r, center=np.array([0,0]), radius=np.sqrt(1/0.05), scale=25)
-            draw_circle_x_y(draw, r, center=np.array([0,0]), radius=np.sqrt(1/0.05), scale=25, shift=shift1)
-            paraboloid_intersection(draw, r, 4.0, 4.0, i*0.05, i, scale=25.0)
+            fn = lambda x, y : paraboloid(x, y, coeff=i*0.01, intercept=i)
+            cfn = lambda x, y : 0.0
+            #drawFunctionalXYGrid(draw, r, scale=50, fn=cfn, extent=15)
+            drawXYGrid(draw, r, meshLen=1.0)
+            drawFunctionalXYGrid(draw, r, scale=12.5, fn=fn, extent=20, rgba2=(0,255,0,2), saperatingPlane=np.array([-1,-1,8]))
+            shift1 = np.dot(r, np.array([8,8,0]))*12.5 + np.array([1000.0, 1000.0, 0])
+            drawFunctionalXYGrid(draw, r, scale=12.5, fn=fn, shift=shift1, rgba=(202,200,20,150), extent=20, rgba2=(0,255,0,2), saperatingPlane=np.array([1,1,8]))
+            draw_circle_x_y(draw, r, center=np.array([0,0]), radius=np.sqrt(1/0.01), scale=12.5)
+            draw_circle_x_y(draw, r, center=np.array([0,0]), radius=np.sqrt(1/0.01), scale=12.5, shift=shift1)
+            paraboloid_intersection(draw, r, 8.0, 8.0, i*0.01, i, scale=12.5)
             im.save("Images\\RotatingCube\\im" + str(i1) + ".png")
 
 
