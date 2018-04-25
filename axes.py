@@ -75,12 +75,27 @@ def drawXYGrid(draw, r, meshLen = 0.5, extent = 1.0, shift = np.array([1000.0,10
     for x in np.arange(-5.0,upper,meshLen):
         pt1 = np.dot(r, np.array([x,-5.0,0]))*scale + shift[:3]
         pt2 = np.dot(r,np.array([x,5.0,0]))*scale + shift[:3]
-        draw.line((pt1[0],pt1[1],pt2[0],pt2[1]),(102,255,51, 120),width=2)
+        draw.line((pt1[0],pt1[1],pt2[0],pt2[1]),(102,255,51,120),width=2)
     for y in np.arange(-5.0,upper,meshLen):
         pt1 = np.dot(r, np.array([-5.0,y,0]))*scale + shift[:3]
         pt2 = np.dot(r,np.array([5.0,y,0]))*scale + shift[:3]
         draw.line((pt1[0],pt1[1],pt2[0],pt2[1]),(102,255,51, 120),width=2)
 
+
+def decorateAxes(draw, r, scale=200,shift=np.array([1000,1000,0]), extent=5.2, zextent=5.2):
+    x1 = np.dot(r,np.array([0,0,0]))*scale+shift[:3]
+    x2 = np.dot(r,np.array([extent,0,0]))*scale+shift[:3]
+    draw.line((x1[0], x1[1], x2[0], x2[1]), fill='yellow', width=7)
+    y1 = np.dot(r,np.array([0,0,0]))*scale+shift[:3]
+    y2 = np.dot(r,np.array([0,extent,0]))*scale+shift[:3]
+    draw.line((y1[0], y1[1], y2[0], y2[1]), fill='yellow', width=7)
+    z1 = np.dot(r,np.array([0,0,0]))*scale+shift[:3]
+    z2 = np.dot(r,np.array([0,0,zextent]))*scale+shift[:3]
+    draw.line((z1[0], z1[1], z2[0], z2[1]), fill='orange', width=7)
+    font = ImageFont.truetype("arial.ttf", 50)
+    draw.text((x2[0]+10,x2[1]+10), 'x', 'yellow', font=font)
+    draw.text((y2[0]+10,y2[1]+10), 'y', 'yellow', font=font)
+    draw.text((z2[0]+10,z2[1]+10), 'z', 'orange', font=font)
 
 
 def arrowV1(draw, r, start, end, rgb=(0,255,0), scale=200, shift=np.array([1000,1000,0])):

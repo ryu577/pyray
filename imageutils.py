@@ -37,20 +37,55 @@ def writeLatex(im, lat, coordn = (50,50), color = (120,80,200), flip_im = False)
     plt.close()
 
 
-def pasteImage(img, bigim, posn, whiteBackground = False, color = None):
+def pasteImage(img, bigim, posn, whiteBackground = False, color = None, p=1.0, img2=None):
     """
     Pastes a small image onto a bigger image at the coordinates specified by posn.
     """
     pixdata = img.load()
+    if img2 is not None:
+        pixdata2 = img2.load()
     width, height = img.size
     bw,bh = bigim.size
     mainpixdata = bigim.load()
     for y in xrange(height):
         for x in xrange(width):
             if x < bw - posn[0] and y < bh - posn[1] and x + posn[0] > 0 and y + posn[1] > 0:
-                if sum(pixdata[x, y][:3]) != 0 and not (whiteBackground and sum(pixdata[x, y][:3]) == 255 * 3):
+                ss = 0
+                if img2 is not None:
+                    ss = sum(pixdata[x, y][:3]) + sum(pixdata2[x,y][:3])
+                else:
+                    ss = sum(pixdata[x, y][:3])
+                if ss != 0:# and not (whiteBackground and sum(pixdata[x, y][:3]) == 255 * 3):
                     if color is None:
-                        mainpixdata[x+posn[0], y+posn[1]] = pixdata[x,y]
+                        if img2 is None:
+                            mainpixdata[x+posn[0], y+posn[1]] = pixdata[x,y]
+                        else:
+                            #try:
+                            finaldata = (
+                                        min(int(pixdata[x,y][0]*p+pixdata2[x,y][0]*(1-p)),255), 
+                                        min(int(pixdata[x,y][1]*p+pixdata2[x,y][1]*(1-p)),255), 
+                                        min(int(pixdata[x,y][2]*p+pixdata2[x,y][2]*(1-p)),255)
+                                        )
+                            #except:
+                            #    finaldata = pixdata[x,y]
+                            mainpixdata[x+posn[0], y+posn[1]] = finaldata
                     else:
                         mainpixdata[x+posn[0], y+posn[1]] = color
+    if img2 is not None:
+        img2.close()
+    img.close()
+
+
+def removeImagePortion(img, x_min, x_max, y_min, y_max):
+    pixdata = img.load()
+    width, height = img.size
+    bw,bh = img.size
+    mainpixdata = img.load()
+    for y in range(height):
+        for x in range(width):
+            if x_min < x and x < x_max and y_min < y and y < y_max:
+                continue
+            else:
+                mainpixdata[x,y] = (0,0,0)
+
 
