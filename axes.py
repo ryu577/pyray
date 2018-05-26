@@ -224,7 +224,7 @@ def drawDoubleArrowRevVer(draw, xy, span):
     draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0]-arrow_size/2,xy[1]-span-70), fill = "white",width=3)
 
 
-def writeStaggeredText(txt, draw, im_ind, pos = (250,200)):
+def writeStaggeredText(txt, draw, im_ind, pos = (250,200), rgba=(255,255,255)):
     """
     Types text onto an image, filling part by part to give the impression of it being typed.
     args:
@@ -234,6 +234,6 @@ def writeStaggeredText(txt, draw, im_ind, pos = (250,200)):
         pos: The position in the image at which the text is to be typed.
     """
     font = ImageFont.truetype("arial.ttf", 78)
-    draw.text(pos, txt[:min(im_ind*2, len(txt))], (255,255,255), font=font)
+    draw.text(pos, txt[:min(4*im_ind, len(txt))], rgba, font=font)
 
 
