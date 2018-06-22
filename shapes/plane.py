@@ -1,5 +1,6 @@
 import numpy as np
-
+from rotation.rotation import *
+from PIL import Image, ImageDraw, ImageFont, ImageMath
 
 def xzplane(draw, r, y, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """
@@ -37,7 +38,8 @@ def xyplane(draw, r, x, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     draw.polygon([(pln[0][0],pln[0][1]),(pln[1][0],pln[1][1]),(pln[2][0],pln[2][1]),(pln[3][0],pln[3][1])], (0,102,255,70))
 
 
-def arrow_w_projection(im, draw, r, pt_1, pt_2, pt_proj = None, plane = np.array([2.5,2.5,-2.5])*410.0/200.0):
+def arrow_w_projection(im, draw, r, pt_1, pt_2, shift = np.array([1000, 1000, 0, 0]), 
+                       scale=250, pt_proj = None, plane = np.array([2.5,2.5,-2.5])*410.0/200.0):
     [a,b,c] = plane    
     z_pt_3 = c * (1 - pt_2[0]/a - pt_2[1]/b)
     pt_3 = np.array([pt_2[0], pt_2[1], z_pt_3])
