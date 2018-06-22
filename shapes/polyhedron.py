@@ -5,8 +5,8 @@ All kinds of polyhedra. Like Platonic solids, Archimedean solids, Tetartoids, et
 import numpy as np
 from scipy.spatial import ConvexHull
 from misc import *
-from rotation import *
-from color import *
+from rotation.rotation import *
+from utils.color import *
 
 # A global variable used for investigating the angles the faces of polyhedons make with a light source. This is later used to shade them appropriately.
 angles = []
@@ -319,10 +319,13 @@ def line_plane_intersection(pt1, pt2, pl1, pl2, pl3):
     return (1-p)*pt1 + p*pt2
 
 
-def platonic_solids():
+def platonic_solids(basedir=".\\"):
     """
     @MoneyShot
     Draws out an Icosahedron and Dodecahedron.
+    args:
+        basedir:The directory where the images are to be saved. 
+            In the main pyray repo, basedir is ..\\images\\RotatingCube\\
     """
     for i in range(0, 31):
         im = Image.new("RGB", (2048, 2048), (1,1,1))
@@ -331,18 +334,21 @@ def platonic_solids():
         #dodecahedron(draw, r, shift = np.array([370, 1270, 0]), scale = 150)
         #icosahedron(draw, r, shift = np.array([1470, 1270, 0]), scale = 150)
         tetartoid(draw, r, t=0.1)
-        im.save('Images\\RotatingCube\\im' + str(i) + '.png')
+        im.save(basedir + "im" + str(i) + ".png")
 
 
-def draw_tetartoid():
+def draw_tetartoid(basedir=".\\"):
     """
     @MoneyShot
     Draws out a Tetartoid.
+    args:
+        basedir:The directory where the images are to be saved. 
+            In the main pyray repo, basedir is ..\\images\\RotatingCube\\
     """
     for i in range(0, 31):
         im = Image.new("RGB", (2048, 2048), (1,1,1))
         draw = ImageDraw.Draw(im,'RGBA')
         r = np.transpose(rotation(3,np.pi*(9+i)/15)) #i=9
         tetartoid(draw, r, t=0.1)
-        im.save('Images\\RotatingCube\\im' + str(i) + '.png')
+        im.save(basedir + "im" + str(i) + ".png")
 

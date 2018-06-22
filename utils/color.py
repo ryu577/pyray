@@ -24,3 +24,13 @@ def colorFromAngle2(angle, h=136, s=118, maxx = 0.8):
     r, g, b = colorsys.hls_to_rgb(h/255.0, l/255.0, s/255.0)
     r, g, b = [x*255.0 for x in (r, g, b)]
     return (int(r),int(g),int(b))
+
+
+def heat_rgb(minimum, maximum, value):
+    minimum, maximum = float(minimum), float(maximum)
+    ratio = 2 * (value-minimum) / (maximum - minimum)
+    b = int(max(0, 255*(1 - ratio)))
+    r = int(max(0, 255*(ratio - 1)))
+    g = 255 - b - r
+    return (r, g, b)
+

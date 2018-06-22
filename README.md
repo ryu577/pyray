@@ -9,6 +9,27 @@ While there certainly is a very long way to go before this can be a reality, it 
 Above all else, I want to emphasize simplicity in this library and minimize the dependence on external libraries so more people can hit the ground running with it.
 
 
+## 2. Installation
+To install the library, run (pyray was taken on pypi):
+
+```
+pip install raypy
+```
+
+Make sure you have all the requirements (requirements.txt) installed. If not, you can run:
+
+```
+pip install -r requirements.txt
+```
+
+Alternately, you can fork/download the code and run from the main folder:
+
+```
+python setup.py install
+```
+
+In which case, you'll need to have a PYTHONPATH variable on your system, with the root folder of this project included in it.
+
 # Demonstrations
 So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
 
@@ -32,10 +53,10 @@ To keep things simple and the dependencies minimal, the program simply writes an
 You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from cube.py - 
 
 ```python
-from cube import *
+from shapes.cube import *
 cube_with_cuttingplanes(7, popup=True)
 ```
-and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the ./Images/RotatingCube folder). Something like this - 
+and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the folder where you run it from, file called im0.png). Something like this - 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
 target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/cube_planes.png" 
@@ -59,11 +80,19 @@ The video can then be converted to a .gif file if required -
 
 For example, something like this:
 
+
 <a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/GradientAscent/which_direction.gif" 
 alt="Image formed by above method" width="240" height="180" border="10" /></a>
 
+In case you're wondering, you can generate the images used in the gif above via:
 
+```python
+from shapes.plane import *
+from gifgen.all_gifs import *
+for i in range(20):
+	best_direction(im_ind=i)
+```
 
 
 # Contributing
@@ -73,18 +102,23 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 # Other examples
 
 To create a bouncy sphere or a wavy sphere, run 
->python examples.py
+```python
+from shapes.sphere import *
+draw_wavy_sphere_wrapper('.\\im', 66, 1)
+```
 
 <img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
-
+```python
+draw_oscillating_sphere('..\\images\\im', 20, 2)
+```
 <img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 ```python
-from functionalforms import *
+from functions.functionalforms import *
 draw_paraboloids()
 ```
 
@@ -94,10 +128,12 @@ alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 ```python
-from polyhedron import *
+from shapes.polyhedron import *
 draw_tetartoid()
 ```
 
 <a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/tetartoid.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
+
+

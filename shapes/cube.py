@@ -6,11 +6,11 @@ different angles.
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 import sys
-from rotation import *
-from misc import *
-from axes import *
-from geometric import *
-from color import *
+from rotation.rotation import *
+from utils.misc import *
+from utils.axes import *
+from utils.geometric import *
+from utils.color import *
 from scipy.spatial import ConvexHull
 
 
@@ -501,7 +501,8 @@ def new_vector(r, v, dim=4):
 
 
 def cube_with_cuttingplanes(numTerms, im_ind=0, pos=[300, 700, 0],
-                            draw1=None, scale=300, popup=False):
+                            draw1=None, scale=100, popup=False,
+                            baseLocn='.\\im'):
     """
     @MoneyShot
     Generates larger and larger cubes showing their cutting planes
@@ -555,7 +556,7 @@ def cube_with_cuttingplanes(numTerms, im_ind=0, pos=[300, 700, 0],
         if draw1 is None:
             if popup:
                 im.show()
-            im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
+            im.save(baseLocn + str(im_ind) + '.png')
 
 
 def teserract_body_diagonal(width=15, im_ind=70, scale=500,

@@ -4,8 +4,9 @@ Methods for drawing primitive constructs like axes, grids, arrows, etc.
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-import rotation as rot
-from functionalforms import *
+import rotation.rotation as rot
+from functions.functionalforms import *
+
 
 def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np.array([1000,1000,0])):
     """
@@ -33,7 +34,7 @@ def new_vector(r, v, dim = 4, shift = np.array([1000, 1000, 0, 0]), scale = 300)
     translate = np.zeros(dim)
     translate[0] = 1000
     translate[1] = 1000
-    v = v - translate #1000,1000 should go to 0,0. 
+    v = v - translate #1000,1000 should go to 0,0.
     v = v / scale
     v = np.dot(r,v)
     v = v * scale
@@ -224,7 +225,7 @@ def drawDoubleArrowRevVer(draw, xy, span):
     draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0]-arrow_size/2,xy[1]-span-70), fill = "white",width=3)
 
 
-def writeStaggeredText(txt, draw, im_ind, pos = (250,200), rgba=(255,255,255)):
+def writeStaggeredText(txt, draw, im_ind, pos = (250,200), rgba=(255,255,255), speed=4):
     """
     Types text onto an image, filling part by part to give the impression of it being typed.
     args:
@@ -234,6 +235,6 @@ def writeStaggeredText(txt, draw, im_ind, pos = (250,200), rgba=(255,255,255)):
         pos: The position in the image at which the text is to be typed.
     """
     font = ImageFont.truetype("arial.ttf", 78)
-    draw.text(pos, txt[:min(4*im_ind, len(txt))], rgba, font=font)
+    draw.text(pos, txt[:min(speed*im_ind, len(txt))], rgba, font=font)
 
 

@@ -1,6 +1,6 @@
 import math
-from circle import *
-from axes import *
+from shapes.circle import *
+from utils.axes import *
 from scipy.spatial import ConvexHull
 
 def paraboloid():
@@ -107,7 +107,14 @@ def paraboloid_intersection(draw, r, x1, y1, coeff, intercept, shift=np.array([1
         pt1 = pt2
 
 
-def draw_paraboloids(scale=12.5, ind=0):
+def draw_paraboloids(scale=12.5, basedir=".\\"):
+    '''
+    Draws a pair of flapping paraboloids.
+    args:
+        scale: How big should the paraboloids be relative to the image.
+        basedir:The directory where the images are to be saved. 
+            In the main pyray repo, basedir is ..\\images\\RotatingCube\\
+    '''
     sep = 8
     base_coeff = 0.01
     start_line = -12
@@ -133,7 +140,7 @@ def draw_paraboloids(scale=12.5, ind=0):
             draw_circle_x_y(draw, r, center=np.array([0,0]), radius=np.sqrt(1/base_coeff), 
                 scale=scale, shift=shift1)
             paraboloid_intersection(draw, r, sep, sep, i*base_coeff, i, scale=scale, start_line=start_line)
-            im.save("Images\\RotatingCube\\im" + str(i1) + ".png")
+            im.save(basedir + "im" + str(i1) + ".png")
 
 
 def draw_paraboloidsV2(scale=20.0, ind=0):

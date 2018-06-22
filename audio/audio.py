@@ -4,7 +4,7 @@ from scipy.io import wavfile # get the api
 import numpy as np
 import scipy.fftpack as fftp
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-from axes import *
+from utils.axes import *
 
 
 def plt_fft(filename, plot=False):
@@ -41,7 +41,7 @@ if __name__== '__main__':
 
 
 ##
-def get_fft(filename='.\\audio\\NYTLaurel.wav'):
+def get_fft(filename='..\\sounds\\NYTLaurel.wav'):
 	fs, data = wavfile.read(filename) # load the data
 	a = data.T[0] # this is a two channel soundtrack, I get the first track
 	b=[(ele/2**8.)*2-1 for ele in a] # this is 8-bit track, b is now normalized on [-1,1)
@@ -61,7 +61,7 @@ def write_highpass(myfft, lowav=0, hiwav=0, writefile=False):
 	y2 = np.array(y2,dtype=np.int16) ## https://stackoverflow.com/questions/50431296/wavfile-write-identical-arrays-but-only-one-works
 	if writefile:
 		fs = 44100
-		wavfile.write('.\\audio\\Laurel_py.wav',fs,y2)
+		wavfile.write('..\\sounds\\Laurel_py.wav',fs,y2)
 	return [y2, abs(fft1[1:int(len(fft1)/2)])]
 
 
@@ -75,10 +75,9 @@ def plot_wav(a, draw, rgba, frac=1.0, x_min=100, x_max=2000, y_frac=1.0, y_base=
 		x1=x2
 
 
-def sound_wav(filename = '.\\audio\\NYTLaurel.wav', filename1 = '.\\audio\\MyLaurel.wav'):
+def sound_wav(filename = '..\\sounds\\NYTLaurel.wav', filename1 = '..\\sounds\\MyLaurel.wav'):
 	#fs, data = wavfile.read(filename)
 	#a = data.T[0]
-	
 	dfft = get_fft(filename)
 	[a, dfft1] = write_highpass(dfft, lowav=0, hiwav=4000, writefile=False)
 	dfft = dfft1
@@ -100,6 +99,6 @@ def sound_wav(filename = '.\\audio\\NYTLaurel.wav', filename1 = '.\\audio\\MyLau
 		writeStaggeredText(txt, draw, ii, (600,1250))
 		writeStaggeredText("Here be\n    Yanny", draw, 30, (1299,113), (255,0,0))
 		draw.ellipse((1246,208,1303,396), fill = (0,0,0,0), outline = 'red')
-		im.save(".\\Images\\RotatingCube\\im" + str(ii) + ".png")
+		im.save("..\\images\\RotatingCube\\im" + str(ii) + ".png")
 
 

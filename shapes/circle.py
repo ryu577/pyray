@@ -15,9 +15,8 @@ The coordinate system which is ready for plotting directly on the image is calle
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-import sys
-from rotation import general_rotation
-from rotation import rotation
+from rotation.rotation import general_rotation
+from rotation.rotation import rotation
 
 
 def generalized_circle(draw,
@@ -360,11 +359,10 @@ def draw_circle_x_y(
     shift1 = shift[:3] + center
     pt1 = np.dot(r, start)
     ##
-    theta = np.pi * 2.0 / 180.0
+    theta = np.pi * 1.0 / 180.0
     rot = general_rotation(np.dot(r, np.array([0, 0, 1])), theta)
     for j in range(0, int(arcExtent)):
         pt2 = np.dot(rot, pt1)
-        #draw.line((pt1[0]*scale + shift1[0], pt1[1]*scale+shift1[1], pt2[0]*scale+shift1[0], pt2[1]*scale+shift1[1]), fill=(153, 153, 255,100), width=5)
         draw.line(
             (pt1[0] *
              scale +
@@ -405,7 +403,7 @@ def project_circle_on_plane(
     z = c * (1 - x / a - y / b)
     pt1Up = np.dot(r, np.array([x, y, z]))
     ##
-    theta = np.pi * 2.0 / 180
+    theta = np.pi * 1.0 / 180
     rot = general_rotation(np.dot(r, np.array([0, 0, 1])), theta)
     for j in range(0, arcExtent):
         pt2 = np.dot(rot, pt1)
@@ -452,7 +450,7 @@ def project_circle_on_plane(
                 51,
                 102,
                 255,
-                100),
+                60),
             width=5)
         pt1 = pt2
         pt1Up = pt2Up

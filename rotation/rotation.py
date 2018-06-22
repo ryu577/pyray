@@ -9,7 +9,6 @@ This module provides methods to generate various kinds of rotation matrices.
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-import sys
 
 
 def yzrotation(theta = np.pi*3/20.0):
