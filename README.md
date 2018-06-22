@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ryu577/pyray.svg?branch=master)](https://travis-ci.org/ryu577/pyray)
+
 # Introduction
 
 I'm creating this repository in January 2018 and it is crazy that the best open source option for rendering 3d scenes remains POV ray.
