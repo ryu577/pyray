@@ -3,7 +3,7 @@ from shapes.circle import *
 from utils.axes import *
 from scipy.spatial import ConvexHull
 
-def paraboloid():
+def paraboloid(basepath='.\\'):
     im_ind = 0
     #for i in np.concatenate((np.arange(1.1,20,1),np.arange(-20,-1.1,1)),axis=0):
     for i in (np.concatenate((np.arange(0.5,1,0.01), np.arange(1,3,0.05),np.arange(3,10,0.6)),axis=0) + 1e-4): #Controls the rotation of the plane.
@@ -36,7 +36,7 @@ def paraboloid():
                     pt1 = pt2
             #parabola(draw, r)
             curve(draw, r, r2)
-            im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
+            im.save(basepath + 'im' + str(im_ind) + '.png')
             im_ind = im_ind + 1
 
 

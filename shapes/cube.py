@@ -560,9 +560,11 @@ def cube_with_cuttingplanes(numTerms, im_ind=0, pos=[300, 700, 0],
 
 
 def teserract_body_diagonal(width=15, im_ind=70, scale=500,
-                            shift=np.array([1000, 1000, 0, 0, 0])):
+                            shift=np.array([1000, 1000, 0, 0, 0]),
+                            basepath = '.\\'):
     """
     @MoneyShot
+        basepath in main repo: images\\RotatingCube\\
         Draws a four dimensional teserract with two tetrahedral
         and one octahedral planes visible.
     """
@@ -616,7 +618,7 @@ def teserract_body_diagonal(width=15, im_ind=70, scale=500,
     v1 = rotated_vertices[0]
     v2 = rotated_vertices[15]
     draw.line((v1[0], v1[1], v2[0], v2[1]), fill=(255, 255, 255), width=2)
-    im.save('Images\\RotatingCube\\im' + str(im_ind) + '.png')
+    im.save(basepath + 'im' + str(im_ind) + '.png')
 
 
 def teserract_body_diagonal2(im_ind=70, width=15, scale=500,
