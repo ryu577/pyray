@@ -30,8 +30,6 @@ Alternately, you can fork/download the code and run from the main folder:
 python setup.py install
 ```
 
-In which case, you'll need to have a PYTHONPATH variable on your system, with the root folder of this project included in it.
-
 # Demonstrations
 So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
 
