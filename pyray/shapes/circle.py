@@ -14,9 +14,7 @@ The coordinate system which is ready for plotting directly on the image is calle
 '''
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont, ImageMath
-from rotation.rotation import general_rotation
-from rotation.rotation import rotation
+from pyray.rotation import general_rotation
 
 
 def generalized_circle(draw,

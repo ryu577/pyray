@@ -4,9 +4,9 @@ All kinds of polyhedra. Like Platonic solids, Archimedean solids, Tetartoids, et
 
 import numpy as np
 from scipy.spatial import ConvexHull
-from misc import *
-from rotation.rotation import *
-from utils.color import *
+from pyray.misc import *
+from pyray.rotation import *
+from pyray.color import *
 
 # A global variable used for investigating the angles the faces of polyhedons make with a light source. This is later used to shade them appropriately.
 angles = []
@@ -23,7 +23,7 @@ def plot_polyhedron(draw, tet_orig, r, shift, scale = 300, thresh = 1.24):
         draw.ellipse((ver[0]-9,ver[1]-9,ver[0]+9,ver[1]+9), fill = (255,183,31))
         # For debugging - in case one wants to see how vertices at various coordinates relate to each other.
         #draw.text((ver[0],ver[1]), str(round(tet_orig[j][0],2) ) + "," + str(round(tet_orig[j][1],2 )) + "," + str(round(tet_orig[j][2],2)), font=font, fill = (255,255,255))
-        j = j + 1    
+        j = j + 1
 
 
 def octahedron(draw, r, shift = [1000,1000,0], scale = 300):
@@ -230,10 +230,10 @@ def dodecahedron_planes(draw, r, tet_orig, scale = 300, shift = np.array([1000,1
 
 def tetartoid(draw, r, s=0.3, t=0.04, scale=500, shift=np.array([1000.0, 1000.0, 0])):
     '''
-    Draws a tetartoid. Based on the answer by Arentino here - 
+    Draws a tetartoid. Based on the answer by Arentino here -
     https://math.stackexchange.com/questions/1393370/what-are-the-rules-for-a-tetartoid-pentagon
     args:
-        s: 0 <= s <= 0.5. 
+        s: 0 <= s <= 0.5.
     '''
     tet_orig = np.array([
             [1,1,1],
@@ -268,20 +268,20 @@ def tetartoid(draw, r, s=0.3, t=0.04, scale=500, shift=np.array([1000.0, 1000.0,
             directn = directn / np.sqrt(sum(directn**2))
             q[i, j] = p[i, j] + directn * t * scale
             q[j, i] = p[j, i] - directn * t * scale
-    
+
     planes = [
         [c[3], q[2,0], q[0,2], v[0], q[0,1]],
         [c[3], q[1,2], q[2,1], v[2], q[2,0]],
         [c[3], q[0,1], q[1,0], v[1], q[1,2]],
-        
+
         [c[1], q[0,2], q[2,0], v[2], q[2,3]],
         [c[1], q[2,3], q[3,2], v[3], q[3,0]],
         [c[1], q[3,0], q[0,3], v[0], q[0,2]],
-        
+
         [c[2], q[1,0], q[0,1], v[0], q[0,3]],
         [c[2], q[3,1], q[1,3], v[1], q[1,0]],
         [c[2], q[0,3], q[3,0], v[3], q[3,1]],
-        
+
         [c[0], q[2,1], q[1,2], v[1], q[1,3]],
         [c[0], q[1,3], q[1,3], v[3], q[3,2]],
         [c[0], q[3,2], q[2,3], v[2], q[2,1]]
@@ -301,7 +301,7 @@ def tetartoid(draw, r, s=0.3, t=0.04, scale=500, shift=np.array([1000.0, 1000.0,
 
 def line_plane_intersection(pt1, pt2, pl1, pl2, pl3):
     '''
-    In 3d space, finds the intersection of line given by two points 
+    In 3d space, finds the intersection of line given by two points
     with a plane given by three points.
     args:
         pt1: The first point of the line.
@@ -324,7 +324,7 @@ def platonic_solids(basedir=".\\"):
     @MoneyShot
     Draws out an Icosahedron and Dodecahedron.
     args:
-        basedir:The directory where the images are to be saved. 
+        basedir:The directory where the images are to be saved.
             In the main pyray repo, basedir is ..\\images\\RotatingCube\\
     """
     for i in range(0, 31):
@@ -342,7 +342,7 @@ def draw_tetartoid(basedir=".\\"):
     @MoneyShot
     Draws out a Tetartoid.
     args:
-        basedir:The directory where the images are to be saved. 
+        basedir:The directory where the images are to be saved.
             In the main pyray repo, basedir is ..\\images\\RotatingCube\\
     """
     for i in range(0, 31):

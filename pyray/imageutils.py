@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
 import sympy
 
 try:
@@ -62,8 +62,8 @@ def pasteImage(img, bigim, posn, whiteBackground = False, color = None, p=1.0, i
                         else:
                             #try:
                             finaldata = (
-                                        min(int(pixdata[x,y][0]*p+pixdata2[x,y][0]*(1-p)),255), 
-                                        min(int(pixdata[x,y][1]*p+pixdata2[x,y][1]*(1-p)),255), 
+                                        min(int(pixdata[x,y][0]*p+pixdata2[x,y][0]*(1-p)),255),
+                                        min(int(pixdata[x,y][1]*p+pixdata2[x,y][1]*(1-p)),255),
                                         min(int(pixdata[x,y][2]*p+pixdata2[x,y][2]*(1-p)),255)
                                         )
                             #except:
@@ -87,5 +87,3 @@ def removeImagePortion(img, x_min, x_max, y_min, y_max):
                 continue
             else:
                 mainpixdata[x,y] = (0,0,0)
-
-
