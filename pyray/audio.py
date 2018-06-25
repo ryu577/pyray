@@ -4,7 +4,7 @@ from scipy.io import wavfile # get the api
 import numpy as np
 import scipy.fftpack as fftp
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-from utils.axes import *
+from pyray.axes import *
 
 
 def plt_fft(filename, plot=False):
@@ -13,7 +13,7 @@ def plt_fft(filename, plot=False):
 	c = fft(a) # calculate fourier transform (complex numbers list)
 	d = int(len(c)/2)  # you only need half of the fft list (real signal symmetry)
 	if plot:
-		plt.plot(abs(c[1:(d-1)]),'r') 
+		plt.plot(abs(c[1:(d-1)]),'r')
 		plt.show()
 	return abs(c[1:(d-1)])
 

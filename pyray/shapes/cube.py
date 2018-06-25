@@ -4,14 +4,14 @@ different angles.
 '''
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont, ImageMath
-import sys
-from rotation.rotation import *
-from utils.misc import *
-from utils.axes import *
-from utils.geometric import *
-from utils.color import *
+from PIL import Image, ImageDraw
 from scipy.spatial import ConvexHull
+
+from pyray.rotation import *
+from pyray.misc import *
+from pyray.axes import *
+from pyray.geometric import *
+from pyray.color import *
 
 
 class Vertice():

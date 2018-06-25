@@ -1,6 +1,5 @@
-
-import numpy as np
 import colorsys
+import numpy as np
 
 # An array of colors to be used when multi colored images need to be drawn.
 colors = [(120,80,200),(200,80,100),(0,255,128),(0,0,255),(255,153,31),(51,153,255),(0,255,0),(255,255,255),(255,255,0),(255,153,153),(174,87,209),(100,149,237),(210,105,30),(176,196,202)]
@@ -33,4 +32,3 @@ def heat_rgb(minimum, maximum, value):
     r = int(max(0, 255*(ratio - 1)))
     g = 255 - b - r
     return (r, g, b)
-

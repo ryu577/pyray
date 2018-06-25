@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def jarvis_convex_hull(points):
     """
     Returns points in the order required for a convex hull. A native alternative to scipy.spatial.ConvexHull
@@ -25,7 +24,7 @@ def jarvis_convex_hull(points):
                         check = points[j][1] - points[start_indx][1] - m * (points[j][0] - points[start_indx][0])
                         if abs(check) < 1e-2:
                             if dist(points[start_indx],points[j]) > dist(points[start_indx],points[i]):
-                                threshold = threshold + 1 
+                                threshold = threshold + 1
                             else:
                                 threshold = threshold - 1
                         elif  check > 0:
@@ -42,7 +41,6 @@ def jarvis_convex_hull(points):
             return res
 
 
-
 def dist(pt1,pt2):
     """
     Simple 2d euclidean distances between two points.
@@ -51,4 +49,3 @@ def dist(pt1,pt2):
         pt2: The second point.
     """
     return (pt1[0]-pt2[0])**2 + (pt1[1]-pt2[1])**2
-

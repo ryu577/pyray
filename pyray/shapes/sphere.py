@@ -1,8 +1,8 @@
-import numpy as np
 import os
-from PIL import Image, ImageDraw, ImageFont, ImageMath
-from shapes.circle import *
-from rotation.rotation import rotation
+import numpy as np
+from PIL import Image, ImageDraw
+from pyray.shapes.circle import *
+from pyray.rotation import rotation
 
 ####################################################################################
 # To understand what's going on, read the comments carefully _ Josephus 20:21 #
@@ -11,12 +11,12 @@ from rotation.rotation import rotation
 def draw_rotating_sphere(save_dir, number_of_circles, line_thickness):
     # Craete total 30 images
     for i in np.arange(30):
-        # We'll rotate the sphere by 18 degrees (18 = pi/10) 
+        # We'll rotate the sphere by 18 degrees (18 = pi/10)
         r = rotation(3, np.pi*i / 100.0)
         # Create the canvas size of (500, 500)
         im = Image.new("RGB", (500, 500), (1, 1, 1))
         draw = ImageDraw.Draw(im, 'RGBA')
-        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1, 
+        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1,
             r, num_circle = number_of_circles, rgba=(182, 183, 186, 255), width = line_thickness)
         # Save
         file_name = save_dir + str(i) + '.png'
@@ -35,8 +35,8 @@ def draw_oscillating_sphere(save_dir, number_of_circles, line_thickness):
         # Sphere's center is np.array([0,0,0])
         # The vector that passes through the center is np.array([0,0,1])
         # Radius is oscillating randomly: 1 * np.random.uniform(0.75,1) + 0.4 * np.sin(np.pi/10.0*i)
-        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 
-            1 * np.random.uniform(0.75,1) + 0.4 * np.sin(np.pi/10.0*i), r, num_circle = number_of_circles, 
+        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]),
+            1 * np.random.uniform(0.75,1) + 0.4 * np.sin(np.pi/10.0*i), r, num_circle = number_of_circles,
             rgba=(182, 183, 186, 255), width = line_thickness)
         file_name = save_dir + str(i) + '.png'
         im.save(file_name)
@@ -54,8 +54,8 @@ def draw_wavy_sphere_wrapper(save_dir, number_of_circles, line_thickness):
         # Sphere's center is np.array([0,0,0])
         # The vector that passes through the center is np.array([0,0,1])
         # Radius is oscillating randomly
-        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1, r, 
-            wavy_index = wavy_index ,num_circle = number_of_circles, 
+        draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1, r,
+            wavy_index = wavy_index ,num_circle = number_of_circles,
             rgba=(182, 183, 186, 255), width = line_thickness)
         file_name = save_dir + str(i) + '.png'
         im.save(file_name)
@@ -76,8 +76,8 @@ def draw_wavy_sphere_acceleration_wrapper(save_dir, number_of_circles, line_thic
             # Sphere's center is np.array([0,0,0])
             # The vector that passes through the center is np.array([0,0,1])
             # Radius is oscillating randomly
-            draw_sphere2(draw, np.array([0,0,0]), np.array([0,0,1]), 1, r, 
-                wavy_index = wavy_index ,num_circle = number_of_circles, 
+            draw_sphere2(draw, np.array([0,0,0]), np.array([0,0,1]), 1, r,
+                wavy_index = wavy_index ,num_circle = number_of_circles,
                 rgba=(182, 183, 186, 255), width = line_thickness)
             file_name = save_dir + str(i) + '.png'
             im.save(file_name)
@@ -85,8 +85,8 @@ def draw_wavy_sphere_acceleration_wrapper(save_dir, number_of_circles, line_thic
 
 if __name__ == "__main__":
     # Create the directories to save image files
-    save_dir_list = ['images\\RotatingSphereDense\\im', 
-                    'images\\RotatingSphereLight\\im', 
+    save_dir_list = ['images\\RotatingSphereDense\\im',
+                    'images\\RotatingSphereLight\\im',
                     'images\\RotatingOscillatingSphere\\im',
                     'images\\WavySphere\\im',
                     'images\\WavySphere_A\\im']

@@ -1,7 +1,7 @@
 '''
-To render 3d scenes (or even high dimensional), the first thing we need is 
-the ability to rotate the objects we render and view them from different angles. 
-This can be done with rotation matrices or quaternions. 
+To render 3d scenes (or even high dimensional), the first thing we need is
+the ability to rotate the objects we render and view them from different angles.
+This can be done with rotation matrices or quaternions.
 We favor the rotation matrix since they are simpler and can be used in spaces of arbitrary dimensionality.
 Rotation matrices are simply collections of orthonormal vectors that form a basis of the space we are in.
 This module provides methods to generate various kinds of rotation matrices.
@@ -49,14 +49,14 @@ def axisangle(a, theta):
     A wrapper to general_rotation named more appropriately. Returns a rotation matrix that rotates about an axis by an angle.
     args:
         a: The axis to rotate about
-        theta: The angle to rotate by. 
+        theta: The angle to rotate by.
     """
     return general_rotation(a,theta)
 
 
 def matrix_to_axisangle(m):
     """
-    For a rotation matrix in 3 dimensions (rotations about the origin), we need 4 parameters. 
+    For a rotation matrix in 3 dimensions (rotations about the origin), we need 4 parameters.
     An axis about which we are going to rotate and an angle which is the extent of rotation.
     This method takes the rotation matrix in as input and returns an axis and angle combination that would generate that matrix.
     args:
@@ -75,7 +75,7 @@ def rotation(n, theta = np.pi/3):
     http://www.continuummechanics.org/rotationmatrix.html
     args:
         n : The dimensionality of the space in which we are going to rotate things.
-        theta: The angle of rotation for each of the planar 2-d rotation matrices. 
+        theta: The angle of rotation for each of the planar 2-d rotation matrices.
     """
     r = np.eye(n)
     for i in range(n):
@@ -115,4 +115,3 @@ def rotate_vec2vec(oldvec, newvec):
     newvec1 = newvec / np.sqrt(sum(newvec**2))
     theta = np.arccos(sum(oldvec1*newvec1))
     return axisangle(axis, theta)
-
