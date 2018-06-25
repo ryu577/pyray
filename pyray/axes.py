@@ -4,7 +4,7 @@ Methods for drawing primitive constructs like axes, grids, arrows, etc.
 
 import numpy as np
 from PIL import ImageFont
-from pyray.functionalforms import *
+from pyray.shapes.paraboloid import *
 
 
 def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np.array([1000,1000,0])):
