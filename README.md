@@ -11,7 +11,7 @@ While there certainly is a very long way to go before this can be a reality, it 
 Above all else, I want to emphasize simplicity in this library and minimize the dependence on external libraries so more people can hit the ground running with it.
 
 
-## 2. Installation
+# Installation
 To install the library, run (pyray was taken on pypi):
 
 ```
