@@ -3,13 +3,16 @@ import numpy as np
 from PIL import Image, ImageDraw
 from pyray.shapes.circle import *
 from pyray.rotation import rotation
+from pyray.helpers import get_image_bytes
 
 ####################################################################################
 # To understand what's going on, read the comments carefully _ Josephus 20:21 #
 ####################################################################################
 
-def draw_rotating_sphere(save_dir, number_of_circles, line_thickness):
-    # Craete total 30 images
+def draw_rotating_sphere(number_of_circles, line_thickness, save_dir=None, is_stream=False):
+    if not is_stream and save_dir is None:
+        raise Exception("Save directory required when not streaming")
+    # Create total 30 images
     for i in np.arange(30):
         # We'll rotate the sphere by 18 degrees (18 = pi/10)
         r = rotation(3, np.pi*i / 100.0)
@@ -18,9 +21,11 @@ def draw_rotating_sphere(save_dir, number_of_circles, line_thickness):
         draw = ImageDraw.Draw(im, 'RGBA')
         draw_sphere(draw, np.array([0,0,0]), np.array([0,0,1]), 1,
             r, num_circle = number_of_circles, rgba=(182, 183, 186, 255), width = line_thickness)
-        # Save
-        file_name = save_dir + str(i) + '.png'
-        im.save(file_name)
+        if is_stream:
+            yield get_image_bytes(im)
+        else:
+            file_name = save_dir + str(i) + '.png'
+            im.save(file_name)
 
 
 def draw_oscillating_sphere(save_dir, number_of_circles, line_thickness):
