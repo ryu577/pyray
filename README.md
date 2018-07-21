@@ -11,7 +11,7 @@ While there certainly is a very long way to go before this can be a reality, it 
 Above all else, I want to emphasize simplicity in this library and minimize the dependence on external libraries so more people can hit the ground running with it.
 
 
-## 2. Installation
+# Installation
 To install the library, run (pyray was taken on pypi):
 
 ```
@@ -135,4 +135,12 @@ draw_tetartoid()
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/tetartoid.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
+```python
+from pyray.shapes.pointswarm import *
+points_to_bins()
+```
+
+<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/classificn/classificn.gif" 
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
