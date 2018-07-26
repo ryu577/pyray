@@ -115,6 +115,22 @@ draw_oscillating_sphere('..\\images\\im', 20, 2)
 <img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
+```python
+from pyray.shapes.polyhedron import *
+basedir = '.\\'
+tr = Tetartoid()
+for i in range(0, 31):
+    im = Image.new("RGB", (2048, 2048), (1,1,1))
+    draw = ImageDraw.Draw(im,'RGBA')
+    r = general_rotation(np.array([0,1,0]),2*np.pi*i/30)
+    tr.render_solid_planes(draw, r, shift=np.array([1000, 1000, 0]), scale=750)
+    im.save(basedir + "im" + str(i) + ".png")
+```
+
+<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/tetartoid2.gif" 
+alt="Image formed by above method" width="240" height="240" border="10" /></a>
+
 
 ```python
 from pyray.shapes.paraboloid import *
@@ -126,14 +142,6 @@ target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
-```python
-from pyray.shapes.polyhedron import *
-draw_tetartoid()
-```
-
-<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
-target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/tetartoid.gif" 
-alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 ```python
 from pyray.shapes.pointswarm import *
