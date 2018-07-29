@@ -6,42 +6,75 @@ from scipy.spatial import ConvexHull
 from pyray.misc import *
 from pyray.rotation import *
 from pyray.color import *
+from pyray.shapes.cube import *
 import abc
 
 
-class Polyhedron(object):
-    __metaclass__ = abc.ABCMeta
+def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]),debug=False):
+    face_num = -1
+    for plane in planes:
+        plane1 = np.dot(plane,r)
+        plane_center = sum(plane1)/len(plane1)
+        cross_pdt = np.cross(plane1[0]-plane1[1], plane1[0]-plane1[2])
+        cross_pdt = cross_pdt/np.sqrt(sum(cross_pdt**2))
+        face_angle = abs(np.dot(cross_pdt, np.array([0,0,1.0])))
+        plane1 = plane1*scale+shift[:3]
+        #if not np.isnan(face_angle) and face_angle>0:
+        # The z-coordinate of the face center is positive means the plane
+        # is facing towards us.
+        face_num+=1
+        if cross_pdt[2]>0:
+            rgba = colorFromAngle2(face_angle,h=153,s=120,maxx=1.0)
+            poly = [(i[0], i[1]) for i in plane1]
+            draw.polygon(poly, fill=rgba)
+            if debug:
+                plane_center = sum(plane1)/len(plane1)
+                pos = (plane_center[0], plane_center[1])
+                font = ImageFont.truetype("arial.ttf", 78)
+                draw.text(pos, str(face_num), (255,255,255), font=font)
 
-    def render_solid_planes(self, draw, r, scale=300, shift=np.array([1000,1000,0]),debug=False):
-        face_num = -1
-        for plane in self.planes:
-            plane1 = np.dot(plane,r)
-            plane_center = sum(plane1)/len(plane1)
-            cross_pdt = np.cross(plane1[0]-plane1[1], plane1[0]-plane1[2])
-            cross_pdt = cross_pdt/np.sqrt(sum(cross_pdt**2))
-            face_angle = abs(np.dot(cross_pdt, np.array([0,0,1.0])))
-            plane1 = plane1*scale+shift[:3]
-            #if not np.isnan(face_angle) and face_angle>0:
-            # The z-coordinate of the face center is positive means the plane
-            # is facing towards us.
-            face_num+=1
-            if cross_pdt[2]>0:
-                rgba = colorFromAngle2(face_angle,h=153,s=120,maxx=1.0)
-                poly = [(i[0], i[1]) for i in plane1]
-                draw.polygon(poly, fill=rgba)
-                if debug:
-                    plane_center = sum(plane1)/len(plane1)
-                    pos = (plane_center[0], plane_center[1])
-                    font = ImageFont.truetype("arial.ttf", 78)
-                    draw.text(pos, str(face_num), (255,255,255), font=font)
+
+def line_plane_intersection(pt1, pt2, pl1, pl2, pl3):
+    '''
+    In 3d space, finds the intersection of line given by two points
+    with a plane given by three points.
+    args:
+        pt1: The first point of the line.
+        pt2: The second point of the line.
+        pl1: The first of three points from the plane.
+        pl2: The second of three points from the plane.
+        pl3: The third of three points from the plane.
+    '''
+    avec = np.cross((pl1 - pl2), (pl1 - pl3))
+    d = np.dot(avec, pl1)
+    if np.dot(avec, (pt2 - pt1)) > 1e-4:
+        p = (d - np.dot(avec, pt1)) / (np.dot(avec, (pt2 - pt1)))
+    else:
+        p = 0.0
+    return (1-p)*pt1 + p*pt2
+
 
 def orient_face(poly):
+    """
+    When looking at the polygon from outside it,
+    we need to ensure the vertices are in clockwise
+    order. If the order is not correct, we use this method
+    to flip the order of vertices. Used to identify back
+    faces so that we don't have to render them.
+    """
     cross_pdt = np.cross(poly[0]-poly[1], poly[1]-poly[2])
     out_vec = sum(poly)
     if np.dot(out_vec, cross_pdt) < 0:
         return np.flip(poly,axis=0)
     else:
         return poly
+
+
+class Polyhedron(object):
+    __metaclass__ = abc.ABCMeta
+
+    def render_solid_planes(self, draw, r, scale=300, shift=np.array([1000,1000,0]), debug=False):
+        render_solid_planes(self.planes, draw, r, scale, shift, debug)
 
 
 class Dodecahedron(Polyhedron):
@@ -191,10 +224,76 @@ class Octahedron(Polyhedron):
         return np.array(faces)
 
 
+
+def tetrahedral_rotations():
+    """
+    The (chiral) tetrahedral symmetry group consists of twelve rotations: 
+    eight (by +/- 1/3 turn) around the main diagonals of a cube, 
+    three (by 1/2 turn) around the coordinate axes, 
+    and the identity or null rotation.
+    See comment by Anton Sherwood: https://math.stackexchange.com/a/2582519/155881
+    """
+    c = Cube(3)
+    vers = c.vertices
+    rotations = []
+    for body_diag_indices in [[0,7],[1,6],[3,4],[2,5]]:
+        ver1 = vers[body_diag_indices[0]].binary
+        ver2 = vers[body_diag_indices[1]].binary
+        rotations.append(general_rotation((ver1-ver2), 2*np.pi/3))
+        rotations.append(general_rotation((ver1-ver2), -2*np.pi/3))
+    rotations.append(general_rotation(np.array([1,0,0]), 2*np.pi/2))
+    rotations.append(general_rotation(np.array([0,1,0]), 2*np.pi/2))
+    rotations.append(general_rotation(np.array([0,0,1]), 2*np.pi/2))
+    return np.array(rotations)
+
+
+def tetartoid_face(a,b,c):
+    """
+    Based on section on Tetartoid presented here - 
+    https://en.wikipedia.org/wiki/Dodecahedron
+    """
+    if a>b or b>c or a>c:
+        print("This method requires a<b<c.")
+        return
+    n = a**2*c-b*c**2
+    d1 = a**2-a*b+b**2+a*c-2*b*c
+    d2 = a**2+a*b+b**2-a*c-2*b*c
+    if n*d1*d2 == 0:
+        print("Something is wrong with the arguments")
+        return
+    return np.array([
+                    [a,b,c],
+                    [-a,-b,c],
+                    [-n/d1,-n/d1,n/d1],
+                    [-c,-a,b],
+                    [-n/d2,n/d2,n/d2]
+                ])
+
+
+
 class Tetartoid(Polyhedron):
+    """
+    A tetartoid is an intermediate solid betweeen a tetrahedron and dodecahedron.
+    The construction is based on - https://math.stackexchange.com/a/1396300/155881
+    """
     def __init__(self,s=0.3,t=0.04):
         self.planes = self.get_planes(s,t)
+        
+        
+        bsq = ((1 + 3* (-1 + s)* s + (-1 + t)* t)* (3* (1 - 2* s)**2 *s**2 + \
+            2* (1 - 2* s)* s* t + (3 + 4* s* (-3 + 4* s))* t**2 - 4* t**3 + \
+            4* t**4)) / (-3* s + 6* s**2 + t* (-1 + 2* t))**2
+        self.b = np.sqrt(bsq)
 
+        csq = ((s**2 + 3* t**2)* (-4* s**3 + 4* s**4 + 2* s* (1 - 6* t)* t + \
+            t**2* (5 + 12* (-1 + t)* t) + \
+            s**2* (1 + 4* t* (-1 + 4* t))))/(s* (-1 + 2* s) - 3* t* + 6* t**2)**2
+        self.c = np.sqrt(csq)
+
+        asq = 1 - 4* s + 4* s**2 + 4 *t**2
+        self.a = np.sqrt(asq)
+        
+    
     def get_planes(self, s=0.3, t=0.04):
         # We start with the tetrahedron vertices.
         v = np.array([
@@ -253,6 +352,7 @@ class Tetartoid(Polyhedron):
             plane[0] = cprime
             plane[3] = vprime
         return np.array(planes)
+        
 
 
 
@@ -721,51 +821,6 @@ def tetartoid(draw, r, s=0.3, t=0.04, scale=500, shift=np.array([1000.0, 1000.0,
         poly = [(i[0], i[1]) for i in plane]
         draw.polygon(poly, fill=rgba)
 
-
-
-def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]),debug=False):
-    face_num = -1
-    for plane in planes:
-        plane1 = np.dot(plane,r)
-        plane_center = sum(plane1)/len(plane1)
-        cross_pdt = np.cross(plane1[0]-plane1[1], plane1[0]-plane1[2])
-        cross_pdt = cross_pdt/np.sqrt(sum(cross_pdt**2))
-        face_angle = abs(np.dot(cross_pdt, np.array([0,0,1.0])))
-        plane1 = plane1*scale+shift[:3]
-        #if not np.isnan(face_angle) and face_angle>0:
-        # The z-coordinate of the face center is positive means the plane
-        # is facing towards us.
-        face_num+=1
-        if cross_pdt[2]>0:
-            rgba = colorFromAngle2(face_angle,h=153,s=120,maxx=1.0)
-            poly = [(i[0], i[1]) for i in plane1]
-            draw.polygon(poly, fill=rgba)
-            if debug:
-                plane_center = sum(plane1)/len(plane1)
-                pos = (plane_center[0], plane_center[1])
-                font = ImageFont.truetype("arial.ttf", 78)
-                draw.text(pos, str(face_num), (255,255,255), font=font)
-
-
-
-def line_plane_intersection(pt1, pt2, pl1, pl2, pl3):
-    '''
-    In 3d space, finds the intersection of line given by two points
-    with a plane given by three points.
-    args:
-        pt1: The first point of the line.
-        pt2: The second point of the line.
-        pl1: The first of three points from the plane.
-        pl2: The second of three points from the plane.
-        pl3: The third of three points from the plane.
-    '''
-    avec = np.cross((pl1 - pl2), (pl1 - pl3))
-    d = np.dot(avec, pl1)
-    if np.dot(avec, (pt2 - pt1)) > 1e-4:
-        p = (d - np.dot(avec, pt1)) / (np.dot(avec, (pt2 - pt1)))
-    else:
-        p = 0.0
-    return (1-p)*pt1 + p*pt2
 
 
 def platonic_solids(basedir=".\\"):
