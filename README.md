@@ -121,8 +121,8 @@ basedir = '.\\'
 tr = Tetartoid()
 for i in range(0, 31):
     im = Image.new("RGB", (2048, 2048), (1,1,1))
-    draw = ImageDraw.Draw(im,'RGBA')
-    r = general_rotation(np.array([0,1,0]),2*np.pi*i/30)
+    draw = ImageDraw.Draw(im, 'RGBA')
+    r = general_rotation(np.array([0,1,0]), 2*np.pi*i/30)
     tr.render_solid_planes(draw, r, shift=np.array([1000, 1000, 0]), scale=750)
     im.save(basedir + "im" + str(i) + ".png")
 ```
