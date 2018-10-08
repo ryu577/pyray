@@ -2,14 +2,8 @@ import colorsys
 import numpy as np
 
 # An array of colors to be used when multi colored images need to be drawn.
+# used in https://github.com/ryu577/pyray/raw/master/Images/cube_planes.png
 colors = [(120,80,200),(200,80,100),(0,255,128),(0,0,255),(255,153,31),(51,153,255),(0,255,0),(255,255,255),(255,255,0),(255,153,153),(174,87,209),(100,149,237),(210,105,30),(176,196,202)]
-
-
-def colorFromAngle(angle):
-    """
-    Converts numbers into colors for shading effects.
-    """
-    return (int(230*(angle/450)), int(230*(angle/450)), 250)
 
 
 def colorFromAngle2(angle, h=136, s=118, maxx = 0.8):
