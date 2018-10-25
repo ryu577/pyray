@@ -11,9 +11,41 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 
 
+def planar_rotation(theta = np.pi*3/20.0):
+    """
+    Returns a simple planar rotation matrix for rotating vectors 
+    in the 2-d plane about the origin.
+    args:
+        theta: The angle by which we will perform the rotation.
+    """
+    r = np.eye(2)
+    r[0,0] = np.cos(theta)
+    r[1,0] = -np.sin(theta)
+    r[0,1] = np.sin(theta)
+    r[1,1] = np.cos(theta)
+    return r
+
+
+def generalized_planar_rotation(pt, center, r):
+    """
+    Rotates a 2-d point about a central point.
+    args:
+        pt: The point to rotate.
+        center: The point about which to rotate.
+        theta: The angle by which we will perform the rotation.
+    """
+    # First, express the point in the central coordinate system.
+    pt_1 = pt - center
+    # Now, rotate this point.
+    pt_1 = np.dot(r, pt_1)
+    # Project back to original coordinate system.
+    return pt_1 + center
+
+
 def yzrotation(theta = np.pi*3/20.0):
     """
-    Returns a simple planar rotation matrix that rotates vectors around the x-axis.
+    Returns a simple planar rotation matrix that rotates 
+    vectors around the x-axis.
     args:
         theta: The angle by which we will perform the rotation.
     """
@@ -27,7 +59,10 @@ def yzrotation(theta = np.pi*3/20.0):
 
 def general_rotation(a, theta):
     """
-    Returns a three dimensional rotation matrix given the axis to rotate about and the angle to rotate by.
+    Applies to 3-d space.
+    Returns a 3x3 rotation matrix given the
+    axis to rotate about and the angle to rotate by.
+    Rotations are performed about the origin.
     args:
         a: The axis to rotate about
         theta: The angle to rotate by.
@@ -44,9 +79,42 @@ def general_rotation(a, theta):
         ])
 
 
+def axis_rotation(pt1, pt2, theta):
+    """
+    Applies to 3-d space.
+    Performs a rotation about an axis given by two points
+    not necessarily centered at the origin. Unfortunately,
+    we need to return a 4x4 matrix here since translations
+    can't be expressed as a 3x3 matrix. So, it is the users 
+    responsibility to add a 1 to any vector they are applying
+    this matrix to so that is is 4 dimensional. Also, unlike
+    general_rotation, this will only work for vectors post-multiplied
+    to the matrix.
+    Refer to:
+    http://paulbourke.net/geometry/rotate/
+    https://en.wikipedia.org/wiki/Translation_(geometry).
+    args:
+        pt1: The first point of the axis of rotation.
+        pt2: The second point of the axis of rotation.
+        theta: The angle by which the rotation will occur.
+    """
+    tr = np.eye(4)
+    tr_inv = np.eye(4)
+    tr[0,3] = -pt1[0]
+    tr[1,3] = -pt1[1]
+    tr[2,3] = -pt1[2]
+    tr_inv[0,3] = pt1[0]
+    tr_inv[1,3] = pt1[1]
+    tr_inv[2,3] = pt1[2]
+    rot = np.eye(4)
+    rot[:3,:3] = general_rotation(pt2-pt1,theta)
+    return np.dot(np.dot(tr_inv,rot),tr)
+
+
 def axisangle(a, theta):
     """
-    A wrapper to general_rotation named more appropriately. Returns a rotation matrix that rotates about an axis by an angle.
+    A wrapper to general_rotation named more appropriately. 
+    Returns a rotation matrix that rotates about an axis by an angle.
     args:
         a: The axis to rotate about
         theta: The angle to rotate by.
@@ -115,3 +183,4 @@ def rotate_vec2vec(oldvec, newvec):
     newvec1 = newvec / np.sqrt(sum(newvec**2))
     theta = np.arccos(sum(oldvec1*newvec1))
     return axisangle(axis, theta)
+

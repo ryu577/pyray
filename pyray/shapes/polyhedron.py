@@ -10,10 +10,28 @@ from pyray.shapes.cube import *
 import abc
 
 
-def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]),debug=False):
+def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]),
+                        debug=False, trnsp=255, make_edges=False, cut_back_face=True):
+    """
+    Given the plnes that make up the faces of a polyhedron,
+    draw all of them with colors representing light
+    shading.
+    args:
+        planes: An array of the collections of points constituting the planes.
+        draw: The draw object of Image class.
+        r: The rotation matrix.
+        scale: How much to scale the figure.
+        shift: The center of the figure.
+        debug: If true, draws the text of the coordinates at the points.
+        trnsp: The transparency of the faces.
+        make_edges: Weather or not to draw the edges with the faces.
+        cut_back_face: Only show the faces facing the camera. Want
+            to set this to true in most cases.
+    """
     face_num = -1
     for plane in planes:
         plane1 = np.dot(plane,r)
+        plane1 = orient_face(plane1)
         plane_center = sum(plane1)/len(plane1)
         cross_pdt = np.cross(plane1[0]-plane1[1], plane1[0]-plane1[2])
         cross_pdt = cross_pdt/np.sqrt(sum(cross_pdt**2))
@@ -23,15 +41,57 @@ def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]
         # The z-coordinate of the face center is positive means the plane
         # is facing towards us.
         face_num+=1
-        if cross_pdt[2]>0:
+        if not cut_back_face or cross_pdt[2]>0:
             rgba = colorFromAngle2(face_angle,h=153,s=120,maxx=1.0)
+            rgba1 = rgba+(trnsp,)
             poly = [(i[0], i[1]) for i in plane1]
-            draw.polygon(poly, fill=rgba)
+            draw.polygon(poly, fill=rgba1)
             if debug:
                 plane_center = sum(plane1)/len(plane1)
                 pos = (plane_center[0], plane_center[1])
                 font = ImageFont.truetype("arial.ttf", 78)
                 draw.text(pos, str(face_num), (255,255,255), font=font)
+        if make_edges:
+            for idx in range(len(plane1)):
+                draw.line((plane1[idx][0],plane1[idx][1],
+                    plane1[(idx+1)%len(plane1)][0],plane1[(idx+1)%len(plane1)][1]), 
+                    fill = rgba, width = 5)
+
+
+def draw_cube():
+    c = Cube(3)
+    verts = np.array([i.binary for i in c.vertices])-np.array([.5,.5,.5])
+    hull = ConvexHull(verts)
+    simps = hull.simplices
+    planes = np.array([[verts[j] for j in i] for i in simps])
+    for i in range(20):
+        im = Image.new("RGB", (2048, 2048), (1,1,1))
+        draw = ImageDraw.Draw(im,'RGBA')
+        r = np.transpose(rotation(3,np.pi*(9+i)/15)) #i=9
+        planes = [orient_face(pl) for pl in planes]
+        render_solid_planes(planes, draw, r)
+        im.save(".\\im" + str(i) + ".png")
+
+
+
+def plane_face_intersection(a,b,c,d,face):
+    """
+    Finds the intersection line of a plane with 
+    the face of a solid. Returns the two points 
+    that make up the line of intersection. a,b,c,d are 
+    the coefficients of the plane ax+by+cz=d while face
+    is a sequence of points which form the plane.
+    args:
+        a: The coefficient of x in eqn of plane.
+        b: The coefficient of y in eqn of plane.
+        c: The coefficient of z in eqn of plane.
+        d: The constant term in eqn of plane.
+        plane: Sequence of points that enclose the face.
+    """
+    face_coefficients = np.cross(face[0]-face[1], face[1]-face[2])
+    d_plane = np.dot(face_coefficients, face[0])
+
+    return None
 
 
 def line_plane_intersection(pt1, pt2, pl1, pl2, pl3):
@@ -63,6 +123,7 @@ def orient_face(poly):
     faces so that we don't have to render them.
     """
     cross_pdt = np.cross(poly[0]-poly[1], poly[1]-poly[2])
+    # Assumes center of solid is at origin.
     out_vec = sum(poly)
     if np.dot(out_vec, cross_pdt) < 0:
         return np.flip(poly,axis=0)
@@ -73,8 +134,9 @@ def orient_face(poly):
 class Polyhedron(object):
     __metaclass__ = abc.ABCMeta
 
-    def render_solid_planes(self, draw, r, scale=300, shift=np.array([1000,1000,0]), debug=False):
-        render_solid_planes(self.planes, draw, r, scale, shift, debug)
+    def render_solid_planes(self, draw, r, scale=300, shift=np.array([1000,1000,0]), 
+                            debug=False, trnsp=255, make_edges=False, cut_back_face=True):
+        render_solid_planes(self.planes, draw, r, scale, shift, debug, trnsp, make_edges)
 
 
 class Dodecahedron(Polyhedron):
@@ -224,7 +286,6 @@ class Octahedron(Polyhedron):
         return np.array(faces)
 
 
-
 def tetrahedral_rotations():
     """
     The (chiral) tetrahedral symmetry group consists of twelve rotations: 
@@ -270,16 +331,41 @@ def tetartoid_face(a,b,c):
                 ])
 
 
-
 class Tetartoid(Polyhedron):
     """
     A tetartoid is an intermediate solid betweeen a tetrahedron and dodecahedron.
     The construction is based on - https://math.stackexchange.com/a/1396300/155881
+    For s=0.33, t=0.33 we get a cube.
+    For s=0.404508, t=0.0954913 produce a Dodecahedron.
+    For t=0, we get a Tetrahedron.
     """
     def __init__(self,s=0.3,t=0.04):
-        self.planes = self.get_planes(s,t)
-        
-        
+        self.planes = self.get_planes(s, t)
+
+        self.dual_face_indices = np.array([
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            [9,10,11],
+            [0,1,3],
+            [0,3,5],
+            [0,5,6],
+            [0,2,6],
+            [1,2,10],
+            [1,9,11],
+            [1,3,11],
+            [2,6,7],
+            [2,7,9],
+            [3,4,11],
+            [4,5,8],
+            [5,6,8],
+            [7,9,10],
+            [7,8,10],
+            [4,10,11],
+            [1,2,9]
+        ])
+
+        ## The side lengths of the pentagon.
         bsq = ((1 + 3* (-1 + s)* s + (-1 + t)* t)* (3* (1 - 2* s)**2 *s**2 + \
             2* (1 - 2* s)* s* t + (3 + 4* s* (-3 + 4* s))* t**2 - 4* t**3 + \
             4* t**4)) / (-3* s + 6* s**2 + t* (-1 + 2* t))**2
@@ -287,7 +373,7 @@ class Tetartoid(Polyhedron):
 
         csq = ((s**2 + 3* t**2)* (-4* s**3 + 4* s**4 + 2* s* (1 - 6* t)* t + \
             t**2* (5 + 12* (-1 + t)* t) + \
-            s**2* (1 + 4* t* (-1 + 4* t))))/(s* (-1 + 2* s) - 3* t* + 6* t**2)**2
+            s**2* (1 + 4* t* (-1 + 4* t))))/(s* (-1 + 2* s) - 3* t + 6* t**2)**2
         self.c = np.sqrt(csq)
 
         asq = 1 - 4* s + 4* s**2 + 4 *t**2
@@ -351,8 +437,7 @@ class Tetartoid(Polyhedron):
             vprime = line_plane_intersection(o, plane[3], plane[1], plane[2], plane[4])
             plane[0] = cprime
             plane[3] = vprime
-        return np.array(planes)
-        
+        return np.array(planes)        
 
 
 

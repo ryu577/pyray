@@ -167,7 +167,7 @@ class Face():
         Changes the dimensionality of the underlying cube.
         args:
             dim2: The new dimensionality we want the underlying cube to
-            possess.
+                possess.
         """
         vertice1 = Vertice(self.vertice1.index, dim2)
         vertice2 = Vertice(self.vertice2.index, dim2)

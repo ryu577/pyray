@@ -235,3 +235,4 @@ def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), spe
     """
     font = ImageFont.truetype("arial.ttf", 78)
     draw.text(pos, txt[:min(speed*im_ind, len(txt))], rgba, font=font)
+
