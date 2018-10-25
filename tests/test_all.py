@@ -1,4 +1,16 @@
 import numpy as np
+import pytest
+
+"""
+Set relative path for windows machine
+"""
+import platform
+if platform.system()=="Windows":
+    import sys
+    import os
+    path = os.path.abspath(".")
+    sys.path.append(path)
+
 from pyray.rotation import rotation
 from pyray.shapes.cube import Vertice
 from pyray.color import heat_rgb
