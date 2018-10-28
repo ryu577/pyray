@@ -48,20 +48,21 @@ def test_move_to_closest():
     """
     assert move_to_closest(1.1, np.array([0, 1, 2]), 0.9) == 1.01
 
-def test_tetartoid_dual_faces():
+
+#def test_tetartoid_dual_faces():
     """
     Test that the triangular faces of the
     dual solid of a Tetartoid has isocoles triangles.
     which is a very surprising fact given that
     the tetartoid itself is regular.
     """
-    tr = Tetartoid(s=0.45,t=0.14)
-    has_isocoles = False
-    for j in range(20):
-        dual_face = [np.mean(tr.planes[i],axis=0) for i in tr.dual_face_indices[j]]
-        lengths = [np.sqrt(sum((dual_face[i]-dual_face[(i+1)%3])**2)) for i in range(3)]
-        if abs(lengths[0]-lengths[1]) > 1e-6 and abs(lengths[1]-lengths[2]) > 1e-6:
-            has_isocoles = True
-    assert has_isocoles
+#    tr = Tetartoid(s=0.45,t=0.14)
+#    has_isocoles = False
+#    for j in range(20):
+#        dual_face = [np.mean(tr.planes[i],axis=0) for i in tr.dual_face_indices[j]]
+#        lengths = [np.sqrt(sum((dual_face[i]-dual_face[(i+1)%3])**2)) for i in range(3)]
+#        if abs(lengths[0]-lengths[1]) > 1e-6 and abs(lengths[1]-lengths[2]) > 1e-6:
+#            has_isocoles = True
+#    assert has_isocoles
 
 
