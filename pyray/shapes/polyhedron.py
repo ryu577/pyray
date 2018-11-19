@@ -11,7 +11,8 @@ import abc
 
 
 def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]),
-                        debug=False, trnsp=255, make_edges=False, cut_back_face=True):
+                        debug=False, trnsp=255, make_edges=False, cut_back_face=True,
+                        h=153, s=120, rgb=None):
     """
     Given the plnes that make up the faces of a polyhedron,
     draw all of them with colors representing light
@@ -30,7 +31,8 @@ def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]
     """
     face_num = -1
     for plane in planes:
-        plane1 = np.dot(plane,r)
+        plane1 = np.array(plane)
+        plane1 = np.dot(plane1,r)
         plane1 = orient_face(plane1)
         plane_center = sum(plane1)/len(plane1)
         cross_pdt = np.cross(plane1[0]-plane1[1], plane1[0]-plane1[2])
@@ -41,9 +43,12 @@ def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]
         # The z-coordinate of the face center is positive means the plane
         # is facing towards us.
         face_num+=1
-        if not cut_back_face or cross_pdt[2]>0:
-            rgba = colorFromAngle2(face_angle,h=153,s=120,maxx=1.0)
-            rgba1 = rgba+(trnsp,)
+        if rgb is None:
+            rgba = colorFromAngle2(face_angle,h=h,s=s,maxx=1.0)
+        else:
+            rgba = rgb
+        rgba1 = rgba+(trnsp,)
+        if not cut_back_face or cross_pdt[2]>0:            
             poly = [(i[0], i[1]) for i in plane1]
             draw.polygon(poly, fill=rgba1)
             if debug:
@@ -58,20 +63,24 @@ def render_solid_planes(planes, draw, r, scale=300, shift=np.array([1000,1000,0]
                     fill = rgba, width = 5)
 
 
-def draw_cube():
-    c = Cube(3)
-    verts = np.array([i.binary for i in c.vertices])-np.array([.5,.5,.5])
-    hull = ConvexHull(verts)
-    simps = hull.simplices
-    planes = np.array([[verts[j] for j in i] for i in simps])
-    for i in range(20):
-        im = Image.new("RGB", (2048, 2048), (1,1,1))
-        draw = ImageDraw.Draw(im,'RGBA')
-        r = np.transpose(rotation(3,np.pi*(9+i)/15)) #i=9
-        planes = [orient_face(pl) for pl in planes]
-        render_solid_planes(planes, draw, r)
-        im.save(".\\im" + str(i) + ".png")
-
+def render_solid_planes_back_first(planes, draw, r, scale=300, shift=np.array([1000,1000,0]),
+                        debug=False, trnsp=255, make_edges=False, cut_back_face=True,
+                        h=153, s=120):
+    face_angles = []
+    for plane in planes:
+        plane1 = np.array(plane)
+        plane1 = np.dot(plane1,r)
+        plane1 = orient_face(plane1)
+        cross_pdt = np.cross(plane1[0]-plane1[1], plane1[0]-plane1[2])
+        cross_pdt = cross_pdt/np.sqrt(sum(cross_pdt**2))
+        face_angles.append(cross_pdt[2])
+    face_angles = np.array(face_angles)
+    if sum(face_angles<0) > 0:
+        render_solid_planes(planes[face_angles<0], draw, r, scale, shift,
+                        debug, trnsp, make_edges, cut_back_face, h, s)
+    if sum(face_angles>0) > 0:
+        render_solid_planes(planes[face_angles>0], draw, r, scale, shift,
+                        debug, trnsp, make_edges, cut_back_face, h, s)
 
 
 def plane_face_intersection(a,b,c,d,face):
@@ -90,7 +99,6 @@ def plane_face_intersection(a,b,c,d,face):
     """
     face_coefficients = np.cross(face[0]-face[1], face[1]-face[2])
     d_plane = np.dot(face_coefficients, face[0])
-
     return None
 
 
@@ -131,6 +139,26 @@ def orient_face(poly):
         return poly
 
 
+def draw_cube():
+    """
+    Draws a cube using only the vertices.
+    Obtains faces using the scipy convex hull
+    method.
+    """
+    c = Cube(3)
+    verts = np.array([i.binary for i in c.vertices])-np.array([.5,.5,.5])
+    hull = ConvexHull(verts)
+    simps = hull.simplices
+    planes = np.array([[verts[j] for j in i] for i in simps])
+    for i in range(20):
+        im = Image.new("RGB", (2048, 2048), (1,1,1))
+        draw = ImageDraw.Draw(im,'RGBA')
+        r = np.transpose(rotation(3,np.pi*(9+i)/15)) #i=9
+        planes = [orient_face(pl) for pl in planes]
+        render_solid_planes(planes, draw, r)
+        im.save(".\\im" + str(i) + ".png")
+
+
 class Polyhedron(object):
     __metaclass__ = abc.ABCMeta
 
@@ -147,7 +175,8 @@ class Dodecahedron(Polyhedron):
     def get_planes(self):
         """
         Returns the planes corresponding to all the faces of a Dodecahedron.
-        Edges based on Cartesian coordinates section here: https://en.wikipedia.org/wiki/Regular_dodecahedron
+        Edges based on Cartesian coordinates section here: 
+        https://en.wikipedia.org/wiki/Regular_dodecahedron
         """
         phi = (1+np.sqrt(5)) / 2
         tet_orig = []
@@ -168,7 +197,8 @@ class Dodecahedron(Polyhedron):
             for i1 in range(3):
                 for pm2 in [-1,1]:
                     coeff = np.array([coeff1[ (i1+jj)%3] for jj in range(3)])
-                    penta = np.array([i for i in tet_orig if (np.dot(i, coeff ) + pm2*phi*phi == 0)])
+                    penta = np.array([i for i in tet_orig \
+                        if (np.dot(i, coeff ) + pm2*phi*phi == 0)])
                     #Rotate the pentagon slightly so that it's visible from the front.
                     #TODO: Need to rotate only when convex hull throws error.
                     penta_r = np.dot(penta,r)
@@ -237,14 +267,16 @@ class Icosahedron(Polyhedron):
 
 class Tetrahedron(Polyhedron):
     def __init__(self):
-        self.vertices = np.array([
+        v = np.array([
             [1,1,1],
             [-1,-1,1],
             [1,-1,-1],
             [-1,1,-1]
         ])
+        self.vertices = v/2/np.sqrt(2)
         self.planes = self.get_planes()
         self.faces = self.planes
+        self.edges = self.get_edges()
 
     def get_planes(self):
         faces = []
@@ -253,6 +285,13 @@ class Tetrahedron(Polyhedron):
             face = orient_face(self.vertices[face_ind])
             faces.append(face)
         return np.array(faces)
+
+    def get_edges(self):
+        edges = []
+        for i in range(4):
+            for j in range(i+1,4):
+                edges.append([self.vertices[i],self.vertices[j]])
+        return np.array(edges)
 
 
 class Octahedron(Polyhedron):
@@ -286,32 +325,12 @@ class Octahedron(Polyhedron):
         return np.array(faces)
 
 
-def tetrahedral_rotations():
-    """
-    The (chiral) tetrahedral symmetry group consists of twelve rotations: 
-    eight (by +/- 1/3 turn) around the main diagonals of a cube, 
-    three (by 1/2 turn) around the coordinate axes, 
-    and the identity or null rotation.
-    See comment by Anton Sherwood: https://math.stackexchange.com/a/2582519/155881
-    """
-    c = Cube(3)
-    vers = c.vertices
-    rotations = []
-    for body_diag_indices in [[0,7],[1,6],[3,4],[2,5]]:
-        ver1 = vers[body_diag_indices[0]].binary
-        ver2 = vers[body_diag_indices[1]].binary
-        rotations.append(general_rotation((ver1-ver2), 2*np.pi/3))
-        rotations.append(general_rotation((ver1-ver2), -2*np.pi/3))
-    rotations.append(general_rotation(np.array([1,0,0]), 2*np.pi/2))
-    rotations.append(general_rotation(np.array([0,1,0]), 2*np.pi/2))
-    rotations.append(general_rotation(np.array([0,0,1]), 2*np.pi/2))
-    return np.array(rotations)
-
 
 def tetartoid_face(a,b,c):
     """
     Based on section on Tetartoid presented here - 
     https://en.wikipedia.org/wiki/Dodecahedron
+    TODO: Include this in the class.
     """
     if a>b or b>c or a>c:
         print("This method requires a<b<c.")
@@ -416,14 +435,14 @@ class Tetartoid(Polyhedron):
 
         planes = [
             [c[3], q[2,0], q[0,2], v[0], q[0,1]],
-            [c[3], q[1,2], q[2,1], v[2], q[2,0]],
-            [c[3], q[0,1], q[1,0], v[1], q[1,2]],
+            [c[3], q[1,2], q[2,1], v[2], q[2,0]],#
+            [c[3], q[0,1], q[1,0], v[1], q[1,2]],#
 
-            [c[1], q[0,2], q[2,0], v[2], q[2,3]],
+            [c[1], q[0,2], q[2,0], v[2], q[2,3]],#
             [c[1], q[2,3], q[3,2], v[3], q[3,0]],
-            [c[1], q[3,0], q[0,3], v[0], q[0,2]],
+            [c[1], q[3,0], q[0,3], v[0], q[0,2]],#
 
-            [c[2], q[1,0], q[0,1], v[0], q[0,3]],
+            [c[2], q[1,0], q[0,1], v[0], q[0,3]],#
             [c[2], q[3,1], q[1,3], v[1], q[1,0]],
             [c[2], q[0,3], q[3,0], v[3], q[3,1]],
 
@@ -437,6 +456,19 @@ class Tetartoid(Polyhedron):
             vprime = line_plane_intersection(o, plane[3], plane[1], plane[2], plane[4])
             plane[0] = cprime
             plane[3] = vprime
+        vertices = []
+        for i in range(4):
+            for j in range(i+1,4):
+                vertices.append(q[i,j])
+                vertices.append(q[j,i])
+        for i in range(4):
+            vertices.append(c[i])
+        for i in range(4):
+            vertices.append(v[i])
+        self.vertices = np.array(vertices)
+        self.qs = q
+        self.cs = np.array([planes[9,0],planes[3,0],planes[6,0],planes[0,0]])
+        self.vs = np.array([planes[0,3],planes[2,3],planes[1,3],planes[4,3]])
         return np.array(planes)        
 
 

@@ -59,7 +59,8 @@ for i in range(5):
 
 #############################################################################
 ## Scene b - Draws out tetartoid faces via tetrahedral rotations.
-## Confirms that once we draw a face, we can rotate it by the tetrahedral rotation group to form a tetartoid.
+## Confirms that once we draw a face, we can rotate it by the tetrahedral 
+## rotation group to form a tetartoid.
 basedir = '..\\images\\RotatingCube\\'
 pts = tetartoid_face(1,2,3)
 rots = tetrahedral_rotations()

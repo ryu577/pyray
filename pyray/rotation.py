@@ -8,6 +8,7 @@ This module provides methods to generate various kinds of rotation matrices.
 '''
 
 import numpy as np
+from pyray.shapes.cube import Cube
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 
 
@@ -183,4 +184,84 @@ def rotate_vec2vec(oldvec, newvec):
     newvec1 = newvec / np.sqrt(sum(newvec**2))
     theta = np.arccos(sum(oldvec1*newvec1))
     return axisangle(axis, theta)
+
+
+def tetrahedral_rotations(p=1.0):
+    """
+    The (chiral) tetrahedral symmetry group consists of twelve rotations: 
+    eight (by +/- 1/3 turn) around the main diagonals of a cube, 
+    three (by 1/2 turn) around the coordinate axes, 
+    and the identity or null rotation.
+    See comment by Anton Sherwood: https://math.stackexchange.com/a/2582519/155881
+    """
+    c = Cube(3)
+    vers = c.vertices
+    rotations = []
+    for body_diag_indices in [[0,7],[1,6],[3,4],[2,5]]:
+        ver1 = vers[body_diag_indices[0]].binary
+        ver2 = vers[body_diag_indices[1]].binary
+        rotations.append(general_rotation((ver1-ver2), 2*np.pi/3*p))
+        rotations.append(general_rotation((ver1-ver2), -2*np.pi/3*p))
+    rotations.append(general_rotation(np.array([1,0,0]), 2*np.pi/2*p))
+    rotations.append(general_rotation(np.array([0,1,0]), 2*np.pi/2*p))
+    rotations.append(general_rotation(np.array([0,0,1]), 2*np.pi/2*p))
+    return np.array(rotations)
+
+
+class Quaternion():
+    def __init__(self,c,x,y,z):
+        self.c=c
+        self.x=x
+        self.y=y
+        self.z=z
+    
+    def __mul__(self, other):
+        print("not implemented")
+
+    def __rmul__(self, other):
+        print("not implemented")
+
+def quaternion_mult(q,r):
+    return [r[0]*q[0]-r[1]*q[1]-r[2]*q[2]-r[3]*q[3],
+            r[0]*q[1]+r[1]*q[0]-r[2]*q[3]+r[3]*q[2],
+            r[0]*q[2]+r[1]*q[3]+r[2]*q[0]-r[3]*q[1],
+            r[0]*q[3]-r[1]*q[2]+r[2]*q[1]+r[3]*q[0]]
+
+def point_rotation_by_quaternion(point,q):
+    r = [0]+point
+    q_conj = [q[0],-1*q[1],-1*q[2],-1*q[3]]
+    return quaternion_mult(quaternion_mult(q,r),q_conj)[1:]
+
+
+def rotate_plane(plane, pt1, pt2, theta):
+    """
+    Rotates a plane (collection of points) 
+    about an axis defined by
+    pt1 and pt2 by an angle theta.
+    args:
+        pt1: First point defining axis.
+        pt2: Second point defining axis.
+    """
+    plane_tmp = np.copy(plane)
+    plane_e = np.append(plane_tmp,np.ones(plane.shape[0])[...,None],1)
+    r = axis_rotation(pt1,pt2,theta)
+    plane1 = np.dot(r,plane_e.T).T
+    return plane1[:,np.array([0,1,2])]
+
+
+def angle_btw_planes(face1,face2):
+    """
+    Calculates the angle between two planes.
+    To define a plane we need at least three points.
+    args:
+        face1: The first plane.
+        face2: The second plane.
+    """
+    face1_per = np.cross(face1[0]-face1[1],face1[1]-face1[2])
+    face1_per_normd = face1_per/np.sqrt(sum(face1_per**2))
+    face2_per = np.cross(face2[0]-face2[1],face2[1]-face2[2])
+    face2_per_normd = face2_per/np.sqrt(sum(face2_per**2))
+    return np.arccos(np.dot(face1_per_normd,face2_per_normd))
+
+
 

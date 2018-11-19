@@ -4,6 +4,8 @@ from PIL import Image, ImageDraw
 from pyray.shapes.circle import *
 from pyray.rotation import rotation
 from pyray.helpers import get_image_bytes
+from pyray.shapes.polyhedron import *
+from pyray.shapes.sphere_goldberg_252 import *
 
 ####################################################################################
 # To understand what's going on, read the comments carefully _ Josephus 20:21 #
@@ -73,7 +75,7 @@ def draw_wavy_sphere_acceleration_wrapper(save_dir, number_of_circles, line_thic
         if (wavy_index > 0.65*number_of_circles and wavy_index%2!=0):
             pass
         else:
-            # 2.52 is an angle of Z axis (Why do I choose 2.52? For an aesthetic reason:))
+            # 2.52 is an angle of Z axis (Why did I choose 2.52? For aesthetic reasons:))
             r = rotation(3, 2.50 + np.pi*np.sin(i/10.0) * np.random.uniform(0.8,1) / 30.0)
             # Create the canvas size of (500, 500)
             im = Image.new("RGB", (500, 500), (1, 1, 1))
@@ -86,6 +88,16 @@ def draw_wavy_sphere_acceleration_wrapper(save_dir, number_of_circles, line_thic
                 rgba=(182, 183, 186, 255), width = line_thickness)
             file_name = save_dir + str(i) + '.png'
             im.save(file_name)
+
+
+def draw_goldberg_sphere():
+    faces = np.array([[sphere_vertices[j] for j in i] for i in sphere_faces])
+    for i in range(30):
+        im = Image.new("RGB", (2048, 2048), (1, 1, 1))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        r = general_rotation(np.array([1,0,0]), 2*np.pi/30*i)
+        render_solid_planes(faces, draw, r)
+        im.save('im' + str(i) + '.png')
 
 
 if __name__ == "__main__":
