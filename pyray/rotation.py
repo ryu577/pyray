@@ -8,7 +8,6 @@ This module provides methods to generate various kinds of rotation matrices.
 '''
 
 import numpy as np
-from pyray.shapes.cube import Cube
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 
 
@@ -194,6 +193,7 @@ def tetrahedral_rotations(p=1.0):
     and the identity or null rotation.
     See comment by Anton Sherwood: https://math.stackexchange.com/a/2582519/155881
     """
+    from pyray.shapes.cube import Cube
     c = Cube(3)
     vers = c.vertices
     rotations = []
