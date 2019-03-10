@@ -16,7 +16,7 @@ def jarvis_convex_hull(points):
     while True:
         for ref_index, ref_point in enumerate(points):
             exit_ = True
-            if i == start_index or i in added_points:
+            if ref_index == start_index or ref_index in added_points:
                 continue
 
             signs = 0
@@ -26,8 +26,8 @@ def jarvis_convex_hull(points):
                     continue
                 check = compare(start_point, ref_point, compare_point)
                 if abs(check) < 1e-2:
-                    dist_start_ref = dist(start_point, ref_point)
-                    dist_start_compare = dist(start_point, compare_point)
+                    dist_start_ref = distance(start_point, ref_point)
+                    dist_start_compare = distance(start_point, compare_point)
                     if dist_start_compare > dist_start_ref:
                         threshold = threshold + 1
                     else:
