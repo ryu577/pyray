@@ -81,6 +81,36 @@ def draw_grid(im=Image.new("RGB", (1024, 1024), (255,255,255))):
 	im.save(basedir + "im" + str(i1) + ".png")
 
 
+class ZigZagPath(object):
+	def __init__(self, points):
+		self.points = points
+		self.distances = []
+		for i in range(len(points)-1):
+			self.distances.append(dist(distances[i], distances[i+1]))
+		self.distances = np.array(self.distances)
+
+	def draw_lines(self, draw, curr_dist):
+		remaining_dist = sum(self.distances)
+		total_dist = remaining_dist
+		for i in range(len(self.distances)):
+			if remaining_dist < self.distances[i]:
+				pp = remaining_dist/self.distances[i]
+				pt1 = self.points[i]
+				pt2 = self.points[i+1]
+				pt2 = pp*pt2+(1-pp)*pt1
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill="yellow", width=3)
+				break
+			else:
+				pt1 = self.points[i]
+				pt2 = self.points[i+1]
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill="yellow", width=3)
+				remaining_dist -= self.distances[i]
+
+
+def dist(pt1, pt2):
+	return np.sqrt(sum((pt2-pt1)**2))
+
+
 def refl_abt_horizntl(y, y_ref=-3):
 	delta = (y_ref-y)
 	return y+2*delta
