@@ -1349,8 +1349,49 @@ for i in range(45):
     writeStaggeredText("s = " +"%.4f" % round(s,4)+ "\nt = "+ "%.4f" % round(t,4), draw, 100, speed=2,pos=(50,1000))
     im.save(basedir + "im" + str(i) + ".png")
 
+
 '''
 Scene 38
+'''
+txt = "Stays a cube"
+
+for i in range(45):
+    im = Image.new("RGB", (2048, 2048), (1,1,1))
+    draw = ImageDraw.Draw(im,'RGBA')
+    s = zigzag2(i,33,45,20)/100
+    t = zigzag2(i,33,45,20)/100
+    tt = Tetartoid(s, 0)
+    tt1 = Tetartoid(s, t)
+    tet = Tetrahedron()
+    r_base = general_rotation(tet.vertices[3], 2*np.pi*(i+30+27+34+34+44)/90)
+    render_solid_planes(tt1.planes, draw, r_base, shift=np.array([1000, 1000, 0]),\
+                    scale=1200, make_edges=True,trnsp=200)
+    render_solid_planes(tet.planes, draw, r_base, shift=np.array([1000, 1000, 0]),\
+                    scale=1200, make_edges=True,trnsp=0)
+    for i1 in range(4):
+        for j1 in range(i1+1,4):
+            if i1 == 0 and j1 == 3:
+                pt1_fin = np.dot(r_base.T,tt1.qs[i1,j1])*1200+np.array([1000,1000,0])
+                pt2_fin = np.dot(r_base.T,tt1.qs[j1,i1])*1200+np.array([1000,1000,0])
+                draw.ellipse((pt1_fin[0]-5, pt1_fin[1]-5, pt1_fin[0]+5, pt1_fin[1]+5),fill='red', outline='yellow')
+                draw.ellipse((pt2_fin[0]-5, pt2_fin[1]-5, pt2_fin[0]+5, pt2_fin[1]+5),fill='red', outline='yellow')
+            if i1 == 0 and j1 == 2:
+                pt1_fin = np.dot(r_base.T,tt1.qs[i1,j1])*1200+np.array([1000,1000,0])
+                pt2_fin = np.dot(r_base.T,tt1.qs[j1,i1])*1200+np.array([1000,1000,0])
+                draw.ellipse((pt1_fin[0]-5, pt1_fin[1]-5, pt1_fin[0]+5, pt1_fin[1]+5),fill='red', outline='yellow')
+                draw.ellipse((pt2_fin[0]-5, pt2_fin[1]-5, pt2_fin[0]+5, pt2_fin[1]+5),fill='red', outline='yellow')
+            pt1_fin = np.dot(r_base.T,tt.qs[i1,j1])*1200+np.array([1000,1000,0])
+            pt2_fin = np.dot(r_base.T,tt.qs[j1,i1])*1200+np.array([1000,1000,0])
+            draw.ellipse((pt1_fin[0]-5, pt1_fin[1]-5, pt1_fin[0]+5, pt1_fin[1]+5),fill='yellow', outline='yellow')
+            draw.ellipse((pt2_fin[0]-5, pt2_fin[1]-5, pt2_fin[0]+5, pt2_fin[1]+5),fill='yellow', outline='yellow')
+    writeStaggeredText(txt, draw, i, speed=2)
+    writeStaggeredText("s = " +"%.4f" % round(s,4)+ "\nt = "+ "%.4f" % round(t,4), draw, 100, speed=2,pos=(50,1000))
+    im.save(basedir + "im" + str(i) + ".png")
+
+
+
+'''
+Scene 39
 '''
 txt = "Subscribe for more :)"
 
@@ -1362,7 +1403,7 @@ for i in range(45):
     tt = Tetartoid(s, 0)
     tt1 = Tetartoid(s, t)
     tet = Tetrahedron()
-    r_base = general_rotation(tet.vertices[3], 2*np.pi*(i+30+27+34+34+44)/90)
+    r_base = general_rotation(tet.vertices[3], 2*np.pi*(i+30+27+34+34+44+44)/90)
     render_solid_planes(tt1.planes, draw, r_base, shift=np.array([1000, 1000, 0]),\
                     scale=1200, make_edges=True,trnsp=200)
     render_solid_planes(tet.planes, draw, r_base, shift=np.array([1000, 1000, 0]),\
@@ -1411,4 +1452,5 @@ for ed in tet.edges:
         pt2_fin = np.dot(r_base.T,pt2)*1200+np.array([1000,1000,0])
         draw.ellipse((pt1_fin[0]-5, pt1_fin[1]-5, pt1_fin[0]+5, pt1_fin[1]+5),fill='yellow', outline='yellow')
         draw.ellipse((pt2_fin[0]-5, pt2_fin[1]-5, pt2_fin[0]+5, pt2_fin[1]+5),fill='yellow', outline='yellow')
+
 

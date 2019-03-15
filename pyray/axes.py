@@ -66,7 +66,7 @@ def render_xy_plane(draw, r = np.eye(4), width = 5):
         draw.line((y_axis_start[0],y_axis_start[1],y_axis_end[0],y_axis_end[1]), fill=(248,50,0,70), width=width)
 
 
-def drawXYGrid(draw, r, meshLen = 0.5, extent = 1.0, shift = np.array([1000.0,1000.0,0.0]),scale=200.0):
+def drawXYGrid(draw, r, meshLen=0.5, extent=1.0, shift=np.array([1000.0,1000.0,0.0]),scale=200.0):
     """
     Draws an x-y grid over the x-y plane
     """
@@ -224,7 +224,7 @@ def drawDoubleArrowRevVer(draw, xy, span):
     draw.line((xy[0]-arrow_size/2,xy[1]-span,xy[0]-arrow_size/2,xy[1]-span-70), fill = "white",width=3)
 
 
-def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), speed=4):
+def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), speed=4, font=78):
     """
     Types text onto an image, filling part by part to give the impression of it being typed.
     args:
@@ -233,6 +233,6 @@ def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), spe
         im_ind: How far in the animation are we?
         pos: The position in the image at which the text is to be typed.
     """
-    font = ImageFont.truetype("arial.ttf", 78)
+    font = ImageFont.truetype("arial.ttf", font)
     draw.text(pos, txt[:min(speed*im_ind, len(txt))], rgba, font=font)
 
