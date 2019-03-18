@@ -10,8 +10,7 @@ from pyray.rotation import *
 #basedir = '..\\images\\RotatingCube\\'
 basedir = '.\\images\\RotatingCube\\'
 
-def draw_grid(im=Image.new("RGB", (1024, 1024), (255,255,255))):
-	i1=0
+def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255))):
 	draw = ImageDraw.Draw(im,'RGBA')
 	#drawXYGrid(draw, r, meshLen=1.0, scale=300, shift=np.array([1000,1000,0]))
 	scale = 64
@@ -44,14 +43,14 @@ def draw_grid(im=Image.new("RGB", (1024, 1024), (255,255,255))):
 	## Draw the grey grid.
 	draw_grey_grid(draw, r, end_pt=np.array([6,-2]))
 	draw_grey_grid(draw, r, start_pt = np.array([0,-6]),end_pt=np.array([4,-4]))
-	
+
 	pt = np.dot(r,np.array([6, -2]))*scale + origin
 	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (255,0,0,150), outline = (0,0,0))
 	## Draw the purple target line From the top.
 	pt1 = np.dot(r,np.array([-scale,origin[1]-3*scale])-origin) + origin
 	pt2 = np.dot(r,np.array([1154,origin[1]-3*scale])-origin) + origin
 	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(148,0,211,255), width=4)
-	
+
 	#Draw solid orange line.
 	pt1 = np.dot(r,np.array([2, -2]))*scale + origin
 	pt2 = np.dot(r,np.array([6, -2]))*scale + origin
@@ -68,42 +67,50 @@ def draw_grid(im=Image.new("RGB", (1024, 1024), (255,255,255))):
 
 	y1=0
 	pt1 = np.dot(r,np.array([0, y1]))*scale + origin
-	y2=-1
+	y2=1
 	pt2 = np.dot(r,np.array([1, y2]))*scale + origin
+	y3=-3
+	pt3 = np.dot(r,np.array([5, y3]))*scale + origin
 
 	y1_ref = refl_abt_horizntl(y1)
 	pt1_ref = np.dot(r,np.array([0, y1_ref]))*scale + origin
 	y2_ref = refl_abt_horizntl(y2)
 	pt2_ref = np.dot(r,np.array([1, y2_ref]))*scale + origin
+	y3_ref = refl_abt_horizntl(y3)
+	pt3_ref = np.dot(r,np.array([5, y3_ref]))*scale + origin
 
-	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill="yellow", width=8)
-	draw.line((pt1_ref[0],pt1_ref[1],pt2_ref[0],pt2_ref[1]), fill="yellow", width=8)
-	im.save(basedir + "im" + str(i1) + ".png")
+	#draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill="yellow", width=8)
+	#draw.line((pt1_ref[0],pt1_ref[1],pt2_ref[0],pt2_ref[1]), fill="yellow", width=8)
+	zg = ZigZagPath(np.array([pt1, pt2, pt3]))
+	zg.draw_lines(draw, prop_dist=ix/max_ix)
+	zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3_ref]))
+	zg.draw_lines(draw, prop_dist=ix/max_ix)
+	im.save(basedir + "im" + str(ix) + ".png")
 
 
 class ZigZagPath(object):
 	def __init__(self, points):
 		self.points = points
 		self.distances = []
-		for i in range(len(points)-1):
-			self.distances.append(dist(distances[i], distances[i+1]))
+		for i in range(len(self.points)-1):
+			self.distances.append(dist(self.points[i], self.points[i+1]))
 		self.distances = np.array(self.distances)
 
-	def draw_lines(self, draw, curr_dist):
-		remaining_dist = sum(self.distances)
+	def draw_lines(self, draw, prop_dist=1.0):
+		remaining_dist = sum(self.distances)*prop_dist
 		total_dist = remaining_dist
 		for i in range(len(self.distances)):
 			if remaining_dist < self.distances[i]:
-				pp = remaining_dist/self.distances[i]
+				pp = float(remaining_dist/self.distances[i])
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
 				pt2 = pp*pt2+(1-pp)*pt1
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill="yellow", width=3)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=3)
 				break
 			else:
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill="yellow", width=3)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=3)
 				remaining_dist -= self.distances[i]
 
 
@@ -164,6 +171,5 @@ def draw_coin():
 		r = general_rotation(np.array([0,1,0]),2*np.pi/20*ii)
 		render_solid_planes(planes, draw, r, shift=np.array([512, 512, 0]), scale=75)
 		im.save(basedir + "im" + str(ii) + ".png")
-
 
 
