@@ -7,17 +7,27 @@ from pyray.shapes.polyhedron import *
 from pyray.axes import *
 from pyray.rotation import *
 
+
 #basedir = '..\\images\\RotatingCube\\'
 basedir = '.\\images\\RotatingCube\\'
 
-def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255))):
+def rotate_abt_x_line(y_line=-3, y_pt=1, theta=np.pi/2):
+	radius = y_line-y_pt
+	y_proj = radius*np.cos(theta)
+	y_prime = y_line-y_proj
+	return y_prime
+
+
+def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255)), dark=True):
+	if dark:
+		im=Image.new("RGB", (1024, 1024), (0,0,0))
 	draw = ImageDraw.Draw(im,'RGBA')
 	#drawXYGrid(draw, r, meshLen=1.0, scale=300, shift=np.array([1000,1000,0]))
 	scale = 64
 	#The origin coordinates should be divisible by the scale.
 	origin = np.array([scale*4,scale*10])
-	r = general_rotation(np.array([0,0,1]),np.pi/0.5)[:2,:2]
-	writeLatex(im, "\\kappa", (200,50))
+	r = general_rotation(np.array([.11,1,0]),np.pi/0.5)[:2,:2]
+	#writeLatex(im, "\\kappa", (200,50))
 	## Draw the base grid.
 	for i in np.arange(-64, 1154, scale):
 		pt1 = np.dot(r,np.array([i,-64])-origin) + origin
@@ -42,7 +52,7 @@ def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255))):
 
 	## Draw the grey grid.
 	draw_grey_grid(draw, r, end_pt=np.array([6,-2]))
-	draw_grey_grid(draw, r, start_pt = np.array([0,-6]),end_pt=np.array([4,-4]))
+	#draw_grey_grid(draw, r, start_pt = np.array([0,-6]),end_pt=np.array([4,-4]))
 
 	pt = np.dot(r,np.array([6, -2]))*scale + origin
 	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (255,0,0,150), outline = (0,0,0))
@@ -60,7 +70,8 @@ def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255))):
 	pt2 = np.dot(r,np.array([5, -3]))*scale + origin
 	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(128,0,128,150), width=8)
 
-	pt = np.dot(r,np.array([0, -6]))*scale + origin
+	#pt = np.dot(r,np.array([0, -6]))*scale + origin
+	pt = np.dot(r,np.array([0, 0]))*scale + origin
 	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (30,144,255,250), outline = (0,0,0))
 	draw_2d_arrow(draw, r, np.array([-3,3]), np.array([9,-9]))
 	draw_2d_arrow(draw, r, np.array([-3,-3]), np.array([5,5]))
@@ -82,9 +93,20 @@ def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255))):
 	#draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill="yellow", width=8)
 	#draw.line((pt1_ref[0],pt1_ref[1],pt2_ref[0],pt2_ref[1]), fill="yellow", width=8)
 	zg = ZigZagPath(np.array([pt1, pt2, pt3]))
-	zg.draw_lines(draw, prop_dist=ix/max_ix)
+	#zg.draw_lines(draw, prop_dist=ix/max_ix)
+	zg.draw_lines(draw, prop_dist=max_ix/max_ix)
 	zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3_ref]))
-	zg.draw_lines(draw, prop_dist=ix/max_ix)
+	#zg.draw_lines(draw, prop_dist=ix/max_ix)
+	
+	theta = np.pi*ix/max_ix
+	y1_ref = rotate_abt_x_line(y_pt=y1,theta=theta)
+	pt1_ref = np.dot(r,np.array([0, y1_ref]))*scale + origin
+	y2_ref = rotate_abt_x_line(y_pt=y2,theta=theta)
+	pt2_ref = np.dot(r,np.array([1, y2_ref]))*scale + origin
+	y3_ref = rotate_abt_x_line(y_pt=y3,theta=theta)
+	pt3_ref = np.dot(r,np.array([5, y3_ref]))*scale + origin
+	zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3]))
+	zg.draw_lines(draw, prop_dist=max_ix/max_ix)
 	im.save(basedir + "im" + str(ix) + ".png")
 
 
@@ -105,12 +127,12 @@ class ZigZagPath(object):
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
 				pt2 = pp*pt2+(1-pp)*pt1
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=3)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=5)
 				break
 			else:
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=3)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=5)
 				remaining_dist -= self.distances[i]
 
 
@@ -121,6 +143,7 @@ def dist(pt1, pt2):
 def refl_abt_horizntl(y, y_ref=-3):
 	delta = (y_ref-y)
 	return y+2*delta
+
 
 def draw_grey_grid(draw, r, start_pt=np.array([0,0]), end_pt=np.array([7,-3]), \
 					origin=np.array([4*64,10*64]), scale=64):
