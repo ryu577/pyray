@@ -18,9 +18,8 @@ def rotate_abt_x_line(y_line=-3, y_pt=1, theta=np.pi/2):
 	return y_prime
 
 
-def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255)), dark=True):
-	if dark:
-		im=Image.new("RGB", (1024, 1024), (0,0,0))
+def draw_grid(ix, max_ix, rotate_path=True):
+	im=Image.new("RGB", (1024, 1024), (0,0,0))
 	draw = ImageDraw.Draw(im,'RGBA')
 	#drawXYGrid(draw, r, meshLen=1.0, scale=300, shift=np.array([1000,1000,0]))
 	scale = 64
@@ -36,7 +35,6 @@ def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255)), dark
 		pt1 = np.dot(r,np.array([-64,i])-origin) + origin
 		pt2 = np.dot(r,np.array([1154,i])-origin) + origin
 		draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(220,100,5,120), width=1)
-
 	## Draw the axes.
 	#arrowV1(draw, np.eye(3), np.array([0,-0.8,0]), np.array([0,0.8,0]), rgb=(0,255,0), scale=100, shift=np.array([500,500,0]))
 	#arrowV1(draw, np.eye(3), np.array([-0.8,0,0]), np.array([0.8,0,0]), rgb=(0,255,0), scale=100, shift=np.array([500,500,0]))
@@ -75,7 +73,8 @@ def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255)), dark
 	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (30,144,255,250), outline = (0,0,0))
 	draw_2d_arrow(draw, r, np.array([-3,3]), np.array([9,-9]))
 	draw_2d_arrow(draw, r, np.array([-3,-3]), np.array([5,5]))
-
+	return im
+	'''
 	y1=0
 	pt1 = np.dot(r,np.array([0, y1]))*scale + origin
 	y2=1
@@ -83,31 +82,51 @@ def draw_grid(ix, max_ix, im=Image.new("RGB", (1024, 1024), (255,255,255)), dark
 	y3=-3
 	pt3 = np.dot(r,np.array([5, y3]))*scale + origin
 
-	y1_ref = refl_abt_horizntl(y1)
-	pt1_ref = np.dot(r,np.array([0, y1_ref]))*scale + origin
-	y2_ref = refl_abt_horizntl(y2)
-	pt2_ref = np.dot(r,np.array([1, y2_ref]))*scale + origin
-	y3_ref = refl_abt_horizntl(y3)
-	pt3_ref = np.dot(r,np.array([5, y3_ref]))*scale + origin
+	#y1_ref = refl_abt_horizntl(y1)
+	#pt1_ref = np.dot(r,np.array([0, y1_ref]))*scale + origin
+	#y2_ref = refl_abt_horizntl(y2)
+	#pt2_ref = np.dot(r,np.array([1, y2_ref]))*scale + origin
+	#y3_ref = refl_abt_horizntl(y3)
+	#pt3_ref = np.dot(r,np.array([5, y3_ref]))*scale + origin
 
 	#draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill="yellow", width=8)
 	#draw.line((pt1_ref[0],pt1_ref[1],pt2_ref[0],pt2_ref[1]), fill="yellow", width=8)
 	zg = ZigZagPath(np.array([pt1, pt2, pt3]))
+	if not rotate_path:
+		zg.draw_lines(draw, prop_dist=ix/max_ix)
+	else:
+		zg.draw_lines(draw, prop_dist=max_ix/max_ix)
+	#zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3_ref]))
 	#zg.draw_lines(draw, prop_dist=ix/max_ix)
-	zg.draw_lines(draw, prop_dist=max_ix/max_ix)
-	zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3_ref]))
-	#zg.draw_lines(draw, prop_dist=ix/max_ix)
-	
-	theta = np.pi*ix/max_ix
-	y1_ref = rotate_abt_x_line(y_pt=y1,theta=theta)
-	pt1_ref = np.dot(r,np.array([0, y1_ref]))*scale + origin
-	y2_ref = rotate_abt_x_line(y_pt=y2,theta=theta)
-	pt2_ref = np.dot(r,np.array([1, y2_ref]))*scale + origin
-	y3_ref = rotate_abt_x_line(y_pt=y3,theta=theta)
-	pt3_ref = np.dot(r,np.array([5, y3_ref]))*scale + origin
-	zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3]))
-	zg.draw_lines(draw, prop_dist=max_ix/max_ix)
-	im.save(basedir + "im" + str(ix) + ".png")
+	if rotate_path:
+		theta = np.pi*ix/max_ix
+		y1_ref = rotate_abt_x_line(y_pt=y1,theta=theta)
+		pt1_ref = np.dot(r,np.array([0, y1_ref]))*scale + origin
+		y2_ref = rotate_abt_x_line(y_pt=y2,theta=theta)
+		pt2_ref = np.dot(r,np.array([1, y2_ref]))*scale + origin
+		y3_ref = rotate_abt_x_line(y_pt=y3,theta=theta)
+		pt3_ref = np.dot(r,np.array([5, y3_ref]))*scale + origin
+		zg = ZigZagPath(np.array([pt1_ref, pt2_ref, pt3]))
+		zg.draw_lines(draw, prop_dist=max_ix/max_ix)
+	return im
+	'''
+
+
+class Path(object):
+	def __init__(self,pts,r=np.eye(2),scale=64,origin=np.array([64*4,64*10]),
+					theta=np.pi):
+		pts1 = np.copy(pts)
+		i=0
+		for pt in pts:
+			y1 = pt[1]
+			y_ref = rotate_abt_x_line(y_pt=y1,theta=theta)
+			pts1[i,1] = y_ref
+			i+=1
+		self.pts = np.dot(pts,r.T)*scale+origin
+		self.zg = ZigZagPath(self.pts)	
+		
+		self.refl_pts = np.dot(pts1,r.T)*scale+origin
+		self.refl_zg = ZigZagPath(self.refl_pts)
 
 
 class ZigZagPath(object):
@@ -118,7 +137,7 @@ class ZigZagPath(object):
 			self.distances.append(dist(self.points[i], self.points[i+1]))
 		self.distances = np.array(self.distances)
 
-	def draw_lines(self, draw, prop_dist=1.0):
+	def draw_lines(self, draw, prop_dist=1.0, width=7):
 		remaining_dist = sum(self.distances)*prop_dist
 		total_dist = remaining_dist
 		for i in range(len(self.distances)):
@@ -127,12 +146,12 @@ class ZigZagPath(object):
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
 				pt2 = pp*pt2+(1-pp)*pt1
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=5)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=width)
 				break
 			else:
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=5)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=width)
 				remaining_dist -= self.distances[i]
 
 
@@ -181,7 +200,8 @@ def draw_2d_arrow(draw, r, start_pt=np.array([0,0]),
 def draw_coin():
 	verts = 15
 	width= 2
-	polygon = np.array([[3*np.cos(2*np.pi/verts*n), 3*np.sin(2*np.pi/verts*n),1] for n in np.arange(1,verts+1)])
+	polygon = np.array([[3*np.cos(2*np.pi/verts*n), 3*np.sin(2*np.pi/verts*n),1] \
+						for n in np.arange(1,verts+1)])
 	planes = [polygon]
 	for j in range(verts):
 		poly = [polygon[j], polygon[(j+1)%verts], \
@@ -194,5 +214,58 @@ def draw_coin():
 		r = general_rotation(np.array([0,1,0]),2*np.pi/20*ii)
 		render_solid_planes(planes, draw, r, shift=np.array([512, 512, 0]), scale=75)
 		im.save(basedir + "im" + str(ii) + ".png")
+
+
+class CreateGif(object):
+	@staticmethod
+	def scene1(write=True,ix=None):
+		for i in range(11):
+			im = draw_grid(i, 10.0, rotate_path=False)
+			draw = ImageDraw.Draw(im,'RGBA')
+			pts = np.array([[0,0],[1,1],[5,-3]])
+			pth = Path(pts)
+			pth.zg.draw_lines(draw,i/10.0)
+			if write:
+				im.save(basedir + "im" + str(i) + ".png")
+
+	@staticmethod
+	def scene2():
+		for i in range(11):
+			im = draw_grid(i, 10.0, rotate_path=True)
+			draw = ImageDraw.Draw(im,'RGBA')
+			pts = np.array([[0.,0.],[1.,1.],[5.,-3.]])
+			pth = Path(pts,theta=np.pi*float(i)/10.0)
+			pth.zg.draw_lines(draw,10.0/10.0)
+			pth.refl_zg.draw_lines(draw,10.0/10.0)
+			im.save(basedir + "im" + str(i) + ".png")
+
+	@staticmethod
+	def scene3():
+		for i in range(11):
+			im = draw_grid(i, 10.0, rotate_path=True)
+			draw = ImageDraw.Draw(im,'RGBA')
+			pts = np.array([[0.,0.],[1.,1.],[5.,-3.]])
+			pth = Path(pts)
+			#pth.zg.draw_lines(draw,10.0/10.0)
+			pth.refl_zg.draw_lines(draw,1.0,width=4)
+			pts = np.array([[0,0],[1,-1],[2,0],[5,-3]])
+			pth = Path(pts)
+			pth.zg.draw_lines(draw,i/10.0)
+			im.save(basedir + "im" + str(i) + ".png")
+
+	@staticmethod
+	def scene4():
+		for i in range(11):
+			im = draw_grid(i, 10.0, rotate_path=True)
+			draw = ImageDraw.Draw(im,'RGBA')
+			pts = np.array([[0.,0.],[1.,1.],[5.,-3.]])
+			pth = Path(pts)
+			#pth.zg.draw_lines(draw,10.0/10.0)
+			pth.refl_zg.draw_lines(draw,1.0,width=4)
+			pts = np.array([[0.,0.],[1.,-1.],[2.,0.],[5.,-3.]])
+			pth = Path(pts,theta=np.pi*i/10.0)
+			pth.zg.draw_lines(draw,10.0/10.0,width=4)
+			pth.refl_zg.draw_lines(draw,10.0/10.0)
+			im.save(basedir + "im" + str(i) + ".png")
 
 
