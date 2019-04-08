@@ -469,8 +469,26 @@ class Tetartoid(Polyhedron):
         self.qs = q
         self.cs = np.array([planes[9,0],planes[3,0],planes[6,0],planes[0,0]])
         self.vs = np.array([planes[0,3],planes[2,3],planes[1,3],planes[4,3]])
-        return np.array(planes)        
+        return np.array(planes)
 
+
+def draw_coin(basedir = '.\\images\\RotatingCube\\'):
+	verts = 15
+	width= 2
+	polygon = np.array([[3*np.cos(2*np.pi/verts*n), 3*np.sin(2*np.pi/verts*n),1] \
+						for n in np.arange(1,verts+1)])
+	planes = [polygon]
+	for j in range(verts):
+		poly = [polygon[j], polygon[(j+1)%verts], \
+			polygon[(j+1)%verts]-np.array([0,0,width]), polygon[(j)]-np.array([0,0,width])]
+		planes.append(poly)
+	planes.append(polygon+np.array([0,0,-width]))
+	for ii in range(20):
+		im = Image.new("RGB", (1024, 1024), (1,1,1))
+		draw = ImageDraw.Draw(im,'RGBA')
+		r = general_rotation(np.array([0,1,0]),2*np.pi/20*ii)
+		render_solid_planes(planes, draw, r, shift=np.array([512, 512, 0]), scale=75)
+		im.save(basedir + "im" + str(ii) + ".png")
 
 
 ########################################################################

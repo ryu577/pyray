@@ -3,8 +3,11 @@ Methods for drawing primitive constructs like axes, grids, arrows, etc.
 '''
 
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont, ImageMath
 from PIL import ImageFont
 from pyray.shapes.paraboloid import *
+from pyray.rotation import *
+from pyray.misc import dist
 
 
 def render_scene_4d_axis(draw, r = np.eye(4), width = 9, scale = 200, shift = np.array([1000,1000,0])):
@@ -235,4 +238,139 @@ def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), spe
     """
     font = ImageFont.truetype("arial.ttf", font)
     draw.text(pos, txt[:min(speed*im_ind, len(txt))], rgba, font=font)
+
+
+
+def draw_2d_arrow(draw, r, start_pt=np.array([0,0]),
+					end_pt=np.array([7,-3]), \
+					origin=np.array([4*64,10*64]), scale=64, rgba="grey",
+					width=2):
+	pt1 = np.dot(r,start_pt)*scale + origin
+	pt2 = np.dot(r,end_pt)*scale + origin
+	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=rgba, width=width)
+	vec = (pt2-pt1)
+	vec = vec/np.sqrt(sum(vec**2))/2
+	r1 = planar_rotation(5*np.pi/4)
+	arrow_foot = np.dot(r1,vec)*scale + pt2
+	draw.line((arrow_foot[0],arrow_foot[1],pt2[0],pt2[1]), fill=rgba, width=width)
+	r1 = planar_rotation(3*np.pi/4)
+	arrow_foot = np.dot(r1,vec)*scale + pt2
+	draw.line((arrow_foot[0],arrow_foot[1],pt2[0],pt2[1]), fill=rgba, width=width)
+
+
+def draw_grid():
+	im=Image.new("RGB", (1024, 1024), (0,0,0))
+	draw = ImageDraw.Draw(im,'RGBA')
+	#drawXYGrid(draw, r, meshLen=1.0, scale=300, shift=np.array([1000,1000,0]))
+	scale = 64
+	#The origin coordinates should be divisible by the scale.
+	origin = np.array([scale*4,scale*10])
+	r = general_rotation(np.array([.11,1,0]),np.pi/0.5)[:2,:2]
+	#writeLatex(im, "\\kappa", (200,50))
+	## Draw the base grid.
+	for i in np.arange(-64, 1154, scale):
+		pt1 = np.dot(r,np.array([i,-64])-origin) + origin
+		pt2 = np.dot(r,np.array([i,1154])-origin) + origin
+		draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(220,100,5,120), width=1)
+		pt1 = np.dot(r,np.array([-64,i])-origin) + origin
+		pt2 = np.dot(r,np.array([1154,i])-origin) + origin
+		draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(220,100,5,120), width=1)
+	## Draw the axes.
+	#arrowV1(draw, np.eye(3), np.array([0,-0.8,0]), np.array([0,0.8,0]), rgb=(0,255,0), scale=100, shift=np.array([500,500,0]))
+	#arrowV1(draw, np.eye(3), np.array([-0.8,0,0]), np.array([0.8,0,0]), rgb=(0,255,0), scale=100, shift=np.array([500,500,0]))
+	draw_2d_arrow(draw, r, np.array([-3,0]), np.array([12,0]),rgba="red",width=3)
+	draw_2d_arrow(draw, r, np.array([0,-3]), np.array([0,-10]),rgba="red",width=3)
+	pt1 = np.dot(r,np.array([origin[0],0])-origin) + origin
+	pt2 = np.dot(r,np.array([origin[0],1024])-origin) + origin
+	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(255,70,20,255), width=7)
+
+	pt1 = np.dot(r,np.array([0,origin[1]])-origin) + origin
+	pt2 = np.dot(r,np.array([1024, origin[1]])-origin) + origin
+	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(255,70,20,255), width=7)
+
+	## Draw the grey grid.
+	draw_grey_grid(draw, r, end_pt=np.array([6,-2]))
+	#draw_grey_grid(draw, r, start_pt = np.array([0,-6]),end_pt=np.array([4,-4]))
+
+	pt = np.dot(r,np.array([6, -2]))*scale + origin
+	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (255,0,0,150), outline = (0,0,0))
+	## Draw the purple target line From the top.
+	pt1 = np.dot(r,np.array([-scale,origin[1]-3*scale])-origin) + origin
+	pt2 = np.dot(r,np.array([1154,origin[1]-3*scale])-origin) + origin
+	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(148,0,211,255), width=4)
+
+	#Draw solid orange line.
+	pt1 = np.dot(r,np.array([2, -2]))*scale + origin
+	pt2 = np.dot(r,np.array([6, -2]))*scale + origin
+	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(255,165,0), width=8)
+
+	pt1 = np.dot(r,np.array([3, -3]))*scale + origin
+	pt2 = np.dot(r,np.array([5, -3]))*scale + origin
+	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(128,0,128,150), width=8)
+
+	#pt = np.dot(r,np.array([0, -6]))*scale + origin
+	pt = np.dot(r,np.array([0, 0]))*scale + origin
+	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (30,144,255,250), outline = (0,0,0))
+	draw_2d_arrow(draw, r, np.array([-3,3]), np.array([9,-9]))
+	draw_2d_arrow(draw, r, np.array([-3,-3]), np.array([5,5]))
+	return im
+
+
+def draw_grey_grid(draw, r, start_pt=np.array([0,0]), end_pt=np.array([7,-3]), \
+					origin=np.array([4*64,10*64]), scale=64):
+	vec = (end_pt - start_pt)
+	up_ext = np.array([int((vec[0]+vec[1])/2), int((vec[0]+vec[1])/2)])
+	down_ext = np.array([int((vec[0]-vec[1])/2), int((-vec[0]+vec[1])/2)])
+	for i in range(abs(int(up_ext[0]))+1):
+		pt1 = np.dot(r,np.array([i, i])+start_pt)*scale + origin
+		pt2 = np.dot(r,np.array([i, i])+down_ext+start_pt)*scale + origin
+		draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill="grey", width=2)
+	##
+	for i in range(abs(int(down_ext[0]))+1):
+		pt1 = np.dot(r,np.array([i, -i])+start_pt)*scale + origin
+		pt2 = np.dot(r,np.array([i, -i])+up_ext+start_pt)*scale + origin
+		draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill="grey", width=2)
+
+
+class Path(object):
+	def __init__(self,pts,r=np.eye(2),scale=64,origin=np.array([64*4,64*10]),
+					theta=np.pi):
+		pts1 = np.copy(pts)
+		i=0
+		for pt in pts:
+			y1 = pt[1]
+			y_ref = rotate_abt_x_line(y_pt=y1,theta=theta)
+			pts1[i,1] = y_ref
+			i+=1
+		self.pts = np.dot(pts,r.T)*scale+origin
+		self.zg = ZigZagPath(self.pts)	
+		
+		self.refl_pts = np.dot(pts1,r.T)*scale+origin
+		self.refl_zg = ZigZagPath(self.refl_pts)
+
+
+class ZigZagPath(object):
+	def __init__(self, points):
+		self.points = points
+		self.distances = []
+		for i in range(len(self.points)-1):
+			self.distances.append(dist(self.points[i], self.points[i+1]))
+		self.distances = np.array(self.distances)
+
+	def draw_lines(self, draw, prop_dist=1.0, width=7):
+		remaining_dist = sum(self.distances)*prop_dist
+		total_dist = remaining_dist
+		for i in range(len(self.distances)):
+			if remaining_dist < self.distances[i]:
+				pp = float(remaining_dist/self.distances[i])
+				pt1 = self.points[i]
+				pt2 = self.points[i+1]
+				pt2 = pp*pt2+(1-pp)*pt1
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=width)
+				break
+			else:
+				pt1 = self.points[i]
+				pt2 = self.points[i+1]
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=width)
+				remaining_dist -= self.distances[i]
 

@@ -265,3 +265,17 @@ def angle_btw_planes(face1,face2):
 
 
 
+## A series of methods relating to 1-d rotation.
+
+def rotate_abt_x_line(y_line=-3, y_pt=1, theta=np.pi/2):
+	radius = y_line-y_pt
+	y_proj = radius*np.cos(theta)
+	y_prime = y_line-y_proj
+	return y_prime
+
+
+def refl_abt_horizntl(y, y_ref=-3):
+	delta = (y_ref-y)
+	return y+2*delta
+
+

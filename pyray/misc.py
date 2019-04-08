@@ -130,3 +130,8 @@ def general_base(n, b, dim = None):
         indx = indx + 1
         n = int(n / b)
     return res
+
+
+def dist(pt1, pt2):
+	return np.sqrt(sum((pt2-pt1)**2))
+
