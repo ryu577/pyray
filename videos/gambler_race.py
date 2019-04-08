@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 from pyray.rotation import *
 from pyray.imageutils import *
-from functions.functionalforms import *
+from pyray.shapes.paraboloid import *
 from pyray.shapes.polyhedron import *
 from pyray.axes import *
 from pyray.rotation import *
