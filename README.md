@@ -109,11 +109,10 @@ draw_wavy_sphere_wrapper('.\\im', 66, 1)
 <img src="https://github.com/ryu577/pyray/blob/master/Images/WavySphere.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
-```python
-draw_oscillating_sphere('..\\images\\im', 20, 2)
-```
-<img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
+<script src="https://gist.github.com/ryu577/7c00762f7cdbfee2bd9bb967d4f315cd.js"></script>
+<img src="https://camo.githubusercontent.com/a9229ef6577001fb21c262e75c472558061ee462/68747470733a2f2f73322e67696679752e636f6d2f696d616765732f416e6472655265666c636e2e676966" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
+
 
 ```python
 from pyray.shapes.polyhedron import *
