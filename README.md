@@ -43,7 +43,7 @@ You can run any method tagged @MoneyShot to see how this works. For example, you
 from pyray.shapes.cube import *
 cube_with_cuttingplanes(7, popup=True)
 ```
-and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the folder where you run it from, file called im0.png). Something like this - 
+and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the folder where you run it from, file called im0.png). Something like this (click to see what happens) - 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
 target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/cube_planes.png" 
@@ -80,6 +80,7 @@ for i in range(20):
 	best_plane_direction(im_ind=i)
 ```
 
+If you think this is valuable, please star :)
 
 # Contributing
 
