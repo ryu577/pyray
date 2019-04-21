@@ -124,7 +124,7 @@ for i in range(0, 31):
     im.save(basedir + "im" + str(i) + ".png")
 ```
 
-<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+<a href="https://www.youtube.com/watch?v=0JEFjS2fiTA&feature=youtu.be" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/tetartoid2.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
