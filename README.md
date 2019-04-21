@@ -137,7 +137,7 @@ from pyray.shapes.paraboloid import *
 draw_paraboloids()
 ```
 
-<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+<a href="https://www.youtube.com/watch?v=acsSIyDugP0&t=53s" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/paraboloids.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
