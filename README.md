@@ -30,19 +30,6 @@ Alternately, you can fork/download the code and run from the main folder:
 python setup.py install
 ```
 
-# Demonstrations
-So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
-
-Here are some that demonstrate the abilities of this code (also see below for some images created with it) - 
-
-1. <a href="https://www.youtube.com/watch?v=KuXnrg1YpiY">Binomial coefficients on hypercubes.</a>
-
-2. <a href="https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s">Why does Gradient descent work?</a>
-
-3. <a href="https://www.youtube.com/watch?v=STkcP5jcJYo">Introduction to Platonic solids</a>
-
-4. <a href="https://www.youtube.com/watch?v=57g6nQGBFcY">Slice a 4d hypercube (Teserract).</a>
-
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
 Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with `pip install -r requirements.txt`
@@ -162,3 +149,15 @@ points_to_bins()
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/classificn/classificn.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
+# Demonstrations
+So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
+
+Here are some that demonstrate the abilities of this code (also see below for some images created with it) - 
+
+1. <a href="https://www.youtube.com/watch?v=KuXnrg1YpiY">Binomial coefficients on hypercubes.</a>
+
+2. <a href="https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s">Why does Gradient descent work?</a>
+
+3. <a href="https://www.youtube.com/watch?v=STkcP5jcJYo">Introduction to Platonic solids</a>
+
+4. <a href="https://www.youtube.com/watch?v=57g6nQGBFcY">Slice a 4d hypercube (Teserract).</a>
