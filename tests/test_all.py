@@ -12,10 +12,10 @@ if platform.system()=="Windows":
     sys.path.append(path)
 
 from pyray.rotation import rotation
-from pyray.shapes.cube import Vertice
+from pyray.shapes.solid.cube import Vertice
 from pyray.color import heat_rgb
 from pyray.misc import move_to_closest
-from pyray.shapes.polyhedron import *
+from pyray.shapes.solid.polyhedron import *
 
 def test_rotation_360():
     """
