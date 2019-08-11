@@ -1,5 +1,5 @@
 import numpy as np
-
+from pyray.shapes.twod.paraboloid import gridSquarePolygon
 
 
 def drawFunctionalXYGrid(draw, r, shift=np.array([1000.0, 1000.0, 0.0]),
