@@ -40,7 +40,7 @@ To keep things simple and the dependencies minimal, the program simply writes an
 You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from cube.py - 
 
 ```python
-from pyray.shapes.cube import *
+from pyray.shapes.solid.cube import *
 cube_with_cuttingplanes(7, popup=True)
 ```
 and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the folder where you run it from, file called im0.png). Something like this (click to see what happens) - 
@@ -75,7 +75,7 @@ alt="Image formed by above method" width="240" height="180" border="10" /></a>
 In case you're wondering, you can generate the images used in the gif above via:
 
 ```python
-from pyray.shapes.plane import *
+from pyray.shapes.twod.plane import *
 for i in range(20):
 	best_plane_direction(im_ind=i)
 ```
@@ -90,7 +90,7 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 
 To create a bouncy sphere or a wavy sphere, run 
 ```python
-from pyray.shapes.sphere import *
+from pyray.shapes.solid.sphere import *
 draw_wavy_sphere_wrapper('.\\im', 66, 1)
 ```
 
@@ -114,7 +114,7 @@ alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 ```python
-from pyray.shapes.polyhedron import *
+from pyray.shapes.solid.polyhedron import *
 basedir = '.\\'
 tr = Tetartoid()
 for i in range(0, 31):
@@ -131,7 +131,7 @@ alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 ```python
-from pyray.shapes.paraboloid import *
+from pyray.shapes.twod.paraboloid import *
 draw_paraboloids()
 ```
 
@@ -142,7 +142,7 @@ alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 ```python
-from pyray.shapes.pointswarm import *
+from pyray.shapes.zerod.pointswarm import *
 points_to_bins()
 ```
 
