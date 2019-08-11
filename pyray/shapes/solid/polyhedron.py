@@ -6,7 +6,7 @@ from scipy.spatial import ConvexHull
 from pyray.misc import *
 from pyray.rotation import *
 from pyray.color import *
-from pyray.shapes.cube import *
+from pyray.shapes.solid.cube import *
 import abc
 
 
