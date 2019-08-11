@@ -244,7 +244,7 @@ class Icosahedron(Polyhedron):
                     mat[2,2] = mat[2,2] * kk
                     poly = mat
                     poly = orient_face(poly)
-                    faces.append(poly)              
+                    faces.append(poly)
 
         for ii in range(3):
             for kk in [1, -1]:

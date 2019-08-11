@@ -5,7 +5,6 @@ Methods for drawing primitive constructs like axes, grids, arrows, etc.
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 from PIL import ImageFont
-from pyray.shapes.paraboloid import *
 from pyray.rotation import *
 from pyray.misc import dist
 

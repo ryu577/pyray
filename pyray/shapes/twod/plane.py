@@ -1,7 +1,34 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
+from pyray.axes import render_scene_4d_axis
 
 from pyray.rotation import *
+
+
+def rotated_xz_plane(draw, r, r2, scale=200, shift=np.array([1000,1000,0]), translate=np.array([0,0,0])):
+    '''
+    Takes an x-z plane, translates it by translate parameter, rotates it by r2 and draws it.
+    params:
+        r: The amount by which the object our plane is cutting is already rotated.
+        r2: The amount by which the plane is to be rotated on top of r.
+        translate: The amount by which the center of the plane is to be moved.
+    '''
+    extent = 2.8
+    pln = np.array(
+            [
+                [-extent,0,0],
+                [extent,0,0],
+                [extent,0,extent*2],
+                [-extent,0,extent*2]
+            ]
+        )
+    pln = np.array([i-translate for i in pln]) # translate every point on the plane.
+    rr = np.dot(r,r2)
+    pln = np.dot(pln, np.transpose(rr))
+    pln = np.array([i + np.dot(r,translate) for i in pln])
+    pln = pln * scale + shift[:3]
+    draw.polygon([(pln[0][0],pln[0][1]),(pln[1][0],pln[1][1]),(pln[2][0],pln[2][1]),(pln[3][0],pln[3][1])], (204,0,255,70))
+
 
 def xzplane(draw, r, y, shift = np.array([1000, 1000, 0, 0]), scale = 300):
     """

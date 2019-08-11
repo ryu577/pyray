@@ -1,6 +1,6 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-from pyray.shapes.polyhedron import *
+from pyray.shapes.solid.polyhedron import *
 from pyray.axes import *
 from pyray.rotation import *
 import matplotlib.pyplot as plt
