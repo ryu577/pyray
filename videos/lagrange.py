@@ -17,7 +17,7 @@ def draw_cubic():
         im = Image.new("RGB", (2048, 2048), "black")
         draw = ImageDraw.Draw(im, 'RGBA')
         r = general_rotation(np.array([1,0,0]),np.pi/120*i)
-        drawFunctionalXYGridInCircle(draw, r, fn=fn, scale=10.0)
+        #drawFunctionalXYGridInCircle(draw, r, fn=fn, scale=10.0)
         im.save(basedir + 'im' + str(i) + '.png')
 
 

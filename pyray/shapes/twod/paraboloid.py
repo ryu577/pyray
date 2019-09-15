@@ -153,26 +153,6 @@ def paraboloidTangent(draw, r, x1, y1, d = 1.0, rgba = (120,80,200,150), scale =
     draw.polygon([(pt1[0], pt1[1]), (pt2[0], pt2[1]), (pt3[0], pt3[1]), (pt4[0], pt4[1])], rgba)
 
 
-def gridSquarePolygon(i, j, r, shift=np.array([1000.0, 1000.0, 0.0]),\
-                        scale=200.0, fn=None):
-    '''
-    '''
-    poly = []
-    k = fn(i, j)
-    pt = np.array([i, j, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    k = fn(i+1, j)
-    pt = np.array([i+1, j, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    k = fn(i+1, j-1)
-    pt = np.array([i+1, j-1, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    k = fn(i, j-1)
-    pt = np.array([i, j-1, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    return [(i[0], i[1]) for i in poly]
-
-
 def paraboloid(x, y, coeff=0.1, intercept=0.1):
     '''
     '''

@@ -1,5 +1,4 @@
 import numpy as np
-from pyray.shapes.twod.paraboloid import gridSquarePolygon
 
 
 def drawFunctionalXYGrid(draw, r, shift=np.array([1000.0, 1000.0, 0.0]),
@@ -36,5 +35,24 @@ def draw_functional_xygrid_in_circle(draw, r, shift=np.array([1000.0, 1000.0, 0.
                 else:
                     draw.polygon(poly, rgba2)
 
+
+def gridSquarePolygon(i, j, r, shift=np.array([1000.0, 1000.0, 0.0]),\
+                        scale=200.0, fn=None):
+    '''
+    '''
+    poly = []
+    k = fn(i, j)
+    pt = np.array([i, j, k])
+    poly.append(np.dot(r, pt) * scale + shift[:3])
+    k = fn(i+1, j)
+    pt = np.array([i+1, j, k])
+    poly.append(np.dot(r, pt) * scale + shift[:3])
+    k = fn(i+1, j-1)
+    pt = np.array([i+1, j-1, k])
+    poly.append(np.dot(r, pt) * scale + shift[:3])
+    k = fn(i, j-1)
+    pt = np.array([i, j-1, k])
+    poly.append(np.dot(r, pt) * scale + shift[:3])
+    return [(i[0], i[1]) for i in poly]
 
 

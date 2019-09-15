@@ -263,6 +263,7 @@ plane5 = np.array([p[:,i] for i in [2,5,0,6]])
 plane6 = np.array([p[:,i] for i in [1,3,7,4]])
 planes = np.array([plane1,plane2,plane3,plane4,plane5,plane6])
 
+
 def draw_planes():
     for j in range(31):
         im = Image.new("RGB", (2048, 2048), (1,1,1))

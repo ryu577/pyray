@@ -242,7 +242,7 @@ def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), spe
 
 def draw_2d_arrow(draw, r, start_pt=np.array([0,0]),
 					end_pt=np.array([7,-3]), \
-					origin=np.array([4*64,10*64]), scale=64, rgba="grey",
+					origin=np.array([4*64,10*64]),scale=64, rgba="grey",
 					width=2):
 	pt1 = np.dot(r,start_pt)*scale + origin
 	pt2 = np.dot(r,end_pt)*scale + origin
