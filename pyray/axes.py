@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 from PIL import ImageFont
 from pyray.rotation import *
+from pyray.shapes.twod.plot import Canvas
 from pyray.misc import dist
 
 
@@ -240,23 +241,6 @@ def writeStaggeredText(txt, draw, im_ind, pos=(250,200), rgba=(255,255,255), spe
 
 
 
-def draw_2d_arrow(draw, r, start_pt=np.array([0,0]),
-					end_pt=np.array([7,-3]), \
-					origin=np.array([4*64,10*64]),scale=64, rgba="grey",
-					width=2):
-	pt1 = np.dot(r,start_pt)*scale + origin
-	pt2 = np.dot(r,end_pt)*scale + origin
-	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=rgba, width=width)
-	vec = (pt2-pt1)
-	vec = vec/np.sqrt(sum(vec**2))/2
-	r1 = planar_rotation(5*np.pi/4)
-	arrow_foot = np.dot(r1,vec)*scale + pt2
-	draw.line((arrow_foot[0],arrow_foot[1],pt2[0],pt2[1]), fill=rgba, width=width)
-	r1 = planar_rotation(3*np.pi/4)
-	arrow_foot = np.dot(r1,vec)*scale + pt2
-	draw.line((arrow_foot[0],arrow_foot[1],pt2[0],pt2[1]), fill=rgba, width=width)
-
-
 def draw_grid():
 	im=Image.new("RGB", (1024, 1024), (0,0,0))
 	draw = ImageDraw.Draw(im,'RGBA')
@@ -277,8 +261,8 @@ def draw_grid():
 	## Draw the axes.
 	#arrowV1(draw, np.eye(3), np.array([0,-0.8,0]), np.array([0,0.8,0]), rgb=(0,255,0), scale=100, shift=np.array([500,500,0]))
 	#arrowV1(draw, np.eye(3), np.array([-0.8,0,0]), np.array([0.8,0,0]), rgb=(0,255,0), scale=100, shift=np.array([500,500,0]))
-	draw_2d_arrow(draw, r, np.array([-3,0]), np.array([12,0]),rgba="red",width=3)
-	draw_2d_arrow(draw, r, np.array([0,-3]), np.array([0,-10]),rgba="red",width=3)
+	Canvas.draw_2d_arrow_s(draw, r, np.array([-3,0]), np.array([12,0]),rgba="red",width=3)
+	Canvas.draw_2d_arrow_s(draw, r, np.array([0,-3]), np.array([0,-10]),rgba="red",width=3)
 	pt1 = np.dot(r,np.array([origin[0],0])-origin) + origin
 	pt2 = np.dot(r,np.array([origin[0],1024])-origin) + origin
 	draw.line((pt1[0],pt1[1],pt2[0],pt2[1]), fill=(255,70,20,255), width=7)
@@ -310,8 +294,8 @@ def draw_grid():
 	#pt = np.dot(r,np.array([0, -6]))*scale + origin
 	pt = np.dot(r,np.array([0, 0]))*scale + origin
 	draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), fill = (30,144,255,250), outline = (0,0,0))
-	draw_2d_arrow(draw, r, np.array([-3,3]), np.array([9,-9]))
-	draw_2d_arrow(draw, r, np.array([-3,-3]), np.array([5,5]))
+	Canvas.draw_2d_arrow_s(draw, r, np.array([-3,3]), np.array([9,-9]))
+	Canvas.draw_2d_arrow_s(draw, r, np.array([-3,-3]), np.array([5,5]))
 	return im
 
 
