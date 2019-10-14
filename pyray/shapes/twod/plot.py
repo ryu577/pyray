@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
 from pyray.rotation import planar_rotation
+from pyray.shapes.twod.line import Line
 
 
 class MapCoord(object):
@@ -111,8 +112,8 @@ class Canvas(object):
         arrow_foot = np.dot(r1,vec)*scale + pt2
         draw.line((arrow_foot[0],arrow_foot[1],pt2[0],pt2[1]), fill=rgba, width=width)
 
-    def draw_2d_arrow(self,start,end,r=np.eye(2)):
-        Canvas.draw_2d_arrow_s(self.draw,r,start,end,self.map_crd.origin,self.map_crd.scale)
+    def draw_2d_arrow(self,start,end,rgba='grey',r=np.eye(2)):
+        Canvas.draw_2d_arrow_s(self.draw,r,start,end,self.map_crd.origin,self.map_crd.scale,rgba)
 
     @staticmethod
     def draw_point_s(draw, pos=np.array([-1,1]),origin=np.array([4,4]),scale=64,r=np.eye(2),
@@ -121,12 +122,33 @@ class Canvas(object):
         draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), 
             fill = (255,25,25,250), outline = (0,0,0))
 
-    def draw_point(self,pos):
+    def draw_point(self,pos,fill=(255,25,25,250),size=8):
         #Canvas.draw_point_s(self.draw,pos,self.map_crd.origin,
         #                self.map_crd.scale,np.eye(2),self.map_crd.im_size)
         pt = self.map_crd.plot_to_im(pos[0],pos[1])
-        self.draw.ellipse((pt[0]-8, pt[1]-8, pt[0]+8, pt[1]+8), 
-            fill = (255,25,25,250), outline = (0,0,0))
+        self.draw.ellipse((pt[0]-size, pt[1]-size, pt[0]+size, pt[1]+size), 
+            fill = fill, outline = (0,0,0))
+
+    def draw_line(self,pt1,pt2,fill=(255,25,25,250),width=4):
+        pt1 = self.map_crd.plot_to_im(pt1[0],pt1[1])
+        pt2 = self.map_crd.plot_to_im(pt2[0],pt2[1])
+        self.draw.line((pt1[0],pt1[1],pt2[0],pt2[1]),fill=fill,width=width)    
+
+    def draw_arrow(self,pt1,pt2,fill=(255,25,25,250),width=4,
+                    arr_bk=.8,arr_per=.2):
+        self.draw_line(pt1,pt2,fill=fill,width=width)
+        l = Line(pt1,pt2)
+        go_back = pt2*arr_bk+pt1*(1-arr_bk)
+        arr_hd_1 = go_back+l.w*arr_per
+        arr_hd_2 = go_back-l.w*arr_per
+        self.draw_line(arr_hd_1,pt2,fill=fill,width=width)
+        self.draw_line(arr_hd_2,pt2,fill=fill,width=width)
+
+    def write_txt(self,pos,txt,rgba,size=18):
+        font = ImageFont.truetype("arial.ttf", size)
+        pos1 = MapCoord.plot_to_im_s(pos[0],pos[1],self.map_crd.origin,scale=64,
+                im_size=self.map_crd.im_size)
+        self.draw.text(pos1,txt,rgba,font=font)
 
 
 def tst_2d_plot():
@@ -138,6 +160,11 @@ def tst_2d_plot():
     cnv.draw_2d_line(np.array([-4,-4]),np.array([4,4]),rgba="purple")
     cnv.draw_2d_line(np.array([4,-4]),np.array([-4,4]),rgba="yellow")
     cnv.draw_point(np.array([-1,-1]))
+    cnv.draw_point(np.array([1,1]),fill="green")
+    cnv.write_txt((1,1),"(1,1)","green")
+    cnv.write_txt((-1,-1),"(-1,-1)","red")
     basedir = '.\\images\\RotatingCube\\'
     cnv.im.save(basedir + "im" + str(1) + ".png")
+
+
 

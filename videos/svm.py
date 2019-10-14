@@ -7,6 +7,8 @@ from pyray.shapes.twod.functional import *
 from pyray.axes import Path, ZigZagPath, draw_grid, draw_grey_grid
 from pyray.misc import dist
 from pyray.shapes.twod.plot import *
+from pyray.misc import zigzag2
+from pyray.rotation import planar_rotation
 
 
 def draw_base_diagram(origin=np.array([8,8])):
@@ -80,9 +82,150 @@ def draw_base_diagram(origin=np.array([8,8])):
 	draw.text(pos, "(-1,-1)", (255,25,25), font=font)
 	return im
 
+def tst():
+	basedir = '.\\images\\RotatingCube\\'
+	im = draw_base_diagram()
+	im.save(basedir + "im" + str(0) + ".png")
 
-basedir = '.\\images\\RotatingCube\\'
+##############################################################
 
-im = draw_base_diagram()
-im.save(basedir + "im" + str(0) + ".png")
+def tst_2d_random_plot(draw_sep_line=True,idx=0,yellow_ext=0,writestuff=True):
+    np.random.seed(0)
+    mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
+    cnv = Canvas(mc)
+    cnv.draw_grid()
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]))
+    cnv.draw_2d_arrow(np.array([0,4]), np.array([0,-4]))
+    if draw_sep_line:
+        eps = zigzag2(idx,0,5,-5)/5
+        cnv.draw_2d_line(np.array([-4,-4-eps]),np.array([4,4+eps]),rgba="purple")
+    for _ in range(50):
+        pt = 4*np.random.uniform(size=2)-2.0
+        if np.random.uniform()>0.2 and abs(pt[0]+pt[1])>.3:
+            if sum(pt)>0.1:
+                cnv.draw_point(pt,fill="green",size=4)
+            elif sum(pt)<-0.1:
+                cnv.draw_point(pt,fill="red",size=4)
+        else:
+            #cnv.draw_point(pt,fill="yellow",size=4)
+            if sum(pt)>0.1:
+                cnv.draw_point(pt,fill=(255-yellow_ext*10,255,0),size=4)
+            elif sum(pt)<-0.1:
+                cnv.draw_point(pt,fill=(255,255-yellow_ext*10,0),size=4)
+    if writestuff:
+        font = ImageFont.truetype("arial.ttf", 18)
+        cnv.draw.text((338,362), "critical point", (255,0,0), font=font)
+        cnv.draw.text((151,132), "flips label", (255,255,0), font=font)
+    basedir = '.\\images\\RotatingCube\\'
+    cnv.im.save(basedir + "im" + str(idx) + ".png")
+
+
+##Fig 1: Without purple line 
+tst_2d_random_plot(False)
+
+##Fig 2: With purple line
+tst_2d_random_plot(True)
+
+
+for i in range(10):
+	tst_2d_random_plot(idx=i,yellow_ext=0)
+
+
+def eqn_of_line(idx=0, r=planar_rotation(np.pi*3/20.0)):
+    mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
+    cnv = Canvas(mc)
+    cnv.draw_grid()
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]))
+    cnv.draw_2d_arrow(np.array([0,4]), np.array([0,-4]))
+    cnv.draw_2d_arrow(np.array([0,0]), np.array([0,-2]),rgba="orange",r=r)
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]),rgba="grey",r=r)
+    basedir = '.\\images\\RotatingCube\\'
+    cnv.im.save(basedir + "im" + str(idx) + ".png")
+
+for i in range(10):
+	eqn_of_line(i,r=planar_rotation(2*np.pi*i/10.0))
+
+
+def scaling_w(idx=0, r=planar_rotation(np.pi*3/20.0)):
+    mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
+    cnv = Canvas(mc)
+    cnv.draw_grid()
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]))
+    cnv.draw_2d_arrow(np.array([0,4]), np.array([0,-4]))
+    eps = zigzag2(idx,0,5,-5)/5
+    cnv.draw_2d_arrow(np.array([0,0]), np.array([0,-2*(1+eps)]),rgba="orange",r=r)
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]),rgba="white",r=r)
+    basedir = '.\\images\\RotatingCube\\'
+    cnv.im.save(basedir + "im" + str(idx) + ".png")
+
+for i in range(10):
+	scaling_w(i,r=planar_rotation(2*np.pi*3.4/10.0))
+
+
+def proof_eqn_line(idx, r=planar_rotation(np.pi*3/20.0)):
+    mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
+    cnv = Canvas(mc)
+    cnv.draw_grid()
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]))
+    cnv.draw_2d_arrow(np.array([0,4]), np.array([0,-4]))
+    cnv.draw_point(np.array([0,0]),fill="yellow",size=5)
+    cnv.write_txt(np.array([0,0]),"O",(255,255,0,200))
+    pt1=np.array([-1,4])
+    pt2=np.array([3,-2])
+    l = Line(pt1,pt2)
+    cnv.draw_line(pt1, pt2,fill="purple")
+    cnv.draw_line(np.array([0,0]), l.closest_pt_from_origin*5,fill="white",width=1)
+    cnv.draw_point(l.closest_pt_from_origin,fill="blue",size=4)
+    cnv.draw_arrow(np.array([0,0]), l.closest_pt_from_origin*.6,\
+				fill="blue",width=3,arr_bk=.9,arr_per=.1)
+    cnv.write_txt(l.closest_pt_from_origin+np.array([.1,.1]),"A","blue")
+    arb_pt_1 = pt1*.2+pt2*.8
+    arb_pt_2 = pt1*.9+pt2*.1
+    cnv.draw_point(arb_pt_1,fill=(3, 252, 53),size=4)
+    cnv.draw_point(arb_pt_2,fill=(252, 144, 3),size=4)
+    cnv.draw_arrow(np.array([0,0]), arb_pt_1,\
+				fill=(3, 252, 53),width=1,arr_bk=.9,arr_per=.1)
+    cnv.draw_arrow(np.array([0,0]), arb_pt_2,\
+				fill=(252, 144, 3),width=1,arr_bk=.9,arr_per=.1)
+    cnv.write_txt(arb_pt_1+np.array([.1,.1]),"B",(3, 252, 53))
+    cnv.write_txt(arb_pt_2+np.array([.1,.1]),"C",(252, 144, 3))
+    basedir = '.\\images\\RotatingCube\\'
+    cnv.im.save(basedir + "im" + str(idx) + ".png")
+
+
+def proof_perpend_dist(idx, r=planar_rotation(np.pi*3/20.0)):
+    mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
+    cnv = Canvas(mc)
+    cnv.draw_grid()
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]))
+    cnv.draw_2d_arrow(np.array([0,4]), np.array([0,-4]))
+    cnv.draw_point(np.array([0,0]),fill="yellow",size=5)
+    cnv.write_txt(np.array([0,0]),"O",(255,255,0,200))
+    pt1=np.array([-1,4])
+    pt2=np.array([3,-2])
+    l = Line(pt1,pt2)
+    cnv.draw_line(pt1, pt2,fill="purple")
+    cnv.draw_line(np.array([0,0]), l.closest_pt_from_origin*5,fill="white",width=1)
+    cnv.draw_point(l.closest_pt_from_origin,fill="blue",size=4)
+    cnv.draw_arrow(np.array([0,0]), l.closest_pt_from_origin*.6,\
+				fill="blue",width=3,arr_bk=.9,arr_per=.1)
+    cnv.write_txt(l.closest_pt_from_origin+np.array([.1,.1]),"A","blue")
+    arb_pt_1 = pt1*.2+pt2*.8+np.array([1,2])
+    cnv.draw_point(arb_pt_1,fill=(3, 252, 53),size=4)
+    cnv.draw_arrow(np.array([0,0]), arb_pt_1,\
+				fill=(3, 252, 53),width=1,arr_bk=.9,arr_per=.1)
+    cnv.write_txt(arb_pt_1+np.array([.1,.1]),"B",(3, 252, 53))
+    l1 = Line(-arb_pt_1,l.closest_pt_from_origin-arb_pt_1)
+    b_to_line = l1.closest_pt_from_origin+arb_pt_1
+    cnv.draw_line(arb_pt_1, b_to_line,\
+				fill=(3, 252, 53),width=1)
+    cnv.write_txt(b_to_line+np.array([.1,.1]),"B'",(3, 252, 53))
+    ##
+    l2 = Line(pt1-arb_pt_1,pt2-arb_pt_1)
+    b_to_main_line = l2.closest_pt_from_origin+arb_pt_1
+    cnv.draw_line(arb_pt_1, b_to_main_line,\
+				fill=(3, 252, 53),width=1)
+    cnv.write_txt(b_to_main_line+np.array([.1,.1]),"B''",(3, 252, 53))
+    basedir = '.\\images\\RotatingCube\\'
+    cnv.im.save(basedir + "im" + str(idx) + ".png")
 
