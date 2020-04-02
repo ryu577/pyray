@@ -1,12 +1,14 @@
 import math
 from scipy.spatial import ConvexHull
 
-from pyray.shapes.circle import *
+from pyray.shapes.oned.circle import *
 from pyray.axes import *
+from pyray.shapes.twod.plane import *
+from pyray.shapes.twod.functional import *
 
-def paraboloid(basepath='.\\'):
+
+def paraboloid_circles_rotatingplane(basepath='.\\', scale=200, shift=np.array([1000,1000,0])):
     im_ind = 0
-    #for i in np.concatenate((np.arange(1.1,20,1),np.arange(-20,-1.1,1)),axis=0):
     for i in (np.concatenate((np.arange(0.5,1,0.01), np.arange(1,3,0.05),np.arange(3,10,0.6)),axis=0) + 1e-4): #Controls the rotation of the plane.
         r2 = general_rotation(np.array([.3, .3, .3]), np.pi/i)
         r1 = np.eye(4)
@@ -18,7 +20,7 @@ def paraboloid(basepath='.\\'):
             im = Image.new("RGB", (2048, 2048), "black")
             draw = ImageDraw.Draw(im, 'RGBA')
             translate = np.array([0,0,1.5])
-            plane(draw, r, r2, 200, np.array([1000,1000,0]), translate)
+            rotated_xz_plane(draw, r, r2, scale, shift, translate)
             render_scene_4d_axis(draw, r1, 4)
             for z in np.arange(0.001, 3.5, 0.01):
                 #generalized_circle(draw, np.array([0,0,z]), np.array([0,0,1]), np.sqrt(z), r, rgba = (255,20,147,50))
@@ -31,50 +33,124 @@ def paraboloid(basepath='.\\'):
                     pt2 = np.dot(rot, pt1)
                     pt2Orig = np.dot(np.transpose(r),pt2)
                     if sum(pt2Orig * orthogonal_vec) - 1.5*orthogonal_vec[2] > 0:
-                        draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]), fill=(255,20,147,30), width=5)
+                        draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]),\
+                             fill=(255,20,147,100), width=5)
                     else:
-                        draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]), fill=(255,20,147,10), width=5)
+                        draw.line((pt1[0]*scale + shift[0], pt1[1]*scale+shift[1], pt2[0]*scale+shift[0], pt2[1]*scale+shift[1]),\
+                             fill=(255,20,147,40), width=5)
                     pt1 = pt2
-            #parabola(draw, r)
-            curve(draw, r, r2)
+            three_d_parabola(draw, r, r2)
             im.save(basepath + 'im' + str(im_ind) + '.png')
             im_ind = im_ind + 1
 
 
-def drawFunctionalXYGrid(draw, r, shift=np.array([1000.0, 1000.0, 0.0]),
-        scale=200.0, rgba=(0,255,0,120), fn=None, extent=10,
-        saperatingPlane=np.array([-1,-1,4]), rgba2=None):
-    '''
-    args:
-        saperatingPlane: Take the dot product of this plane with [x,y,1]. If <0, draw lighter planes.
-        rgba2: The color of the lighter portion of the plane.
-    '''
-    for i in range(-extent, extent, 1):
-        for j in range(-extent, extent, 1):
-            poly = gridSquarePolygon(i, j, r, shift, scale, fn)
-            if np.dot(np.array([i, j, 1]), saperatingPlane) > 0 or rgba2 is None:
-                draw.polygon(poly, rgba)
-            else:
-                draw.polygon(poly, rgba2)
+def paraboloid_circles(basepath='.\\', scale=200, shift=np.array([1000,1000,0])):
+    r2=general_rotation(np.array([0,0,1]),np.pi/2)
+    orthogonal_vec = np.dot(r2, np.array([0,1,0]))
+    r = rotation(3, 2*np.pi*4/30.0)
+    r1 = np.eye(4)
+    r1[:3,:3] = r
+    im = Image.new("RGB", (2048, 2048), "black")
+    draw = ImageDraw.Draw(im, 'RGBA')
+    translate = np.array([0,1.5,0])
+
+    #rotated_xz_plane(draw, r, r2, scale, shift, translate=translate)
+    render_scene_4d_axis(draw, r1, 4)
+    for z in np.arange(0.001, 3.5, 0.01):
+        generalized_arc(draw, r, np.array([0,0,z]), np.array([0,0,1]), np.array([np.sqrt(z),0,z]), 
+                        np.sqrt(z), 0.5, (255,20,147,50))
+        generalized_arc(draw, r, np.array([0,0,z]), np.array([0,0,1]), np.array([-np.sqrt(z),0,z]), 
+                        np.sqrt(z), 0.5, (255,20,147,10))
+    three_d_parabola(draw, r, r2)
+    im.save(basepath + 'im' + str(0) + '.png')
 
 
-def gridSquarePolygon(i, j, r, shift=np.array([1000.0, 1000.0, 0.0]), scale=200.0, fn=None):
+
+def paraboloid_dirty(im_ind=0, scale=200, shift=np.array([1000,1000,0]), opacity=60,
+                    basepath='.\\'):
+    #i=1
+    #r2 = general_rotation(np.array([.3, .3, .3]), np.pi/i)
+    r1 = np.eye(4)
+    rot = general_rotation(np.array([0,0,1]), np.pi/20.0 * (8 + im_ind/3.0))
+    j=4
+    #r = rotation(3, 2 * np.pi* j /30.0)
+    r=np.eye(3)
+    rr = general_rotation(np.array([0,1,0]), np.pi/20.0 * (im_ind/7.0))
+    r = np.dot(r,rr)
+    r = np.dot(r, rot)
+    r1[:3,:3] = r
+    im = Image.new("RGB", (2048, 2048), "black")
+    draw = ImageDraw.Draw(im, 'RGBA')
+    #translate = np.array([0, 0, 1.5])
+    render_scene_4d_axis(draw, r1, 4, scale, shift)
+    for z in np.arange(0.001, 3.5, 0.02):
+        if z<=1:
+            prcnt1=0.0; point1 = np.array([np.sqrt(z),0,z])
+            prcnt2=1.0; point2 = np.array([-np.sqrt(z),0,z])
+        else:
+            angle=2*np.arccos(1/np.sqrt(z))
+            prcnt1=-angle/2/np.pi; point1 = np.array([1,np.sqrt(z-1),z])
+            prcnt2=-1+prcnt1; point2 = np.array([-np.sqrt(z-1),1,z])
+        generalized_arc(draw, r, center=np.array([0,0,z]), vec=np.array([0,0,1]), 
+                        point=point1, 
+                        radius=np.sqrt(z), prcnt=prcnt1, rgba=(255,20,147,50))
+        generalized_arc(draw, r, np.array([0,0,z]), np.array([0,0,1]), point2, 
+                        np.sqrt(z), prcnt2, (255,20,147,10))
+    ## Highlight axes
+    xax1=np.array([-100.0,0,0.0]);xax1=np.dot(r,xax1)*scale+shift
+    xax2=np.array([100.0,0,0.0]);xax2=np.dot(r,xax2)*scale+shift
+    draw.line((xax1[0], xax1[1], xax2[0], xax2[1]), fill=(235,255,0), width=4)
+    xax1=np.array([0.0,-100,0.0]);xax1=np.dot(r,xax1)*scale+shift
+    xax2=np.array([0.0,100,0.0]);xax2=np.dot(r,xax2)*scale+shift
+    draw.line((xax1[0], xax1[1], xax2[0], xax2[1]), fill=(235,255,0), width=4)
+    xzgradients(draw, r, 1.0) # draws the arrows correponding to gradients.
+    ## Draw the plane.
+    pt1 = np.array([1.0,-1.2,0]); pt2 = np.array([1.0,1.2,0])
+    z = 1.2**2+1
+    pt3 = np.array([1.0,-1.2,z]); pt4 = np.array([1.0,1.2,z])
+    pt1 = np.dot(r,pt1)*scale+shift; pt2 = np.dot(r,pt2)*scale+shift
+    pt3 = np.dot(r,pt3)*scale+shift; pt4 = np.dot(r,pt4)*scale+shift
+    draw.polygon([(pt1[0], pt1[1]), (pt2[0], pt2[1]), (pt4[0], pt4[1]), (pt3[0], pt3[1])],\
+                    (0,102,255,150))
+    pt = np.array([1.0,0,1.0]);pt=np.dot(r,pt)*scale+shift
+    pt_z = np.array([0.0,0,1.0]); pt_z=np.dot(r,pt_z)*scale+shift
+    draw.line((pt[0], pt[1], pt_z[0], pt_z[1]), fill=(255,0,120), width=4)
+    pt_y = np.array([1.0,0,0.0]); pt_y=np.dot(r,pt_y)*scale+shift
+    #draw.line((pt[0], pt[1], pt_y[0], pt_y[1]), fill=(255,0,120), width=4)
+    draw.ellipse((pt[0]-10, pt[1]-10, pt[0]+10, pt[1]+10), fill = (0,255,0))
+    pt = shift
+    draw.ellipse((pt[0]-10, pt[1]-10, pt[0]+10, pt[1]+10), fill = (255,255,0))
+    im.save(basepath + 'im' + str(im_ind) + '.png')
+
+
+def xzgradients(draw, r, y):
+    for x in [-1.2,-0.7,-0.4,0.0,0.4,0.7,1.2]:
+        z = x*x + y*y
+        #draw_points(draw, r, y, x)
+        #arrowV1(draw,r,np.array([y,x,z]), np.array([2.5*y,2.5*x,z]), (204,102,255))
+        arrowV1(draw,r,np.array([y,x,z]), np.array([2.5*y,2.5*x,z]), (255,20,147))
+        #arrowV1(draw,r,np.array([y,x,z]), np.array([y+1.0,x,z]), (0,102,255))
+        arrowV1(draw,r,np.array([y,x,z]), np.array([y-1.0,x,z]), (0,102,255))
+
+
+def paraboloidTangent(draw, r, x1, y1, d = 1.0, rgba = (120,80,200,150), scale = 200, 
+                      shift = np.array([1000,1000,0])):
     '''
+    Draws a tangent plane to a paraboloid: x^2+y^2 = z at point given by coordinates (x1, y1)
     '''
-    poly = []
-    k = fn(i, j)
-    pt = np.array([i, j, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    k = fn(i+1, j)
-    pt = np.array([i+1, j, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    k = fn(i+1, j-1)
-    pt = np.array([i+1, j-1, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    k = fn(i, j-1)
-    pt = np.array([i, j-1, k])
-    poly.append(np.dot(r, pt) * scale + shift[:3])
-    return [(i[0], i[1]) for i in poly]
+    x2 = x1-d
+    y2 = y1+d
+    pt1 = np.dot(r, np.array([x2, y2, z_plane(x2, y2, x1, y1)])) * scale + shift[:3]
+    x2 = x1+d
+    y2 = y1+d
+    pt2 = np.dot(r, np.array([x2, y2, z_plane(x2, y2, x1, y1)])) * scale + shift[:3]
+    x2 = x1+d
+    y2 = y1-d
+    pt3 = np.dot(r, np.array([x2, y2, z_plane(x2, y2, x1, y1)])) * scale + shift[:3]
+    x2 = x1-d
+    y2 = y1-d
+    pt4 = np.dot(r, np.array([x2, y2, z_plane(x2, y2, x1, y1)])) * scale + shift[:3]
+    draw.polygon([(pt1[0], pt1[1]), (pt2[0], pt2[1]), (pt3[0], pt3[1]), (pt4[0], pt4[1])], rgba)
 
 
 def paraboloid(x, y, coeff=0.1, intercept=0.1):
@@ -83,7 +159,8 @@ def paraboloid(x, y, coeff=0.1, intercept=0.1):
     return coeff*(x**2 + y**2) - intercept
 
 
-def paraboloid_intersection(draw, r, x1, y1, coeff, intercept, shift=np.array([1000.0, 1000.0, 0.0]), scale=200.0,
+def paraboloid_intersection(draw, r, x1, y1, coeff, intercept, 
+    shift=np.array([1000.0, 1000.0, 0.0]), scale=200.0,
     rgba=(250,250,20), start_line=-12, extend=1.7, width=10):
     '''
     Draws the intersection arc of two paraboloids.
@@ -121,7 +198,7 @@ def draw_paraboloids(scale=12.5, basedir=".\\"):
     start_line = -12
     r1 = np.eye(4)
     for j in range(21,22):
-        r = rot.rotation(3, np.pi/30*j)
+        r = rotation(3, np.pi/30*j)
         r1[:3,:3] = r
         for i1 in range(20):
             i = 2.5*np.sin(i1*np.pi/10.0)
@@ -150,7 +227,7 @@ def draw_paraboloidsV2(scale=20.0, ind=0):
     start_line = -12.0
     r1 = np.eye(4)
     j = 21
-    r = rot.rotation(3, np.pi/30*j)
+    r = rotation(3, np.pi/30*j)
     r1[:3,:3] = r
     shift = np.array([1000.0, 1000.0, 0.0])
     for i1 in range(2,3):
@@ -202,17 +279,14 @@ def draw_paraboloidsV2(scale=20.0, ind=0):
             [a1, b1, d1] = [2*c*(x1-x0), 2*c*(y1-y0), c*(x1-x0)**2 + c*(y1-y0)**2 - i -2*c*(x1-x0)*x1 - 2*c*(y1-y0)*y1]
 
             [x0_1, y0_1] = [sep, sep]
-            [a2, b2, d2] = [2*c*(x1-x0_1), 2*c*(y1-y0_1), c*(x1-x0_1)**2 + c*(y1-y0_1)**2 - i -2*c*(x1-x0_1)*x1 - 2*c*(y1-y0_1)*y1]
-
+            [a2, b2, d2] = [2*c*(x1-x0_1), 2*c*(y1-y0_1), c*(x1-x0_1)**2 + c*(y1-y0_1)**2 \
+                - i -2*c*(x1-x0_1)*x1 - 2*c*(y1-y0_1)*y1]
             [line_pt1, line_pt2] = plane_intersection(draw, r, plane1=[a1, b1, d1], plane2=[a2, b2, d2],
                 x_start=pt_orig[0]-7, x_end=pt_orig[0]+7, scale=scale, shift=shift)
-
             generalizedParaboloidTangent(draw, r, pt_orig[0], pt_orig[1], d=10.0, x0=0, y0=0,
              c=c, i=i , scale=scale, shift=shift, line_pt1=line_pt1, line_pt2=line_pt2, rgba=(153,255,102,150))
-
             generalizedParaboloidTangent(draw, r, pt_orig[0], pt_orig[1], d=10.0, x0=sep, y0=sep,
              c=c, i=i , scale=scale, shift=shift, line_pt1=line_pt1, line_pt2=line_pt2, rgba=(255,204,102,150))
-
             mat = np.array([[a1, b1],[a2, b2]])
             rhs = np.array([-d1, -d2])
             pt_orig = np.linalg.solve(mat, rhs)
@@ -220,9 +294,44 @@ def draw_paraboloidsV2(scale=20.0, ind=0):
             pt = np.dot(r, pt_orig)*scale+shift
             draw.line((pt[0], pt[1], line_pt1[0], line_pt1[1]))
             draw.line((pt[0], pt[1], line_pt2[0], line_pt2[1]))
-
             drawXYGrid(draw, r, meshLen=1.0)
             im.save("Images\\RotatingCube\\im" + str(ind) + ".png")
+
+
+
+def three_d_parabola(draw, r, r2, scale = 200, shift = np.array([1000,1000,0])):
+    '''
+    Draws a curve described by the intersection of a plane with the paraboloid x^2+y^2 = z
+    params:
+        r: The rotation matrix the whole scene is rotated by
+        r2: The rotation matrix that the inetersecting plane is to be rotated by
+    '''
+    # Assume you start with the x-z plane
+    orthogonal_vec = np.array([0,1,0])
+    orthogonal_vec = np.dot(r2, orthogonal_vec)
+    b = 1.5
+    [thetax, thetay, thetaz] = orthogonal_vec
+    c1 = -thetax/thetaz/2
+    c2 = -thetay/thetaz/2
+    c3 = np.sqrt(b + c1**2 + c2**2)
+    x_min = max((c1 - abs(c3)),-np.sqrt(3.5))
+    x_max = min((c1 + abs(c3)),np.sqrt(3.5))
+    y = c2 + np.sqrt(c3*c3 - (x_min-c1)*(x_min-c1))
+    pt1 = np.dot(r, [x_min, y, (x_min**2+y**2)]) * scale + shift[:3]
+    for x in np.arange(x_min, x_max, 0.01):
+        y = c2 + np.sqrt(c3*c3 - (x-c1)*(x-c1))
+        pt2 = np.dot(r, [x, y, (x**2 + y**2)]) * scale + shift[:3]
+        if x**2 + y**2 < 3.5:
+            draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill = (204,102,255), width=5)
+        pt1 = pt2
+    y = c2 + np.sqrt(c3*c3 - (x_min-c1)*(x_min-c1))
+    pt1 = np.dot(r, [x_min, y, (x_min**2+y**2)]) * scale + shift[:3]
+    for x in np.arange(x_min, x_max, 0.01):
+        y = c2 - np.sqrt(c3*c3 - (x-c1)*(x-c1))
+        pt2 = np.dot(r, [x, y, (x**2 + y**2)]) * scale + shift[:3]
+        if x**2 + y**2 < 3.5:
+            draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill = (204,102,255), width=5)
+        pt1 = pt2
 
 
 def plane_intersection(draw, r, plane1=[0,0,0], plane2=[0,0,0], x_start=0, x_end=0, scale=200,
@@ -245,7 +354,7 @@ def plane_intersection(draw, r, plane1=[0,0,0], plane2=[0,0,0], x_start=0, x_end
     return [init_pt, fin_pt]
 
 
-def paraboloidTangent(draw, r, x1, y1, c=1.0, d = 1.0, rgba = (120,80,200,150), scale = 200,
+def paraboloidTangentV2(draw, r, x1, y1, c=1.0, d = 1.0, rgba = (120,80,200,150), scale = 200,
     shift = np.array([1000,1000,0]), line_pt1=None, line_pt2=None):
     '''
     Draws a tangent plane to a paraboloid: x^2+y^2 = z at point given by coordinates (x1, y1)
@@ -317,5 +426,6 @@ def generalizedParaboloidTangent(draw, r, x1, y1, d=1.0, x0=0.0, y0=0.0, rgba=(1
 def z_plane_generalized(x, y, x1, y1, x0, y0, c=1.0, i=0.0):
     d = c*(x1-x0)**2 + c*(y1-y0)**2 - i -2*c*(x1-x0)*x1 - 2*c*(y1-y0)*y1
     return 2*c*(x1-x0)*x + 2*c*(y1-y0)*y + d
+
 
 

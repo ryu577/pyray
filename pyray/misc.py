@@ -2,7 +2,8 @@ import numpy as np
 
 def zigzag(x):
     """
-    Returns a triangular function oscillating between an upper and lower bound (hard coded for now).
+    Returns a triangular function oscillating between an upper and lower bound 
+    (hard coded for now).
     """
     if x < 1:
         return 1 + x
@@ -12,6 +13,23 @@ def zigzag(x):
         return -17 + x
     else:
         return zigzag(x%22)
+
+def zigzag2(i, curr=.45, upper=.48, lower=.13):
+    """
+    Generalized version of the zig-zag function.
+    Returns points oscillating between two bounds
+    linearly.
+    """
+    if abs(i) <= (upper-curr):
+        return curr + i
+    else:
+        i = i - (upper-curr)
+        i = i%(2*(upper-lower))
+        if i < (upper-lower):
+            return upper-i
+        else:
+            return 2*lower-upper+i
+
 
 def scatter(n = 8, l = 5):
     """
@@ -53,11 +71,13 @@ def assign(n = 10, level = 3):
 
 def move_to_closest(theta, tri, p):
     """
-    Move an angle, theta towards the target it is closest to in an array of angles. The extent of movement is dedicated by p.
+    Move an angle, theta towards the target it is closest to in an array of angles. 
+    The extent of movement is dedicated by p.
     args:
         theta: Angles that is to be moved.
         tri: Array of angles. The closest one is chosen and theta moves towards it.
-        p: The extent to which the movement happens. 1 means full movement to the element of tri.
+        p: The extent to which the movement happens. 
+            1 means full movement to the element of tri.
     """
     final = tri[np.argmin((tri-theta)**2)]
     return theta + (final - theta) * p
@@ -110,3 +130,8 @@ def general_base(n, b, dim = None):
         indx = indx + 1
         n = int(n / b)
     return res
+
+
+def dist(pt1, pt2):
+	return np.sqrt(sum((pt2-pt1)**2))
+

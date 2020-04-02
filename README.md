@@ -30,19 +30,6 @@ Alternately, you can fork/download the code and run from the main folder:
 python setup.py install
 ```
 
-# Demonstrations
-So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
-
-Here are some that demonstrate the abilities of this code (also see below for some images created with it) - 
-
-1. <a href="https://www.youtube.com/watch?v=KuXnrg1YpiY">Binomial coefficients on hypercubes.</a>
-
-2. <a href="https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s">Why does Gradient descent work?</a>
-
-3. <a href="https://www.youtube.com/watch?v=STkcP5jcJYo">Introduction to Platonic solids</a>
-
-4. <a href="https://www.youtube.com/watch?v=57g6nQGBFcY">Slice a 4d hypercube (Teserract).</a>
-
 # Requirements
 I've made every effort to keep the requirements for this project to the bare minimum so most people can get it running with almost no pain. These are - 
 Python Imaging Library (PIL), numpy and scipy. For writing on math equations images using the methods in WriteOnImage.py, you'll need matplotlib and sympy. All of these can be installed quite easily with `pip install -r requirements.txt`
@@ -53,10 +40,10 @@ To keep things simple and the dependencies minimal, the program simply writes an
 You can run any method tagged @MoneyShot to see how this works. For example, you can run the following method from cube.py - 
 
 ```python
-from pyray.shapes.cube import *
+from pyray.shapes.solid.cube import *
 cube_with_cuttingplanes(7, popup=True)
 ```
-and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the folder where you run it from, file called im0.png). Something like this - 
+and this will generate a colorful 3d cube with diagonal cutting planes shaded in different colors (in the folder where you run it from, file called im0.png). Something like this (click to see what happens) - 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=KuXnrg1YpiY" 
 target="_blank"><img src="https://github.com/ryu577/pyray/blob/master/Images/cube_planes.png" 
@@ -88,11 +75,12 @@ alt="Image formed by above method" width="240" height="180" border="10" /></a>
 In case you're wondering, you can generate the images used in the gif above via:
 
 ```python
-from pyray.shapes.plane import *
+from pyray.shapes.twod.plane import *
 for i in range(20):
 	best_plane_direction(im_ind=i)
 ```
 
+If you think this is valuable, please star :)
 
 # Contributing
 
@@ -102,7 +90,7 @@ We welcome any kind of contribution, bug report, suggestion, new module, etc. An
 
 To create a bouncy sphere or a wavy sphere, run 
 ```python
-from pyray.shapes.sphere import *
+from pyray.shapes.solid.sphere import *
 draw_wavy_sphere_wrapper('.\\im', 66, 1)
 ```
 
@@ -110,13 +98,23 @@ draw_wavy_sphere_wrapper('.\\im', 66, 1)
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 ```python
-draw_oscillating_sphere('..\\images\\im', 20, 2)
+import numpy as np;from PIL import Image, ImageDraw, ImageFont, ImageMath;from pyray.axes import *
+from pyray.rotation import *;from pyray.axes import draw_2d_arrow, Path, ZigZagPath, draw_grid, draw_grey_grid
+from pyray.misc import dist
+
+im = draw_grid()
+draw = ImageDraw.Draw(im,'RGBA')
+pts = np.array([[0,0],[1,1],[5,-3]])
+pth = Path(pts)
+pth.zg.draw_lines(draw,i/10.0)
+im.save("im" + str(i) + ".png")
 ```
-<img src="https://github.com/ryu577/pyray/blob/master/Images/BouncySphere.gif" 
+<img src="https://camo.githubusercontent.com/a9229ef6577001fb21c262e75c472558061ee462/68747470733a2f2f73322e67696679752e636f6d2f696d616765732f416e6472655265666c636e2e676966" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
+
 ```python
-from pyray.shapes.polyhedron import *
+from pyray.shapes.solid.polyhedron import *
 basedir = '.\\'
 tr = Tetartoid()
 for i in range(0, 31):
@@ -127,24 +125,24 @@ for i in range(0, 31):
     im.save(basedir + "im" + str(i) + ".png")
 ```
 
-<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+<a href="https://www.youtube.com/watch?v=0JEFjS2fiTA&feature=youtu.be" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/tetartoid2.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 ```python
-from pyray.shapes.paraboloid import *
+from pyray.shapes.twod.paraboloid import *
 draw_paraboloids()
 ```
 
-<a href="https://www.youtube.com/watch?v=OV7c6S32IDU" 
+<a href="https://www.youtube.com/watch?v=acsSIyDugP0&t=53s" 
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/paraboloids.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
 
 
 ```python
-from pyray.shapes.pointswarm import *
+from pyray.shapes.zerod.pointswarm import *
 points_to_bins()
 ```
 
@@ -152,3 +150,15 @@ points_to_bins()
 target="_blank"><img src="https://github.com/ryu577/ryu577.github.io/blob/master/Downloads/classificn/classificn.gif" 
 alt="Image formed by above method" width="240" height="240" border="10" /></a>
 
+# Demonstrations
+So far, I've been using this to create YouTube videos for <a href="https://www.youtube.com/channel/UCd2Boc12Ora42VIJBULz0kA">my channel</a>.
+
+Here are some that demonstrate the abilities of this code (also see below for some images created with it) - 
+
+1. <a href="https://www.youtube.com/watch?v=KuXnrg1YpiY">Binomial coefficients on hypercubes.</a>
+
+2. <a href="https://www.youtube.com/watch?v=OV7c6S32IDU&t=3s">Why does Gradient descent work?</a>
+
+3. <a href="https://www.youtube.com/watch?v=STkcP5jcJYo">Introduction to Platonic solids</a>
+
+4. <a href="https://www.youtube.com/watch?v=57g6nQGBFcY">Slice a 4d hypercube (Teserract).</a>

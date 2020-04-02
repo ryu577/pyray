@@ -26,3 +26,5 @@ def heat_rgb(minimum, maximum, value):
     r = int(max(0, 255*(ratio - 1)))
     g = 255 - b - r
     return (r, g, b)
+
+

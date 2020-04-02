@@ -10,7 +10,7 @@ TEST_DEPS = ['pytest']
 DEV_DEPS = []
 
 setup(name='raypy',
-      version='0.0.0',
+      version='0.0.2',
       url='https://github.com/ryu577/pyray',
       license='MIT',
       author='Rohit Pandey',
@@ -18,6 +18,7 @@ setup(name='raypy',
       description='A 3d rendering library written completely in python.',
       packages=find_packages(exclude=['tests', 'Images', 'sounds']),
       long_description=open('README.md').read(),
+      long_description_content_type='text/markdown',
       zip_safe=False,
       install_requires=INSTALL_DEPS,
 
