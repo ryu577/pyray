@@ -6,11 +6,10 @@ from pyray.shapes.twod.paraboloid import *
 from pyray.shapes.solid.polyhedron import *
 from pyray.axes import *
 from pyray.rotation import *
-from pyray.axes import draw_2d_arrow, Path, ZigZagPath, draw_grid, draw_grey_grid
+from pyray.axes import Path, ZigZagPath, draw_grid, draw_grey_grid
 from pyray.misc import dist
 
-basedir = '.\\images\\RotatingCube\\'
-
+basedir = '.\\Images\\RotatingCube\\'
 
 class CreateGif(object):
 	@staticmethod

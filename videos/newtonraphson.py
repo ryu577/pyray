@@ -2,7 +2,7 @@ from functions.functionalforms import *
 from rotation.rotation import *
 from utils.imageutils import *
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-
+import numpy as np
 
 def create_2d_scene(scale=200.0,ind=0, base_ind=0, x0=-3.05):
     im = Image.new("RGB", (2048, 2048), (1, 1, 1))
