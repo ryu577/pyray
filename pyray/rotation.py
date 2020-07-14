@@ -9,7 +9,7 @@ This module provides methods to generate various kinds of rotation matrices.
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-from pyquaternion import Quaternion
+#from pyquaternion import Quaternion
 
 def planar_rotation(theta = np.pi*3/20.0):
     """

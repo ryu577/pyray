@@ -65,7 +65,6 @@ def paraboloid_circles(basepath='.\\', scale=200, shift=np.array([1000,1000,0]))
     im.save(basepath + 'im' + str(0) + '.png')
 
 
-
 def paraboloid_dirty(im_ind=0, scale=200, shift=np.array([1000,1000,0]), opacity=60,
                     basepath='.\\'):
     #i=1
