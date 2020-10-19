@@ -6,7 +6,7 @@ from pyray.shapes.twod.plot import Canvas
 from pyray.axes import ZigZagPath
 import pyray.grid as grd
 
-def tst(basedie=".\\"):
+def tst(basedir=".\\"):
     for i in range(11):
         im=Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im,'RGBA')
