@@ -12,7 +12,7 @@ def tst(basedir=".\\"):
         draw = ImageDraw.Draw(im,'RGBA')
         end1=np.array([6.0,6.0])
         end2=np.array([4.0,8.0])
-        end=end1*(1-i/10.0)+end2*(i/10.0)        
+        end=end1*(1-i/10.0)+end2*(i/10.0)
         gg=grd.Grid(end=end,\
                         center=np.array([0,0]),origin=np.array([40,256]),
                         rot=planar_rotation(-np.pi/4),scale=32)
