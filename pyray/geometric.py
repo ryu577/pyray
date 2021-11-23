@@ -11,7 +11,8 @@ def jarvis_convex_hull(points):
     """
     start_index = np.argmax(points[:,0])  # Point with the highest y-coordinate
     start_point = points[start_index]
-    result = [start_index[:]]
+    #result = [start_index[:]]
+    result = [start_index]
     added_points = {start_index}
     while True:
         for ref_index, ref_point in enumerate(points):

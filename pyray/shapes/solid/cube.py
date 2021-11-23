@@ -413,7 +413,9 @@ class Cube():
                                                 i.vertice2.binary]))
         self.classic_edges = np.array(self.classic_edges)
 
-    def plot_edges(self, r=None, seq=False, j=0):
+    def plot_edges(self, r=None, seq=False, j=0,
+                    shift=np.array([1000, 1000, 0, 0]),
+                    scale=500):
         """
         Plots all the edges of the hypercube.
         """
@@ -573,7 +575,7 @@ def teserract_body_diagonal(width=15, im_ind=70, scale=500,
     r[:3, :3] = rotation(3, np.pi*2*27/80.0)
     r1 = rotation(4, np.pi*2*im_ind/80.0)
     r = np.dot(r, r1)
-    [im, draw] = c1.plot_edges(r)
+    [im, draw] = c1.plot_edges2(r)
     rotated_vertices = np.transpose(
         np.dot(r, np.transpose(c1.vertice_matrix))
                                    ) * scale + shift[:4]

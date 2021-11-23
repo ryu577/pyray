@@ -33,7 +33,7 @@ pts=[gg.get_grid_pt(i,j) for i,j in [(0,0),(0,2),(3,2),(3,6),(6,6)]]
 pt1 = gg.get_grid_pt(0,0)
 pt2 = gg.get_grid_pt(6,6)
 
-zg=ZigZagPath(pts)
+zg = ZigZagPath(pts)
 
 for i in range(11):
     im=Image.new("RGB", (512, 512), (0,0,0))

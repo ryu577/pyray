@@ -27,7 +27,7 @@ def tst(basedir=".\\"):
         draw.line((0,pt1[1],512,pt1[1]), fill="purple", width=3)
         draw.ellipse((pt1[0]-5, pt1[1]-5, pt1[0]+5, \
                         pt1[1]+5),fill='blue')
-        
+
         ## Draw horizontal line corresponding to one above the main diagonal.
         pt1=gg.get_grid_pt(0,1)
         pt2=gg.get_grid_pt(5,6)
