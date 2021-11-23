@@ -1,12 +1,17 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-from pyray.shapes.paraboloid import *
-from pyray.shapes.pointswarm import *
+from pyray.shapes.twod.paraboloid import *
+from pyray.shapes.zerod.pointswarm import *
 from pyray.rotation import *
 from pyray.imageutils import *
 from pyray.axes import *
 import pandas as pd
+import os
 
+
+basedir = '.\\Images\\RotatingCube\\'
+if os.name == 'posix':
+    basedir = 'Images/RotatingCube/'
 
 #############################################################################
 ## Scene 1 - this is a space.
@@ -115,7 +120,7 @@ txt = "We can even give\neach point a score, the perpendicular\ndistance from th
 for i in range(60):
     dd1 = []
     (im, draw) = binary_classificn_pts(3, dd1)
-    writeStaggeredText(txt, draw, i, speed=2)
+    #writeStaggeredText(txt, draw, i, speed=2)
     for j in range(min(int(i/4), len(dd1))):
         pt = dd1[j]
         pt1 = np.concatenate((dd1[j],[0]))
@@ -151,7 +156,7 @@ for i in range(33):
         
     pt_c = (pt_1+pt_2)/2
     pt_c = np.concatenate((pt_c,[0]))
-    writeStaggeredText(txt, draw, i, speed=2)
+    #writeStaggeredText(txt, draw, i, speed=2)
     if i>3 and i<19:
         arrowV1(draw, np.eye(3), pt_c/100, pt_2_c/100, scale=100.0, shift=np.array([0,0,0]), rgb=(255,255,80))
         arrowV1(draw, np.eye(3), pt_c/100, pt_1_c/100, scale=100.0, shift=np.array([0,0,0]), rgb=(255,255,80))
@@ -165,18 +170,18 @@ for i in range(33):
 
 for i in range(11):
     (im, draw) = binary_classificn_pts(4, r=planar_rotation(-np.pi/4*(i)/10))
-    im.save("..\\images\\RotatingCube\\im" + str(int(i)) + ".png")
+    im.save(basedir + "/im" + str(int(i)) + ".png")
 
 #############################################################################
 ## Scene 10 - let it rain over me.
 txt = "Like this..."
 
-ind = 0
+ind = 11
 for t in range(180):
     if t%5==0:
         (im, draw) = binary_classificn_pts(5, r=planar_rotation(-np.pi/4), t1=t)
         #writeStaggeredText(txt, draw, ind, speed=1)
-        im.save("..\\images\\RotatingCube\\im" + str(int(ind)) + ".png")
+        im.save(basedir + "/im" + str(int(ind)) + ".png")
         ind+=1
 
 base = ind
@@ -186,15 +191,15 @@ for t in range(185):
     if t%5==0:
         (im, draw) = binary_classificn_pts(5, r=planar_rotation(-np.pi/4), t1=180, t2=t)
         #writeStaggeredText(txt, draw, base+ind, speed=1)
-        im.save("..\\images\\RotatingCube\\im" + str(int(base+ind)) + ".png")
+        im.save(basedir + "/im" + str(int(base+ind)) + ".png")
         ind+=1
 
 base+=ind
 for t in range(10):
     (im, draw) = binary_classificn_pts(5, r=planar_rotation(-np.pi/4), t1=180, t2=185)
     #writeStaggeredText(txt, draw, base+t, speed=1)
-    im.save("..\\images\\RotatingCube\\im" + str(int(base+t)) + ".png")
-    
+    im.save(basedir + "/im" + str(int(base+t)) + ".png")
+
 #############################################################################
 ## Scene 11 - not a bad model.
 
@@ -295,8 +300,8 @@ for j in np.arange(38):
     pt3 = (xx, 0)
     pt4 = (xx,2048)
     draw.polygon([pt1,pt2,pt3,pt4], fill=(20,255,102,max(100-j*3,10) ))
-    writeStaggeredText(txt, draw, j, speed=3)
-    im.save("..\\images\\RotatingCube\\im" + str(int(j)) + ".png")
+    #writeStaggeredText(txt, draw, j, speed=3)
+    im.save(basedir + "/im" + str(int(j)) + ".png")
 
 
 #############################################################################
@@ -312,7 +317,7 @@ for j in np.arange(38):
         hi2_ind=13, lo2_ind=9,
         xshift1=-j*3,xshift2=j*3)
     writeStaggeredText(txt, draw, j, speed=3)
-    im.save("..\\images\\RotatingCube\\im" + str(int(j)) + ".png")
+    im.save(basedir + "/im" + str(int(j)) + ".png")
 
 #############################################################################
 ## Scene 18 (static)- 
@@ -347,6 +352,5 @@ for j in np.arange(36):
         xshift1=-37*3,xshift2=37*3)
     writeStaggeredText(txt, draw, j, speed=3)
     im.save("..\\images\\RotatingCube\\im" + str(int(j)) + ".png")
-
 
 

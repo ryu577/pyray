@@ -7,9 +7,13 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import matplotlib as mpl
+import os
 
 
-basedir = '.\\images\\RotatingCube\\'
+basedir = '.\\Images\\RotatingCube\\'
+if os.name == 'posix':
+    basedir = 'Images/RotatingCube/'
+
 
 def draw_cubic():
     fn = lambda x,y: x**3+y**3
@@ -76,6 +80,7 @@ def paraboloid_w_grad(im_ind=0, scale=200, shift=np.array([1000,1000,0]), opacit
     im = Image.new("RGB", (2048, 2048), "black")
     draw = ImageDraw.Draw(im, 'RGBA')
     render_scene_4d_axis(draw, r1, 4, scale, shift)
+    # This is what draws the pink paraboloid.
     for z in np.arange(0.001, 3.5, 0.02):
         point1 = np.array([np.sqrt(z),0,z])
         generalized_arc(draw, r, center=np.array([0,0,z]), vec=np.array([0,0,1]), 
@@ -87,7 +92,7 @@ def paraboloid_w_grad(im_ind=0, scale=200, shift=np.array([1000,1000,0]), opacit
     xax1=np.array([0.0,-100,0.0]);xax1=np.dot(r,xax1)*scale+shift
     xax2=np.array([0.0,100,0.0]);xax2=np.dot(r,xax2)*scale+shift
     draw.line((xax1[0], xax1[1], xax2[0], xax2[1]), fill=(255,255,0), width=4)
-    gradients(draw,r)
+    #gradients(draw,r)
     pt = shift
     draw.ellipse((pt[0]-10, pt[1]-10, pt[0]+10, pt[1]+10), fill = (0,255,0))
     draw_paraboloid_plane(draw,r,3.3)
@@ -140,7 +145,7 @@ def plane_w_arrows(im_ind=0, scale=200,\
     pt3 = np.dot(r,pt3)*scale+shift; pt4 = np.dot(r,pt4)*scale+shift
     draw.polygon([(pt1[0], pt1[1]), (pt2[0], pt2[1]), (pt3[0], pt3[1]), (pt4[0], pt4[1])],\
                     (0,102,255,50))
-    
+
     draw_arrows(draw,r,rgba=(255,250,47),shift=shift)
     draw_arrows(draw,r,rot_angl=np.pi/2.0, rgba=(73,200,250),shift=shift)
     draw_arrows(draw,r,rot_angl=np.pi/2.0+np.pi/3, rgba=(255,20,147),shift=shift)
