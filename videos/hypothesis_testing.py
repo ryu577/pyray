@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 from pyray.shapes.oned.curve import *
-from pyray.axes import draw_2d_arrow
+from pyray.shapes.twod.plot import draw_2d_arrow
 from pyray.misc import zigzag2
 
 def draw_trtmt_hist(draw,h1=100,h2=100):

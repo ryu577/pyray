@@ -62,42 +62,51 @@ im.show()
 
 
 ########
+rot = general_rotation(np.array([1,0,0]), np.pi/2.0-0.1)
 im = Image.new("RGB", (2048, 2048), "black")
 draw = ImageDraw.Draw(im, 'RGBA')
-draw; r=rot; vec=np.array([0,0,1]); point=np.array([1,0,0]); prcnt=1
-rgba=(255, 0, 0, 100);
-scale=200;
-shift=np.array([1000, 1000, 0]);
-width=5
 
-pt1 = np.dot(r, point)
-vec = vec / sum(vec**2)**0.5
-theta = np.pi * 2.0 / 80.0 * prcnt
+for k in range(10):
+    generalized_arc(draw, r=np.eye(3), vec=np.array([0,0,1]),
+                    point=np.array([1+k/80,0,0]),
+                    prcnt=1.0
+                    , rgba="red")
 
-for i in range(0, 80):
-    if i<40:
-        r = general_rotation(np.array([1,0,0]), np.pi/2.0-0.2)
-        r1 = general_rotation(np.dot(r, vec), theta)
-    else:
-        r = np.eye(3)
-        r1 = general_rotation(np.dot(r, vec), theta)
-    pt2 = np.dot(r1, pt1)
-    draw.line(
-        (pt1[0] *
-            scale +
-            shift[0],
-            pt1[1] *
-            scale +
-            shift[1],
-            pt2[0] *
-            scale +
-            shift[0],
-            pt2[1] *
-            scale +
-            shift[1]),
-        fill=rgba,
-        width=width)
-    pt1 = pt2
+for k in range(30):
+    draw; r=rot; vec=np.array([0,0,1]); point=np.array([1+k/80,0,0]); prcnt=1
+    rgba=(255, 0, 0, 100);
+    scale=200;
+    shift=np.array([1000, 1000, 0]);
+    width=5
+
+    pt1 = np.dot(r, point)
+    vec = vec / sum(vec**2)**0.5
+    theta = np.pi * 2.0 / 80.0 * prcnt
+
+    for i in range(0, 80):
+        if i<40:
+            r = general_rotation(np.array([1,0,0]), np.pi/2.0-0.2)
+            r1 = general_rotation(np.dot(r, vec), theta)
+        else:
+            r = np.eye(3)
+            r1 = general_rotation(np.dot(r, vec), theta)
+        pt2 = np.dot(r1, pt1)
+        draw.line(
+            (pt1[0] *
+                scale +
+                shift[0],
+                pt1[1] *
+                scale +
+                shift[1],
+                pt2[0] *
+                scale +
+                shift[0],
+                pt2[1] *
+                scale +
+                shift[1]),
+            fill=rgba,
+            width=width)
+        pt1 = pt2
 
 
 

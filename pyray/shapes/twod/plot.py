@@ -151,6 +151,9 @@ class Canvas(object):
         self.draw.text(pos1,txt,rgba,font=font)
 
 
+def draw_2d_arrow(draw,start,end,rgba='grey',r=np.eye(2)):
+    return Canvas.draw_2d_arrow_s(draw, start, end, rgba)
+
 def tst_2d_plot():
     mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
     cnv = Canvas(mc)
