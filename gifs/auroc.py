@@ -168,7 +168,7 @@ def draw_full(gap=50, std=30, alpha=0.15865525393145707,
     
     draw_two_gauss(draw, gap=gap, std=std, alpha=alpha)
     #draw_alpha_beta_curve(draw,alpha,std=std,effect=gap,draw_curve=True)
-    #draw_roc_curve(draw,alpha,std=std,effect=gap,draw_curve=True)
+    draw_roc_curve(draw,alpha,std=std,effect=gap,draw_curve=True)
     draw_confusion_matrix(draw)
     if not write:
         im.show()
