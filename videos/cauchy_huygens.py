@@ -11,9 +11,10 @@ if os.name == 'posix':
 
 im = Image.new("RGB", (512,512), "black")
 draw = ImageDraw.Draw(im, 'RGBA')
-fn = lambda x:500-cauchy.pdf((x-250)/50)*700
+fn = lambda x:256-cauchy.pdf((x-256)/50)*700
 draw_curve(fn,draw)
-draw.line((0,500,512,500),fill="white",width=1)
-draw.line((250,0,250,512),fill="white",width=1)
+draw.line((0,256,512,256),fill="white",width=1)
+draw.line((256,0,256,512),fill="white",width=1)
+draw.line((0,512,512,0),fill="red",width=2)
 im.save(basedir + 'im' + str(0) + '.png')
 

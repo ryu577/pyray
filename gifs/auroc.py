@@ -134,17 +134,19 @@ def betafn(alpha,effect,std):
     return norm.cdf(-effect+norm.isf(alpha,0,std),0,std)
 
 
-def draw_two_gauss(ix=0,extrema=500,std=30,h1=0,h2=0,gap=50,
+def draw_two_gauss(draw,ix=0,extrema=500,std=30,h1=0,h2=0,gap=50,
                     alpha=0.15865525393145707):
-    im = Image.new("RGB", (512,512), "black")
-    draw = ImageDraw.Draw(im, 'RGBA')
     fn = lambda x:300-norm.pdf(x-250,0,std)*7000
     draw_curve(fn, draw, rgba="green")
     fn2 = lambda x:300-norm.pdf(x-250,gap,std)*7000
     draw_curve(fn2,draw,rgba="red")
     delta = norm.isf(alpha,0,std)
+    color_graphs(draw, delta, fn, fn2, extrema)
+
+
+def color_graphs(draw, delta, fn, fn2, extrema):
     x1 = 250+delta
-    #draw.line((x1,0,x1,512),fill=(255,255,0,150),width=1)
+    draw.line((x1,0,x1,512),fill=(255,255,0,150),width=1)
     y1 = fn(x1)
     pts = [(x1,y1),(x1,300),(extrema,fn(extrema))]
     for xx in np.arange(extrema-1,x1,-1):
@@ -157,14 +159,16 @@ def draw_two_gauss(ix=0,extrema=500,std=30,h1=0,h2=0,gap=50,
         yx = fn2(xx)
         pts.append((xx,yx))
     draw.polygon(pts,(255,0,0,100))
-    return im, draw
 
 
-def draw_full(gap=50, std=30, alpha=0.15865525393145707, 
+def draw_full(gap=50, std=30, alpha=0.15865525393145707,
          write=False, ix=0):
-    im, draw = draw_two_gauss(gap=gap, std=std, alpha=alpha)
+    im = Image.new("RGB", (512,512), "black")
+    draw = ImageDraw.Draw(im, 'RGBA')
+    
+    draw_two_gauss(draw, gap=gap, std=std, alpha=alpha)
     #draw_alpha_beta_curve(draw,alpha,std=std,effect=gap,draw_curve=True)
-    draw_roc_curve(draw,alpha,std=std,effect=gap,draw_curve=True)
+    #draw_roc_curve(draw,alpha,std=std,effect=gap,draw_curve=True)
     draw_confusion_matrix(draw)
     if not write:
         im.show()
