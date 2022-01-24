@@ -1,8 +1,7 @@
 import colorsys
 
-import numpy as np
-
 # An array of colors to be used when multi colored images need to be drawn.
+
 colors = [
     (120, 80, 200),
     (200, 80, 100),
