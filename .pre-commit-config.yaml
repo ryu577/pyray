@@ -1,0 +1,18 @@
+repos:
+- repo: https://github.com/psf/black
+  # Make sure you update .circleci/config.yml and requirements-dev-extra.txt to match versions!
+  rev: 20.8b1
+  hooks:
+  - id: black
+    name: "python:black"
+    entry: black --config .black.toml
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.8.4
+  hooks:
+  - id: flake8
+    name: "python:flake8"
+- repo: https://github.com/pycqa/isort
+  rev: 5.7.0
+  hooks:
+  - id: isort
+    name: "python:isort"
