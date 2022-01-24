@@ -9,7 +9,7 @@ This module provides methods to generate various kinds of rotation matrices.
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageMath
-
+#from pyquaternion import Quaternion
 
 def planar_rotation(theta = np.pi*3/20.0):
     """
@@ -109,6 +109,15 @@ def axis_rotation(pt1, pt2, theta):
     rot = np.eye(4)
     rot[:3,:3] = general_rotation(pt2-pt1,theta)
     return np.dot(np.dot(tr_inv,rot),tr)
+
+
+def rotate_point_about_axis(pt, ax_pt1, ax_pt2, theta):
+    """
+    """
+    pt_translated = pt-ax_pt1
+    r_matrix = general_rotation(ax_pt2-ax_pt1,theta)
+    pt_rotated = np.dot(r_matrix,pt_translated)
+    return pt_rotated+ax_pt1    
 
 
 def axisangle(a, theta):

@@ -85,6 +85,8 @@ def draw_base_diagram(origin=np.array([8,8])):
 def tst():
 	basedir = '.\\images\\RotatingCube\\'
 	im = draw_base_diagram()
+    draw = ImageDraw.Draw(im,'RGBA')
+
 	im.save(basedir + "im" + str(0) + ".png")
 
 ##############################################################
@@ -228,4 +230,41 @@ def proof_perpend_dist(idx, r=planar_rotation(np.pi*3/20.0)):
     cnv.write_txt(b_to_main_line+np.array([.1,.1]),"B''",(3, 252, 53))
     basedir = '.\\images\\RotatingCube\\'
     cnv.im.save(basedir + "im" + str(idx) + ".png")
+
+
+def three_pt_example(u=3,ix=0):
+    mc = MapCoord(im_size=np.array([512,512]),origin=np.array([4,4]))
+    cnv = Canvas(mc)
+    cnv.draw_grid()
+    cnv.draw_2d_arrow(np.array([-4,0]), np.array([4,0]))
+    cnv.draw_2d_arrow(np.array([0,4]), np.array([0,-4]))
+    cnv.draw_point(np.array([0,0]),fill="yellow",size=5)
+    if u > 1:
+        pt1=np.array([-4,4])
+        pt2=np.array([4,-4])        
+    elif u > -1 and u < 1:
+        pt1=np.array([-4,4])+np.array([(u-1)/2,(u-1)/2])
+        pt2=np.array([4,-4])+np.array([(u-1)/2,(u-1)/2])
+    cnv.draw_line(pt1, pt2,fill="purple")
+    pt1=np.array([4,4])
+    pt2=np.array([-4,-4])
+    cnv.draw_line(pt1, pt2,fill="yellow")
+    font = ImageFont.truetype("arial.ttf", 18)
+    pos = MapCoord.plot_to_im_s(1,1,np.array([8,8]),scale=64)
+    cnv.write_txt(np.array([1,1]),"(1,1)","green")
+    cnv.draw_point(np.array([1,1]),fill="green",size=5)
+    #draw.text(pos, "(1,1)", (25,255,25), font=font)
+    pos = MapCoord.plot_to_im_s(-1,-1,np.array([8,8]),scale=64)
+    #draw.text(pos, "(-1,-1)", (255,25,25), font=font)
+    cnv.write_txt(np.array([-1,-1]),"(-1,-1)","red")
+    cnv.draw_point(np.array([-1,-1]),fill="red",size=5)
+    cnv.write_txt(np.array([u,u]),"(u,u)","green")
+    cnv.draw_point(np.array([u,u]),fill="green",size=5)
+    basedir = '.\\images\\RotatingCube\\'
+    cnv.im.save(basedir + "im" + str(ix) + ".png")
+
+ix=0
+for u in np.arange(4,-1,-0.3):
+    three_pt_example(u,ix)
+    ix+=1
 

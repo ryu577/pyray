@@ -340,20 +340,20 @@ class ZigZagPath(object):
 			self.distances.append(dist(self.points[i], self.points[i+1]))
 		self.distances = np.array(self.distances)
 
-	def draw_lines(self, draw, prop_dist=1.0, width=7):
+	def draw_lines(self, draw, prop_dist=1.0, width=7, fill=(255,250,204)):
 		remaining_dist = sum(self.distances)*prop_dist
-		total_dist = remaining_dist
+		#total_dist = remaining_dist
 		for i in range(len(self.distances)):
 			if remaining_dist < self.distances[i]:
 				pp = float(remaining_dist/self.distances[i])
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
 				pt2 = pp*pt2+(1-pp)*pt1
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=width)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=fill, width=width)
 				break
 			else:
 				pt1 = self.points[i]
 				pt2 = self.points[i+1]
-				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=(255,250,204), width=width)
+				draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), fill=fill, width=width)
 				remaining_dist -= self.distances[i]
 

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def zigzag(x):
     """
     Returns a triangular function oscillating between an upper and lower bound 
@@ -13,6 +14,7 @@ def zigzag(x):
         return -17 + x
     else:
         return zigzag(x%22)
+
 
 def zigzag2(i, curr=.45, upper=.48, lower=.13):
     """

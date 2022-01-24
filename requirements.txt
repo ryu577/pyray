@@ -1,3 +1,5 @@
 PIL
 numpy
 scipy
+pyquaternion
+

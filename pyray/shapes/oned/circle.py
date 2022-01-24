@@ -114,18 +114,21 @@ def generalized_circle2(draw, center, vec, radius, r, scale=200, shift=np.array(
         pt1 = pt2
 
 
-def generalized_arc(draw, r, center, vec, point, radius, prcnt=1, rgba=(
-        255,0,0,100), scale=200, shift=np.array([1000,1000,0]),width=5):
+def generalized_arc(draw, r, vec, point, prcnt=1, rgba=(
+                    255, 0, 0, 100),
+                    scale=200,
+                    shift=np.array([1000, 1000, 0]),
+                    width=5):
     """
-    Same as generalized_circle, but instead of drawing the whole circle, only draws a portion of it.
+    Same as generalized_circle, but instead of
+    drawing the whole circle, only draws a portion of it.
     """
     pt1 = np.dot(r, point)
     vec = vec / sum(vec**2)**0.5
     theta = np.pi * 2.0 / 80.0 * prcnt
     r1 = general_rotation(np.dot(r, vec), theta)
-    for j in range(0, 80):
+    for _ in range(0, 80):
         pt2 = np.dot(r1, pt1)
-        #draw.ellipse( (pt2[0]-2,pt2[1]-2,pt2[0]+2,pt2[1]+2), fill = (68,193,195), outline = (68,193,195))
         draw.line(
             (pt1[0] *
              scale +

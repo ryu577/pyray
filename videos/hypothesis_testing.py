@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 from pyray.shapes.oned.curve import *
-from pyray.axes import draw_2d_arrow
+from pyray.shapes.twod.plot import draw_2d_arrow
 from pyray.misc import zigzag2
 
 def draw_trtmt_hist(draw,h1=100,h2=100):
@@ -82,6 +82,34 @@ def draw_two_gauss(ix=0,extrema=500,std=50,h1=0,h2=0,gap=50,
         yx = fn2(xx)
         pts.append((xx,yx))
     draw.polygon(pts,(138,43,226,100))
+    draw_trtmt_hist(draw,h1=h1,h2=h2)
+    draw_alpha_beta_curve(draw,alpha,std=std,effect=gap)
+    im.save(basedir + 'im' + str(ix) + '.png')
+
+
+def draw_two_gauss_white(ix=0,extrema=500,std=50,h1=0,h2=0,gap=50,
+                    alpha=0.15865525393145707):
+    im = Image.new("RGB", (512,512), "white")
+    draw = ImageDraw.Draw(im, 'RGBA')
+    fn = lambda x:300-norm.pdf(x-250,0,std)*7000
+    draw_curve(fn,draw,rgba=(0,0,255))
+    fn2 = lambda x:300-norm.pdf(x-250,gap,std)*7000
+    draw_curve(fn2,draw,rgba=(0,255,0))
+    delta = norm.isf(alpha,0,std)
+    x1 = 250+delta
+    draw.line((x1,0,x1,512),fill=(255,0,0,150),width=1)
+    y1 = fn(x1)
+    pts = [(x1,y1),(x1,300),(extrema,fn(extrema))]
+    for xx in np.arange(extrema-1,x1,-1):
+        yx = fn(xx)
+        pts.append((xx,yx))
+    draw.polygon(pts,(0,0,255,100))
+    y2=fn2(x1)
+    pts = [(x1,y2),(x1,300),(180,fn2(180))]
+    for xx in np.arange(179+1,x1,1):
+        yx = fn2(xx)
+        pts.append((xx,yx))
+    draw.polygon(pts,(0,255,0,100))
     draw_trtmt_hist(draw,h1=h1,h2=h2)
     draw_alpha_beta_curve(draw,alpha,std=std,effect=gap)
     im.save(basedir + 'im' + str(ix) + '.png')
