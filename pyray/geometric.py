@@ -9,9 +9,9 @@ def jarvis_convex_hull(points):
         points: An array of numpy arrays representing
         the points to be convex hulled in any order.
     """
-    start_index = np.argmax(points[:,0])  # Point with the highest y-coordinate
+    start_index = np.argmax(points[:, 0])  # Point with the highest y-coordinate
     start_point = points[start_index]
-    #result = [start_index[:]]
+    # result = [start_index[:]]
     result = [start_index]
     added_points = {start_index}
     while True:
@@ -47,7 +47,6 @@ def jarvis_convex_hull(points):
 
         if exit_:
             return result
-
 
 
 def distance(pt1, pt2):
