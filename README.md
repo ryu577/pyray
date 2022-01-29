@@ -86,6 +86,17 @@ If you think this is valuable, please star :)
 
 We welcome any kind of contribution, bug report, suggestion, new module, etc. Anything is welcome.
 
+# Install pre-commit hooks
+
+The pre-commit hooks will run a set of linters and formmatters automatically against your code when
+you commit. This enforces a common set of style standards and checks for common, simple mistakes in
+code. If you have a project-specific set of hooks, install those instead. Otherwise, install the repo-wide hooks. From root:
+
+```shell
+pip install pre-commit
+pre-commit install
+```
+
 # Other examples
 
 To create a bouncy sphere or a wavy sphere, run 
