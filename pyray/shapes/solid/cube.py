@@ -220,6 +220,8 @@ class Face():
         """
         Plots the current face on the image whose draw object is passed.
         """
+        shift = np.array([256,256,0])
+        scale = 15
         rotated_face = np.transpose(np.dot(r, np.transpose(self.face_matrix)))
         [v1, v2, v3, v4] = shift + scale * rotated_face
         # First v4 then v3 because edges are not in increasing order
@@ -484,7 +486,7 @@ class Cube():
                 body = self.bodies[bi]
                 body.plot(r, draw, colors[bi])
                 indx = indx + 1
-        im.save('Images\\RotatingCube\\im' + str(j) + '.png')
+        im.save('Images//RotatingCube//im' + str(j) + '.png')
 
 
 def new_vector(r, v, dim=4):

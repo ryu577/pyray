@@ -127,11 +127,19 @@ def axis_rotation(pt1, pt2, theta):
 
 
 def rotate_point_about_axis(pt, ax_pt1, ax_pt2, theta):
-    """ """
+    """Rotate a point, pt about an axis given by ax_pt1 and ax_pt2."""
     pt_translated = pt - ax_pt1
     r_matrix = general_rotation(ax_pt2 - ax_pt1, theta)
     pt_rotated = np.dot(r_matrix, pt_translated)
     return pt_rotated + ax_pt1
+
+
+def rotate_points_about_axis(pts, ax_pt1, ax_pt2, theta):
+    """Rotate a point, pt about an axis given by ax_pt1 and ax_pt2."""
+    pts_translated = pts - ax_pt1
+    r_matrix = general_rotation(ax_pt2 - ax_pt1, theta)
+    pts_rotated = np.transpose(np.dot(r_matrix, np.transpose(pts_translated)))
+    return pts_rotated + ax_pt1
 
 
 def axisangle(a, theta):
