@@ -54,7 +54,7 @@ def char2coord(ch):
 
 
 class Edge():
-    def __init__(face1, face2):
+    def __init__(self, face1, face2):
         self.face1 = face1
         self.face2 = face2
 
@@ -63,6 +63,7 @@ class GraphCube():
     def __init__(self, survive_ros={}):
         self.white_verts = set()
         self.grey_verts = set()
+        self.grey_rots = {}
         self.black_verts = set()
         self.adj = defaultdict(dict)
         self.vert_props = {}
@@ -107,6 +108,11 @@ class GraphCube():
     def dfs_rotate(self, u):
         """This code does not work, we will have to rotate explicitly"""
         self.vert_props[u].color = "grey"
+        self.grey_verts.add(u)
+        # Apply all the rotations.
+        for kk in self.grey_rots.keys():
+            ax1, ax2 = self.grey_rots[kk]
+            self.vert_props[u].rotate_face(ax1, ax2, np.pi/2)
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 # Apply rotations of grey vertices.
@@ -124,8 +130,12 @@ class GraphCube():
             if self.vert_props[v].color == "white":
                 x1, y1 = map_to_plot(self.vert_props[v].x, self.vert_props[v].y)
                 self.draw.line((x, y, x1, y1),
-                                fill = (255,255,0), width = 1)
+                               fill=(255, 255, 0), width=1)
                 self.dfs_plot(v)
+
+
+def get_rot_ax(f1, f2):
+    return np.array([1,1,1]), np.array([-1,1,1])
 
 
 def map_to_plot(x, y):
