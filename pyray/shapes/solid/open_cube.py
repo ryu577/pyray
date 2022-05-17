@@ -106,7 +106,6 @@ class GraphCube():
             print(str(self.vert_props[k].__dict__))
 
     def dfs_rotate(self, u):
-        """This code does not work, we will have to rotate explicitly"""
         self.vert_props[u].color = "grey"
         self.grey_verts.add(u)
         # Apply all the rotations.
@@ -116,6 +115,7 @@ class GraphCube():
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 # Apply rotations of grey vertices.
+                self.grey_rots[v] = get_rot_ax(vert_props[u], vert_props[v])
                 self.dfs_rotate(v)
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
