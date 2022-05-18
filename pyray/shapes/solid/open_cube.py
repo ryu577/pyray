@@ -21,10 +21,7 @@ class Face():
             self.vertices = np.insert(vertices, 1, self.y, axis=1)
         else:
             self.vertices = np.insert(vertices, 2, self.z, axis=1)
-        
-        # The flattened coordinates.
-        self.x1 = 0
-        self.y1 = 0
+        self.o_verts = self.vertices.copy()
 
     def plot(self, draw, r=np.eye(3),
              shift = np.array([256,256,0]),
@@ -105,18 +102,19 @@ class GraphCube():
         for k in self.vert_props.keys():
             print(str(self.vert_props[k].__dict__))
 
-    def dfs_rotate(self, u):
+    def dfs_flatten(self, u):
         self.vert_props[u].color = "grey"
         self.grey_verts.add(u)
         # Apply all the rotations.
         for kk in self.grey_rots.keys():
-            ax1, ax2 = self.grey_rots[kk]
-            self.vert_props[u].rotate_face(ax1, ax2, np.pi/2)
+            if kk not in black_verts:
+                ax1, ax2 = self.grey_rots[kk]
+                self.vert_props[u].rotate_face(ax1, ax2, np.pi/2)
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 # Apply rotations of grey vertices.
                 self.grey_rots[v] = get_rot_ax(vert_props[u], vert_props[v])
-                self.dfs_rotate(v)
+                self.dfs_flatten(v)
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
 
@@ -135,7 +133,15 @@ class GraphCube():
 
 
 def get_rot_ax(f1, f2):
-    return np.array([1,1,1]), np.array([-1,1,1])
+    x1, y1, z1 = f1.x, f1,y, f1,z
+    x2, y2, z2 = f2.x, f2.y, f2.z
+    x3, y3, z3 = x1+x2, y1+y2, z1+z2
+    if x3 == 0:
+        return f1.vertices[f1.o_verts==[1,y3,z3]], f1.vertices[f1.o_verts==[-1,y3,z3]]
+    elif y3 == 0:
+        return f1.vertices[f1.o_verts==[x3,1,z3]], f1.vertices[f1.o_verts==[x3,-1,z3]]
+    else:
+        return f1.vertices[f1.o_verts==[x3,y3,1]], f1.vertices[f1.o_verts==[x3,y3,-1]]
 
 
 def map_to_plot(x, y):
