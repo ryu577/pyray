@@ -57,7 +57,7 @@ class Edge():
 
 
 class GraphCube():
-    def __init__(self, survive_ros={}):
+    def __init__(self, survive_ros={}, angle=np.pi/12):
         self.white_verts = set()
         self.grey_verts = set()
         self.grey_rots = {}
@@ -66,6 +66,7 @@ class GraphCube():
         self.vert_props = {}
         self.cov_p = set()
         self.cov_p.add((0,0))
+        self.angle = angle
         self.edges = [['-00','0+0'],#2
                       ['-00','0-0'],#1
                       ['-00','00-'],#5
@@ -107,13 +108,13 @@ class GraphCube():
         self.grey_verts.add(u)
         # Apply all the rotations.
         for kk in self.grey_rots.keys():
-            if kk not in black_verts:
+            if kk not in self.black_verts:
                 ax1, ax2 = self.grey_rots[kk]
-                self.vert_props[u].rotate_face(ax1, ax2, np.pi/2)
+                self.vert_props[u].rotate_face(ax1, ax2, self.angle)
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 # Apply rotations of grey vertices.
-                self.grey_rots[v] = get_rot_ax(vert_props[u], vert_props[v])
+                self.grey_rots[v] = get_rot_ax(self.vert_props[u], self.vert_props[v])
                 self.dfs_flatten(v)
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
@@ -131,17 +132,34 @@ class GraphCube():
                                fill=(255, 255, 0), width=1)
                 self.dfs_plot(v)
 
+    def reset_colors(self):
+        for k in self.vert_props.keys():
+            self.vert_props[k].color = "white"
+
+    def dfs_plot_2(self, u):
+        """Assumes a draw object and rotation object attached to graph"""
+        self.vert_props[u].plot(self.draw, self.r,
+                                       scale=40,
+                                       rgba=(12, 90, 190, 90))
+        self.vert_props[u].color = "grey"
+        for v in self.adj[u]:
+            if self.vert_props[v].color == "white":
+                self.dfs_plot_2(v)
+
 
 def get_rot_ax(f1, f2):
-    x1, y1, z1 = f1.x, f1,y, f1,z
+    x1, y1, z1 = f1.x, f1.y, f1.z
     x2, y2, z2 = f2.x, f2.y, f2.z
     x3, y3, z3 = x1+x2, y1+y2, z1+z2
     if x3 == 0:
-        return f1.vertices[f1.o_verts==[1,y3,z3]], f1.vertices[f1.o_verts==[-1,y3,z3]]
+        return (f1.vertices[(f1.o_verts==[1,y3,z3]).sum(axis=1)==3][0], 
+                f1.vertices[(f1.o_verts==[-1,y3,z3]).sum(axis=1)==3][0])
     elif y3 == 0:
-        return f1.vertices[f1.o_verts==[x3,1,z3]], f1.vertices[f1.o_verts==[x3,-1,z3]]
+        return (f1.vertices[(f1.o_verts==[x3,1,z3]).sum(axis=1)==3][0], 
+                f1.vertices[(f1.o_verts==[x3,-1,z3]).sum(axis=1)==3][0])
     else:
-        return f1.vertices[f1.o_verts==[x3,y3,1]], f1.vertices[f1.o_verts==[x3,y3,-1]]
+        return (f1.vertices[(f1.o_verts==[x3,y3,1]).sum(axis=1)==3], 
+                f1.vertices[(f1.o_verts==[x3,y3,-1]).sum(axis=1)==3])
 
 
 def map_to_plot(x, y):
@@ -192,3 +210,19 @@ def tst_plot_faces():
         f.rotate_face(np.array([-1,-1,-1]), np.array([-1,-1,1]), -np.pi/6*ix/10)
         f.plot(draw, r, scale=80, rgba=(12, 90, 190, 90))
         im.save("Images//RotatingCube//im" + str(ix) + ".png")
+
+
+def tst_open_cube():
+    for i in range(19):
+        im = Image.new("RGB", (512, 512), (0,0,0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
+        gr.draw = draw
+        r = general_rotation(np.array([1,1,1]), np.pi/6)
+        gr.r = r
+        gr.dfs_flatten('0+0')
+        gr.reset_colors()
+        gr.dfs_plot_2('0+0')
+        im.save("Images//RotatingCube//im" + str(i) + ".png")
+
+
