@@ -197,9 +197,11 @@ def tst_all_cuts():
         gr = GraphCube(survive, -np.pi/2)
         gr.dfs('0+0')
         if len(gr.black_verts) == 6:
+            print(combo)
             im = Image.new("RGB", (512, 512), (0,0,0))
             draw = ImageDraw.Draw(im,'RGBA')
             gr.r = r
+            gr.reset_vert_col()
             gr.dfs_flatten('0+0')
             gr.draw = draw
             gr.reset_vert_col()
@@ -228,12 +230,11 @@ def tst_open_cube():
         im = Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im, 'RGBA')
         gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
+        #gr = GraphCube({0, 1, 2, 3, 6}, -np.pi/2*i/18)
         gr.draw = draw
         r = general_rotation(np.array([1,1,1]), np.pi/6)
         gr.r = r
-        gr.dfs_flatten('00+')
+        gr.dfs_flatten('0+0')
         gr.reset_vert_col()
-        gr.dfs_plot_2('00+')
+        gr.dfs_plot_2('0+0')
         im.save("Images//RotatingCube//im" + str(i) + ".png")
-
-
