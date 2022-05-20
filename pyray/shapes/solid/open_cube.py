@@ -57,7 +57,7 @@ class Edge():
 
 
 class GraphCube():
-    def __init__(self, survive_ros={}, angle=np.pi/12):
+    def __init__(self, survive_ros={}, angle=np.pi/2):
         self.white_verts = set()
         self.grey_verts = set()
         self.grey_rots = {}
@@ -98,10 +98,21 @@ class GraphCube():
     def reset_vert_col(self):
         for v in self.vert_props.keys():
             self.vert_props[v].color = "white"
+        self.black_verts = set()
+        self.grey_verts = set()
+        self.grey_rots = {}
 
     def print_vert_props(self):
         for k in self.vert_props.keys():
             print(str(self.vert_props[k].__dict__))
+
+    def dfs(self, u):
+        self.vert_props[u].color = "grey"
+        for v in self.adj[u]:
+            if self.vert_props[v].color == "white":
+                self.dfs(v)
+        self.black_verts.add(u)
+
 
     def dfs_flatten(self, u):
         self.vert_props[u].color = "grey"
@@ -133,10 +144,6 @@ class GraphCube():
                 self.draw.line((x, y, x1, y1),
                                fill=(255, 255, 0), width=1)
                 self.dfs_plot(v)
-
-    def reset_colors(self):
-        for k in self.vert_props.keys():
-            self.vert_props[k].color = "white"
 
     def dfs_plot_2(self, u):
         """Assumes a draw object and rotation object attached to graph"""
@@ -184,18 +191,20 @@ def tst():
 def tst_all_cuts():
     lst = np.arange(12)
     ix = 0
+    r = general_rotation(np.array([1,1,1]), np.pi/6)
     for combo in combinations(lst, 5):
         survive = set(combo)
-        gr = GraphCube(survive)
-        gr.dfs('00+')
+        gr = GraphCube(survive, -np.pi/2)
+        gr.dfs('0+0')
         if len(gr.black_verts) == 6:
-            if len(survive - {0,1,6,9}) == len(survive):
-                im = Image.new("RGB", (512, 512), (0,0,0))
-                draw = ImageDraw.Draw(im,'RGBA')
-                gr.draw = draw
-                gr.reset_vert_col()
-                gr.dfs_plot('00+')
-                im.save("Images//RotatingCube//im" + str(ix) + ".png")
+            im = Image.new("RGB", (512, 512), (0,0,0))
+            draw = ImageDraw.Draw(im,'RGBA')
+            gr.r = r
+            gr.dfs_flatten('0+0')
+            gr.draw = draw
+            gr.reset_vert_col()
+            gr.dfs_plot_2('0+0')
+            im.save("Images//RotatingCube//im" + str(ix) + ".png")
             ix += 1
     print(ix)
 
@@ -222,9 +231,9 @@ def tst_open_cube():
         gr.draw = draw
         r = general_rotation(np.array([1,1,1]), np.pi/6)
         gr.r = r
-        gr.dfs_flatten('0+0')
-        gr.reset_colors()
-        gr.dfs_plot_2('0+0')
+        gr.dfs_flatten('00+')
+        gr.reset_vert_col()
+        gr.dfs_plot_2('00+')
         im.save("Images//RotatingCube//im" + str(i) + ".png")
 
 
