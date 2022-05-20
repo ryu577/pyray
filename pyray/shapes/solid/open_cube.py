@@ -161,14 +161,14 @@ def get_rot_ax(f1, f2):
     x2, y2, z2 = f2.x, f2.y, f2.z
     x3, y3, z3 = x1+x2, y1+y2, z1+z2
     if x3 == 0:
-        return (f1.vertices[(f1.o_verts==[1,y3,z3]).sum(axis=1)==3][0],
-                f1.vertices[(f1.o_verts==[-1,y3,z3]).sum(axis=1)==3][0])
+        return (f1.vertices[(f1.o_verts==[1,y3,z3]).sum(axis=1)==3].flatten(),
+                f1.vertices[(f1.o_verts==[-1,y3,z3]).sum(axis=1)==3].flatten())
     elif y3 == 0:
-        return (f1.vertices[(f1.o_verts==[x3,1,z3]).sum(axis=1)==3][0], 
-                f1.vertices[(f1.o_verts==[x3,-1,z3]).sum(axis=1)==3][0])
+        return (f1.vertices[(f1.o_verts==[x3,1,z3]).sum(axis=1)==3].flatten(),
+                f1.vertices[(f1.o_verts==[x3,-1,z3]).sum(axis=1)==3].flatten())
     else:
-        return (f1.vertices[(f1.o_verts==[x3,y3,1]).sum(axis=1)==3], 
-                f1.vertices[(f1.o_verts==[x3,y3,-1]).sum(axis=1)==3])
+        return (f1.vertices[(f1.o_verts==[x3,y3,1]).sum(axis=1)==3].flatten(),
+                f1.vertices[(f1.o_verts==[x3,y3,-1]).sum(axis=1)==3].flatten())
 
 
 def map_to_plot(x, y):
@@ -229,8 +229,8 @@ def tst_open_cube():
     for i in range(19):
         im = Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im, 'RGBA')
-        gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
-        #gr = GraphCube({0, 1, 2, 3, 6}, -np.pi/2*i/18)
+        #gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
+        gr = GraphCube({0, 1, 2, 3, 6}, -np.pi/2*i/18)
         gr.draw = draw
         r = general_rotation(np.array([1,1,1]), np.pi/6)
         gr.r = r
