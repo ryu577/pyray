@@ -124,7 +124,9 @@ class GraphCube():
         self.vert_props[u].color = "grey"
         w = 2
         x, y = map_to_plot(self.vert_props[u].x, self.vert_props[u].y)
-        self.draw.ellipse((x-w,y-w,x+w,y+w), fill=(255,0,0), outline = (0,0,0))
+        self.draw.ellipse((x-w, y-w, x+w, y+w),
+                          fill=(255, 0, 0),
+                          outline=(0, 0, 0))
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 x1, y1 = map_to_plot(self.vert_props[v].x, self.vert_props[v].y)
@@ -139,8 +141,8 @@ class GraphCube():
     def dfs_plot_2(self, u):
         """Assumes a draw object and rotation object attached to graph"""
         self.vert_props[u].plot(self.draw, self.r,
-                                       scale=40,
-                                       rgba=(12, 90, 190, 90))
+                                scale=40,
+                                rgba=(12, 90, 190, 90))
         self.vert_props[u].color = "grey"
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
@@ -152,7 +154,7 @@ def get_rot_ax(f1, f2):
     x2, y2, z2 = f2.x, f2.y, f2.z
     x3, y3, z3 = x1+x2, y1+y2, z1+z2
     if x3 == 0:
-        return (f1.vertices[(f1.o_verts==[1,y3,z3]).sum(axis=1)==3][0], 
+        return (f1.vertices[(f1.o_verts==[1,y3,z3]).sum(axis=1)==3][0],
                 f1.vertices[(f1.o_verts==[-1,y3,z3]).sum(axis=1)==3][0])
     elif y3 == 0:
         return (f1.vertices[(f1.o_verts==[x3,1,z3]).sum(axis=1)==3][0], 
