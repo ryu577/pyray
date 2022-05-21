@@ -3,6 +3,7 @@ import queue
 from collections import defaultdict
 from itertools import combinations
 from pyray.rotation import general_rotation, rotate_points_about_axis
+from pyray.misc import zigzag3
 from PIL import Image, ImageDraw
 
 
@@ -159,16 +160,26 @@ class GraphCube():
 def get_rot_ax(f1, f2):
     x1, y1, z1 = f1.x, f1.y, f1.z
     x2, y2, z2 = f2.x, f2.y, f2.z
+    f2_center = np.array([f2.x, f2.y, f2.z])
     x3, y3, z3 = x1+x2, y1+y2, z1+z2
     if x3 == 0:
-        return (f1.vertices[(f1.o_verts==[1,y3,z3]).sum(axis=1)==3].flatten(),
-                f1.vertices[(f1.o_verts==[-1,y3,z3]).sum(axis=1)==3].flatten())
+        p1, p2 = np.array([1,y3,z3]), np.array([-1,y3,z3])
+        pt1, pt2 = (f1.vertices[(f1.o_verts==p1).sum(axis=1)==3].flatten(),
+                f1.vertices[(f1.o_verts==p2).sum(axis=1)==3].flatten())
     elif y3 == 0:
-        return (f1.vertices[(f1.o_verts==[x3,1,z3]).sum(axis=1)==3].flatten(),
-                f1.vertices[(f1.o_verts==[x3,-1,z3]).sum(axis=1)==3].flatten())
+        p1, p2 = np.array([x3,1,z3]), np.array([x3,-1,z3])
+        pt1, pt2 = (f1.vertices[(f1.o_verts==p1).sum(axis=1)==3].flatten(),
+                f1.vertices[(f1.o_verts==p2).sum(axis=1)==3].flatten())
     else:
-        return (f1.vertices[(f1.o_verts==[x3,y3,1]).sum(axis=1)==3].flatten(),
-                f1.vertices[(f1.o_verts==[x3,y3,-1]).sum(axis=1)==3].flatten())
+        p1, p2 = np.array([x3,y3,1]), np.array([x3,y3,-1])
+        pt1, pt2 = (f1.vertices[(f1.o_verts==p1).sum(axis=1)==3].flatten(),
+                f1.vertices[(f1.o_verts==p2).sum(axis=1)==3].flatten())
+    norm = np.cross(p2-p1, p2-f2_center)
+    dt = np.dot(norm, f2_center)
+    if dt > 0:
+        return (pt1, pt2)
+    else:
+        return (pt2, pt1)
 
 
 def map_to_plot(x, y):
@@ -211,6 +222,19 @@ def tst_all_cuts():
     print(ix)
 
 
+def tst_all_cuts2():
+    lst = np.arange(12)
+    ix = 0
+    r = general_rotation(np.array([1,1,1]), np.pi/6)
+    for combo in combinations(lst, 5):
+        survive = set(combo)
+        gr = GraphCube(survive, -np.pi/2)
+        gr.dfs('0+0')
+        if len(gr.black_verts) == 6:
+            print(combo)
+            ix = tst_open_cube(ix, survive)
+
+
 def tst_plot_faces():
     for ix in range(10):
         im = Image.new("RGB", (512, 512), (0,0,0))
@@ -225,12 +249,13 @@ def tst_plot_faces():
         im.save("Images//RotatingCube//im" + str(ix) + ".png")
 
 
-def tst_open_cube():
-    for i in range(19):
+def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}):
+    for i in range(ix, ix+22):
         im = Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im, 'RGBA')
         #gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
-        gr = GraphCube({0, 1, 2, 3, 6}, -np.pi/2*i/18)
+        theta = -np.pi/2*zigzag3(i-ix)/19
+        gr = GraphCube(surv, theta)
         gr.draw = draw
         r = general_rotation(np.array([1,1,1]), np.pi/6)
         gr.r = r
@@ -238,3 +263,4 @@ def tst_open_cube():
         gr.reset_vert_col()
         gr.dfs_plot_2('0+0')
         im.save("Images//RotatingCube//im" + str(i) + ".png")
+    return i

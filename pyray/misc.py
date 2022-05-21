@@ -16,6 +16,18 @@ def zigzag(x):
         return zigzag(x % 22)
 
 
+def zigzag3(x):
+    """
+    Returns a triangular function oscillating between an upper and lower bound
+    (hard coded for now).
+    """
+    if x < 10:
+        return x
+    elif 10 <= x and x <= 22:
+        return 22 - x
+    else:
+        return zigzag(x % 22)
+
 def zigzag2(i, curr=0.45, upper=0.48, lower=0.13):
     """
     Generalized version of the zig-zag function.
