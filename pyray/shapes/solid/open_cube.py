@@ -254,9 +254,9 @@ def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}):
         im = Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im, 'RGBA')
         #gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
-        theta = -np.pi/2*zigzag3(i-ix)/19
+        theta = -np.pi/2*zigzag3(i-ix)/10
         gr = GraphCube(surv, theta)
-        gr.draw = draw
+        gr.draw = draw  
         r = general_rotation(np.array([1,1,1]), np.pi/6)
         gr.r = r
         gr.dfs_flatten('0+0')
@@ -264,3 +264,5 @@ def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}):
         gr.dfs_plot_2('0+0')
         im.save("Images//RotatingCube//im" + str(i) + ".png")
     return i
+
+ 
