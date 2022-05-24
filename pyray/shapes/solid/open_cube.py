@@ -38,7 +38,8 @@ class Face():
         draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=2)
 
     def rotate_face(self, ax_pt1, ax_pt2, theta):
-        self.vertices = rotate_points_about_axis(self.vertices, ax_pt1, ax_pt2, theta)
+        self.vertices = rotate_points_about_axis(self.vertices,
+                                                 ax_pt1, ax_pt2, theta)
         self.face_center = self.vertices.mean(axis=0)
 
 

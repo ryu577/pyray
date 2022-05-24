@@ -44,7 +44,7 @@ def generalized_planar_rotation(pt, center, r):
     return pt_1 + center
 
 
-def yzrotation(theta=np.pi * 3 / 20.0):
+def yzrotation(theta=np.pi*3/20.0):
     """
     Returns a simple planar rotation matrix that rotates
     vectors around the x-axis.
