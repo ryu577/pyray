@@ -1,10 +1,11 @@
 import numpy as np
 import queue
 from collections import defaultdict
-from itertools import combinations
+from itertools import combinations, permutations
 from pyray.rotation import general_rotation, rotate_points_about_axis
 from pyray.misc import zigzag3
 from PIL import Image, ImageDraw
+from copy import deepcopy
 
 
 class Face():
@@ -27,20 +28,26 @@ class Face():
     def plot(self, draw, r=np.eye(3),
              shift = np.array([256,256,0]),
              scale = 35,
-             rgba = (255, 255, 0, 180)):
+             rgba = (255, 255, 0, 180),
+             wdh=2):
         rotated_face = np.transpose(np.dot(r, np.transpose(self.vertices)))
         [v1, v2, v3, v4] = shift + scale * rotated_face
         draw.polygon([(v1[0], v1[1]), (v2[0], v2[1]), (v4[0], v4[1]),
                       (v3[0], v3[1])], rgba)
-        draw.line((v1[0], v1[1], v2[0], v2[1]), fill=rgba[:3], width=2)
-        draw.line((v2[0], v2[1], v4[0], v4[1]), fill=rgba[:3], width=2)
-        draw.line((v4[0], v4[1], v3[0], v3[1]), fill=rgba[:3], width=2)
-        draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=2)
+        draw.line((v1[0], v1[1], v2[0], v2[1]), fill=rgba[:3], width=wdh)
+        draw.line((v2[0], v2[1], v4[0], v4[1]), fill=rgba[:3], width=wdh)
+        draw.line((v4[0], v4[1], v3[0], v3[1]), fill=rgba[:3], width=wdh)
+        draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=wdh)
 
     def rotate_face(self, ax_pt1, ax_pt2, theta):
         self.vertices = rotate_points_about_axis(self.vertices,
                                                  ax_pt1, ax_pt2, theta)
         self.face_center = self.vertices.mean(axis=0)
+
+class Edge():
+    def __init__(self, face1, face2):
+        self.face1 = face1
+        self.face2 = face2
 
 
 def char2coord(ch):
@@ -50,12 +57,6 @@ def char2coord(ch):
         return 1
     elif ch == '-':
         return -1
-
-
-class Edge():
-    def __init__(self, face1, face2):
-        self.face1 = face1
-        self.face2 = face2
 
 
 class GraphCube():
@@ -115,7 +116,6 @@ class GraphCube():
                 self.dfs(v)
         self.black_verts.add(u)
 
-
     def dfs_flatten(self, u):
         self.vert_props[u].color = "grey"
         self.grey_verts.add(u)
@@ -147,15 +147,15 @@ class GraphCube():
                                fill=(255, 255, 0), width=1)
                 self.dfs_plot(v)
 
-    def dfs_plot_2(self, u):
+    def dfs_plot_2(self, u, rgba=(12, 90, 190, 90)):
         """Assumes a draw object and rotation object attached to graph"""
         self.vert_props[u].plot(self.draw, self.r,
                                 scale=40,
-                                rgba=(12, 90, 190, 90))
+                                rgba=rgba)
         self.vert_props[u].color = "grey"
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
-                self.dfs_plot_2(v)
+                self.dfs_plot_2(v, rgba)
 
 
 def get_rot_ax(f1, f2):
@@ -187,6 +187,8 @@ def map_to_plot(x, y):
     scale = 40
     return 256 + x * scale, 256 + y * scale
 
+######################################
+# test cases and money shots.
 
 def tst():
     survive = {3, 10, 11, 8, 5}
@@ -223,17 +225,19 @@ def tst_all_cuts():
     print(ix)
 
 
-def tst_all_cuts2():
+def main():
     lst = np.arange(12)
     ix = 0
     r = general_rotation(np.array([1,1,1]), np.pi/6)
+    prev_surv = {}
     for combo in combinations(lst, 5):
         survive = set(combo)
         gr = GraphCube(survive, -np.pi/2)
         gr.dfs('0+0')
         if len(gr.black_verts) == 6:
             print(combo)
-            ix = tst_open_cube(ix, survive)
+            ix = tst_open_cube(ix, survive, prev_surv)
+            prev_surv = deepcopy(survive)
 
 
 def tst_plot_faces():
@@ -245,25 +249,44 @@ def tst_plot_faces():
             f = Face(fc)
             f.plot(draw, r, scale=80, rgba=(12, 90, 190, 90))
         f = Face('0-0')
-        f.rotate_face(np.array([-1,-1,-1]), np.array([-1,-1,1]), -np.pi/6*ix/10)
+        f.rotate_face(np.array([-1,-1,-1]),
+                      np.array([-1,-1,1]), -np.pi/6*ix/10)
         f.plot(draw, r, scale=80, rgba=(12, 90, 190, 90))
         im.save("Images//RotatingCube//im" + str(ix) + ".png")
 
 
-def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}):
+def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}, prev_surv={}):
+    r = general_rotation(np.array([1,1,1]), np.pi/6)
     for i in range(ix, ix+22):
         im = Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im, 'RGBA')
         #gr = GraphCube({3, 10, 11, 8, 5}, -np.pi/2*i/18)
         theta = -np.pi/2*zigzag3(i-ix)/10
-        gr = GraphCube(surv, theta)
-        gr.draw = draw  
-        r = general_rotation(np.array([1,1,1]), np.pi/6)
-        gr.r = r
-        gr.dfs_flatten('0+0')
-        gr.reset_vert_col()
-        gr.dfs_plot_2('0+0')
-        im.save("Images//RotatingCube//im" + str(i) + ".png")
+        plot_open_cube(draw, r, surv, theta)
+        plot_open_cube(draw, r, surv, -np.pi/2, rgba=(125, 125, 12, 80))
+        plot_grid(draw, r)
+        im.save("Images//RotatingCube//im" + str(i).rjust(4,'0') + ".png")
     return i
 
- 
+
+def plot_open_cube(draw, r, surv, theta, rgba=(12, 90, 190, 90)):
+    gr = GraphCube(surv, theta)
+    gr.draw = draw
+    gr.r = r
+    gr.dfs_flatten('0+0')
+    gr.reset_vert_col()
+    gr.dfs_plot_2('0+0', rgba=rgba)
+
+
+def plot_grid(draw, r):
+    f = Face('0+0')
+    aa = np.array([1,-1,0])
+    for x in np.arange(-5,6):
+        for z in np.arange(-5,6):
+            f.vertices += 2*np.array([x,0,z])
+            f.plot(draw, r, scale=40,
+                   shift=np.array([256,256,0]),
+                   rgba=(180, 132, 12, 10),
+                   wdh=1)
+            f.vertices -= 2*np.array([x,0,z])
+

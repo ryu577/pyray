@@ -9,10 +9,14 @@ from PIL import Image, ImageDraw
 
 
 class Cube():
+	"""
+	Each of the faces of a Teserract is a cube.
+	"""
 	def __init__(self, val):
 		self.x = char2coord(val[0])
         self.y = char2coord(val[1])
         self.z = char2coord(val[2])
         self.w = char2coord(val[3])
-        self.cube_center = np.array([self.x, self.y, self.z, self.w])
+        self.cube_center = np.array([self.x, self.y,
+        							 self.z, self.w])
 
