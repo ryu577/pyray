@@ -189,6 +189,7 @@ def map_to_plot(x, y):
 
 
 def tst():
+    ix = 0
     survive = {3, 10, 11, 8, 5}
     gr = GraphCube(survive)
     gr.dfs('00+')
