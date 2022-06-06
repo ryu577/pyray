@@ -174,9 +174,10 @@ def matrix_to_axisangle(m):
     return (theta, np.array([x, y, z]))
 
 
-def rotation(n, theta=np.pi / 3):
+def rotation(n, theta=np.pi/3):
     """
-    Returns a general rotation matrix of any dimensionality. This is achieved by a sequence of successive 2d rotations.
+    Returns a general rotation matrix of any dimensionality.
+    This is achieved by a sequence of successive 2d rotations.
     http://www.continuummechanics.org/rotationmatrix.html
     args:
         n : The dimensionality of the space in which we are going to rotate things.
@@ -196,8 +197,8 @@ def rotation(n, theta=np.pi / 3):
 
 def rotation_transition(
     i=0,
-    oldr=general_rotation(np.array([1, 0, 0]), np.pi / 2),
-    newr=rotation(3, 2 * np.pi * 4 / 30.0),
+    oldr=general_rotation(np.array([1, 0, 0]), np.pi/2),
+    newr=rotation(3, 2 * np.pi * 4/30.0),
 ):
     """
     A sequence of intermediate rotations that take the system from an initial rotated state (oldr) to a final one (newr).

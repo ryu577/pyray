@@ -44,6 +44,7 @@ class Face():
                                                  ax_pt1, ax_pt2, theta)
         self.face_center = self.vertices.mean(axis=0)
 
+
 class Edge():
     def __init__(self, face1, face2):
         self.face1 = face1
@@ -289,4 +290,9 @@ def plot_grid(draw, r):
                    rgba=(180, 132, 12, 10),
                    wdh=1)
             f.vertices -= 2*np.array([x,0,z])
+
+
+# ffmpeg -framerate 24 -f image2 -i "*?png" -vb 20M vid.avi
+# ffmpeg -r 24 -f image2 -pattern_type glob -i "*?png" -vcodec libx264 -crf 20 -pix_fmt yuv420p output.mp4
+
 
