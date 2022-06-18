@@ -39,7 +39,7 @@ class Face():
         draw.line((v4[0], v4[1], v3[0], v3[1]), fill=rgba[:3], width=wdh)
         draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=wdh)
 
-    def rotate_face(self, ax_pt1, ax_pt2, theta):
+    def rotate(self, ax_pt1, ax_pt2, theta):
         self.vertices = rotate_points_about_axis(self.vertices,
                                                  ax_pt1, ax_pt2, theta)
         self.face_center = self.vertices.mean(axis=0)
@@ -251,7 +251,7 @@ def tst_plot_faces():
             f = Face(fc)
             f.plot(draw, r, scale=80, rgba=(12, 90, 190, 90))
         f = Face('0-0')
-        f.rotate_face(np.array([-1,-1,-1]),
+        f.rotate(np.array([-1,-1,-1]),
                       np.array([-1,-1,1]), -np.pi/6*ix/10)
         f.plot(draw, r, scale=80, rgba=(12, 90, 190, 90))
         im.save("Images//RotatingCube//im" + str(ix) + ".png")

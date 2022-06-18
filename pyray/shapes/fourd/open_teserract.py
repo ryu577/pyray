@@ -52,35 +52,56 @@ class Face1(Face):
 
 
 def tst():
-    im = Image.new("RGB", (512, 512), (0,0,0))
+    im = Image.new("RGB", (512, 512), (0, 0, 0))
     draw = ImageDraw.Draw(im, 'RGBA')
-    #r = np.eye(4)
     r = rotation(4, np.pi/6)
     f = Face1('00++')
     f.plot(draw, r, scale=40,
-                   shift=np.array([256,256,0,0]),
-                   rgba=(125, 125, 12, 80),
-                   wdh=1)
-    im.save("Images//RotatingCube//im" + str(0).rjust(4,'0') + ".png")
+           shift=np.array([256, 256, 0, 0]),
+           rgba=(125, 125, 12, 80),
+           wdh=1)
+    im.save("Images//RotatingCube//im" + str(0).rjust(4, '0') + ".png")
 
 
 def tst2():
     for ix in range(60):
-        im = Image.new("RGB", (512, 512), (0,0,0))
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
         draw = ImageDraw.Draw(im, 'RGBA')
         r = rotation(4, np.pi*ix/60.0)
-        for combo in combinations([0,1,2,3], 2):
+        for combo in combinations([0, 1, 2, 3], 2):
             (ix1, ix2) = combo
-            for p1 in ['+','-']:
-                for p2 in ['+','-']:
+            for p1 in ['+', '-']:
+                for p2 in ['+', '-']:
                     fc_st = '0000'
                     fc = list(fc_st)
                     fc[ix1] = p1
                     fc[ix2] = p2
                     f = Face1(''.join(fc))
                     f.plot(draw, r, scale=40,
-                       shift=np.array([256,256,0,0]),
+                           shift=np.array([256, 256, 0, 0]),
+                           rgba=(12, 90, 190, 90),
+                           wdh=1)
+        im.save("Images//RotatingCube//im" + str(ix).rjust(4, '0') + ".png")
+
+
+def tst3():
+    ix = 18
+    im = Image.new("RGB", (512, 512), (0, 0, 0))
+    draw = ImageDraw.Draw(im, 'RGBA')
+    r = rotation(4, np.pi*ix/60.0)
+    # Generate all faces.
+    for combo in combinations([0, 1, 2, 3], 2):
+        (ix1, ix2) = combo
+        for p1 in ['+', '-']:
+            for p2 in ['+', '-']:
+                fc_st = '0000'
+                fc = list(fc_st)
+                fc[ix1] = p1
+                fc[ix2] = p2
+                f = Face1(''.join(fc))
+                f.plot(draw, r, scale=40,
+                       shift=np.array([256, 256, 0, 0]),
                        rgba=(12, 90, 190, 90),
                        wdh=1)
-        im.save("Images//RotatingCube//im" + str(ix).rjust(4,'0') + ".png")
+    im.save("Images//RotatingCube//im" + str(ix).rjust(4, '0') + ".png")
 
