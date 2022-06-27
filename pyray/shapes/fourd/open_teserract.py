@@ -2,10 +2,11 @@ import numpy as np
 import queue
 from collections import defaultdict
 from itertools import combinations
-from pyray.shapes.solid.open_cube import char2coord, Face
+from pyray.shapes.solid.open_cube import char2coord, Face, GraphCube
 from pyray.rotation import general_rotation, rotate_points_about_axis,\
     rotation
 from pyray.misc import zigzag3
+import pyray.shapes.fourd.tesseract_graph as tg
 from PIL import Image, ImageDraw
 
 
@@ -67,6 +68,17 @@ class Face1(Face):
         self.simple_rotate(theta, axes)
         self.vertices += new_orig
         self.face_center = self.vertices.mean(axis=0)
+
+
+class TesseractGraph(GraphCube):
+    def __init__(self, survive_ros={}, angle=np.pi/2):
+        self.face_map = tg.face_map
+        self.adj_mat = np.zeros((24, 24))
+        for fc in self.face_map.keys():
+            edgs = get_edges(fc)
+            for ed in edgs:
+                self.adj_mat[self.face_map[fc], self.face_map[ed]] = 1
+        # TODO: implement further.
 
 
 def tst():
