@@ -104,4 +104,3 @@ def tst3():
                        rgba=(12, 90, 190, 90),
                        wdh=1)
     im.save("Images//RotatingCube//im" + str(ix).rjust(4, '0') + ".png")
-
