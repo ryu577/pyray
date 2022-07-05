@@ -75,7 +75,7 @@ class TesseractGraph(GraphCube):
         self.face_map = tg.face_map
         self.adj_mat = np.zeros((24, 24))
         for fc in self.face_map.keys():
-            edgs = get_edges(fc)
+            edgs = tg.get_edges(fc)
             for ed in edgs:
                 self.adj_mat[self.face_map[fc], self.face_map[ed]] = 1
         # TODO: implement further.
