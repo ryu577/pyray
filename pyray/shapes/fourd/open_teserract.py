@@ -23,69 +23,11 @@ class Cube():
                                      self.z, self.w])
 
 
-class Face1(Face):
-    def __init__(self, val, color="white"):
-        self.val = val
-        self.color = color
-        self.x = char2coord(val[0])
-        self.y = char2coord(val[1])
-        self.z = char2coord(val[2])
-        self.w = char2coord(val[3])
-        self.face_center = np.array([self.x, self.y, self.z, self.w])
-        self.vertices = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]])
-        if self.x != 0:
-            self.vertices = np.insert(self.vertices, 0, self.x, axis=1)
-        if self.y != 0:
-            self.vertices = np.insert(self.vertices, 1, self.y, axis=1)
-        if self.z != 0:
-            self.vertices = np.insert(self.vertices, 2, self.z, axis=1)
-        if self.w != 0:
-            self.vertices = np.insert(self.vertices, 3, self.w, axis=1)
-        self.o_verts = self.vertices.copy()
-
-    def plot(self, draw, r=np.eye(4),
-             shift=np.array([256,256,0,0]),
-             scale=35,
-             rgba=(255, 255, 0, 180),
-             wdh=2):
-        super().plot(r=r,rgba=rgba,scale=scale,wdh=wdh,draw=draw,
-                     shift=shift)
-
-    def simple_rotate(self, theta, axes=[0, 1]):
-        """
-        args:
-            axes: An array (ex: [0,1]). Identifies axes that will be rotating.
-                  The other two axes will remain unchanged.
-        """
-        r = np.eye(4)
-        r[np.ix_(axes, axes)] = np.array([[np.cos(theta), -np.sin(theta)],
-                                          [np.sin(theta), np.cos(theta)]])
-        self.vertices = np.dot(self.vertices, r)
-        self.face_center = self.vertices.mean(axis=0)
-
-    def shift_and_simpl_rotate(self, theta, axes=[0, 1], new_orig=np.array([0, 0, 0, 0])):
-        self.vertices -= new_orig
-        self.simple_rotate(theta, axes)
-        self.vertices += new_orig
-        self.face_center = self.vertices.mean(axis=0)
-
-
-class TesseractGraph(GraphCube):
-    def __init__(self, survive_ros={}, angle=np.pi/2):
-        self.face_map = tg.face_map
-        self.adj_mat = np.zeros((24, 24))
-        for fc in self.face_map.keys():
-            edgs = tg.get_edges(fc)
-            for ed in edgs:
-                self.adj_mat[self.face_map[fc], self.face_map[ed]] = 1
-        # TODO: implement further.
-
-
 def tst():
     im = Image.new("RGB", (512, 512), (0, 0, 0))
     draw = ImageDraw.Draw(im, 'RGBA')
     r = rotation(4, np.pi/6)
-    f = Face1('00++')
+    f = tg.Face1('00++')
     f.plot(draw, r, scale=40,
            shift=np.array([256, 256, 0, 0]),
            rgba=(125, 125, 12, 80),
@@ -106,7 +48,7 @@ def tst2():
                     fc = list(fc_st)
                     fc[ix1] = p1
                     fc[ix2] = p2
-                    f = Face1(''.join(fc))
+                    f = tg.Face1(''.join(fc))
                     f.plot(draw, r, scale=40,
                            shift=np.array([256, 256, 0, 0]),
                            rgba=(12, 90, 190, 90),
@@ -130,12 +72,12 @@ def tst3():
                     fc = list(fc_st)
                     fc[ix1] = p1
                     fc[ix2] = p2
-                    f = Face1(''.join(fc))
+                    f = tg.Face1(''.join(fc))
                     f.plot(draw, r, scale=40,
                            shift=np.array([256, 256, 0, 0]),
                            rgba=(12, 90, 190, 90),
                            wdh=1)
-        f = Face1('0+0+')
+        f = tg.Face1('0+0+')
         f.simple_rotate(theta, [0, 3])
         f.plot(draw, r, scale=40,
                shift=np.array([256, 256, 0, 0]),
@@ -160,7 +102,7 @@ def tst4():
                     fc = list(fc_st)
                     fc[ix1] = p1
                     fc[ix2] = p2
-                    f = Face1(''.join(fc))
+                    f = tg.Face1(''.join(fc))
                     if f.val[1] == '+':
                         f.shift_and_simpl_rotate(theta, [1, 3], np.array([0,1,0,1]))
                     elif f.val[1] == '-':
@@ -184,3 +126,25 @@ def tst4():
                            wdh=1)
         im.save("Images//RotatingCube//im" + str(ii).rjust(4, '0') + ".png")
 
+
+def tst_open_tsrct():
+    tf = tg.TsrctFcGraph(angle=np.pi/2/11)
+    tf.r = rotation(4, np.pi*17/60.0)
+    if True:
+        print(len(tf.adj['00++'].keys()))
+        tf.to_plot = {'00++'}
+        for k in tf.adj['00++'].keys():
+            tf.to_plot.add(k)
+        for k in tf.face_map.keys():
+            if k[3] == '+':
+                tf.to_plot.add(k)
+    for i in range(12):
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        tf.draw = draw
+        tf.reset_vert_col()
+        tf.dfs_plot('00++')
+        tf.reset_vert_col()
+        tf.dfs_flatten('00++')
+        im.save("Images//RotatingCube//im" + str(i).rjust(4, '0') + ".png")
+    return tf
