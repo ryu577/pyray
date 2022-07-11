@@ -1,6 +1,7 @@
 import numpy as np
 import networkx as nx
 import pyray.shapes.solid.open_cube as oc
+from collections import deque
 
 
 def cube_trees():
@@ -15,9 +16,9 @@ def cube_trees():
 
 
 class Face1(oc.Face):
-    def __init__(self, val, color="white"):
+    def __init__(self, val, rgba=(255, 255, 0, 180)):
         self.val = val
-        self.color = color
+        self.rgba = rgba
         self.x = oc.char2coord(val[0])
         self.y = oc.char2coord(val[1])
         self.z = oc.char2coord(val[2])
@@ -37,8 +38,10 @@ class Face1(oc.Face):
     def plot(self, draw, r=np.eye(4),
              shift=np.array([256, 256, 0, 0]),
              scale=35,
-             rgba=(255, 255, 0, 180),
+             rgba=None,
              wdh=2):
+        if rgba is None:
+            rgba = self.rgba
         super().plot(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
                      shift=shift)
 
@@ -56,9 +59,13 @@ class Face1(oc.Face):
 
     def shift_and_simpl_rotate(self, theta, axes=[0, 1],
                                new_orig=np.array([0, 0, 0, 0])):
-        self.vertices -= new_orig
+        self.vertices = self.vertices - new_orig
         self.simple_rotate(theta, axes)
-        self.vertices += new_orig
+        self.vertices = self.vertices + new_orig
+        self.face_center = self.vertices.mean(axis=0)
+
+    def reset(self):
+        self.vertices = self.o_verts.copy()
         self.face_center = self.vertices.mean(axis=0)
 
 
@@ -101,10 +108,14 @@ class TsrctFcGraph(oc.GraphCube):
     def dfs_flatten(self, u):
         self.vert_props[u].color = "grey"
         # Apply all the rotations.
+        st = deque()
         for kk in self.grey_rots.keys():
             if self.vert_props[kk].color != "black":
-                args = self.grey_rots[kk]
-                self.vert_props[u].shift_and_simpl_rotate(self.angle, *args)
+                st.append(kk)
+        while st:
+            kk = st.pop()
+            args = self.grey_rots[kk]
+            self.vert_props[u].shift_and_simpl_rotate(self.angle, *args)
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 # Apply rotations of grey vertices.
@@ -118,6 +129,11 @@ class TsrctFcGraph(oc.GraphCube):
 
     def reset_vert_col(self):
         super().reset_vert_col()
+
+    def reset_rotations(self):
+        for k in self.face_map.keys():
+            self.vert_props[k].reset()
+        self.reset_vert_col()
 
 
 def get_rot(f1, f2):
@@ -164,6 +180,19 @@ def get_edges(fc='00++'):
 
 #############
 ## For a 4-d cube and its 3-d graph.
+
+class Cube():
+    """
+    Each of the faces of a Teserract is a cube.
+    """
+    def __init__(self, val):
+        self.x = char2coord(val[0])
+        self.y = char2coord(val[1])
+        self.z = char2coord(val[2])
+        self.w = char2coord(val[3])
+        self.cube_center = np.array([self.x, self.y,
+                                     self.z, self.w])
+
 
 def tsrct_cu_grph():
     deg_mat = 7*np.eye(8)

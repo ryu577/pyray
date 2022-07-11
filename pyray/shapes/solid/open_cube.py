@@ -150,7 +150,12 @@ class GraphCube():
 
     def dfs_plot_2(self, u, rgba=(12, 90, 190, 90)):
         """Assumes a draw object and rotation object attached to graph"""
-        if "to_plot" in self.__dict__ and u in self.to_plot:
+        if "to_plot" in self.__dict__:
+            if u in self.to_plot:
+                self.vert_props[u].plot(self.draw, self.r,
+                                scale=40,
+                                rgba=rgba)
+        else:
             self.vert_props[u].plot(self.draw, self.r,
                                 scale=40,
                                 rgba=rgba)

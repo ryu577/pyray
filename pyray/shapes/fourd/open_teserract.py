@@ -10,19 +10,6 @@ import pyray.shapes.fourd.tesseract_graph as tg
 from PIL import Image, ImageDraw
 
 
-class Cube():
-    """
-    Each of the faces of a Teserract is a cube.
-    """
-    def __init__(self, val):
-        self.x = char2coord(val[0])
-        self.y = char2coord(val[1])
-        self.z = char2coord(val[2])
-        self.w = char2coord(val[3])
-        self.cube_center = np.array([self.x, self.y,
-                                     self.z, self.w])
-
-
 def tst():
     im = Image.new("RGB", (512, 512), (0, 0, 0))
     draw = ImageDraw.Draw(im, 'RGBA')
@@ -127,24 +114,84 @@ def tst4():
         im.save("Images//RotatingCube//im" + str(ii).rjust(4, '0') + ".png")
 
 
+def to_plot1(tf, strt_key='00++'):
+    tf.to_plot = {strt_key}
+    for k in tf.adj[strt_key].keys():
+        tf.to_plot.add(k)
+    #for k in tf.face_map.keys():
+    #    if k[3] == '+':
+    #        tf.to_plot.add(k)
+
+
+def to_plot2(tf, strt_key='00++'):
+    tf.to_plot = {strt_key}
+    k = strt_key
+    visited = {k}
+    for i in range(2):
+        for kk in tf.adj[k].keys():
+            if kk not in visited:
+                tf.to_plot.add(kk)
+                visited.add(kk)
+                print("Second face: " + kk)
+                k = kk
+                break
+
+
 def tst_open_tsrct():
-    tf = tg.TsrctFcGraph(angle=np.pi/2/11)
+    tf = tg.TsrctFcGraph(angle=np.pi/2)
     tf.r = rotation(4, np.pi*17/60.0)
-    if True:
-        print(len(tf.adj['00++'].keys()))
-        tf.to_plot = {'00++'}
-        for k in tf.adj['00++'].keys():
-            tf.to_plot.add(k)
-        for k in tf.face_map.keys():
-            if k[3] == '+':
-                tf.to_plot.add(k)
-    for i in range(12):
+    return plot_open(tf)
+
+
+def plot_open(tf, strt_key='00++', to_plot=to_plot2):
+    tf.reset_rotations()
+    print(len(tf.adj[strt_key].keys()))
+    if False:
+        to_plot(tf)
+    for i in range(2):
         im = Image.new("RGB", (512, 512), (0, 0, 0))
         draw = ImageDraw.Draw(im, 'RGBA')
         tf.draw = draw
         tf.reset_vert_col()
-        tf.dfs_plot('00++')
+        tf.dfs_plot(strt_key)
         tf.reset_vert_col()
-        tf.dfs_flatten('00++')
-        im.save("Images//RotatingCube//im" + str(i).rjust(4, '0') + ".png")
+        tf.dfs_flatten(strt_key)
+        im.save("Images//RotatingCube//im" +
+                str(i).rjust(4, '0') + ".png")
     return tf
+
+
+def tst_specific_faces():
+    r = rotation(4, np.pi*17/60.0)
+    f1 = tg.Face1('00++')
+    f2 = tg.Face1('0-+0')
+    f3 = tg.Face1('+0+0')
+    rot1 = tg.get_rot(f1, f2)
+    rot2 = tg.get_rot(f2, f3)
+    for i in range(11):
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        
+        f1.plot(draw, r)
+        f2.plot(draw, r)
+        f3.plot(draw, r)
+
+        f3.shift_and_simpl_rotate(np.pi/2*1/10.0, *rot1)
+        #f3.shift_and_simpl_rotate(np.pi/2*1/10.0, *rot1)
+        f2.shift_and_simpl_rotate(np.pi/2*1/10.0, *rot1)
+        
+        im.save("Images//RotatingCube//im" +
+                    str(i).rjust(4, '0') + ".png")
+    for i in range(12):
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        
+        f1.plot(draw, r)
+        f2.plot(draw, r)
+        f3.plot(draw, r)
+        
+        f3.shift_and_simpl_rotate(np.pi/2*1/10.0, *rot2)
+
+        im.save("Images//RotatingCube//im" +
+                    str(11+i).rjust(4, '0') + ".png")
+
