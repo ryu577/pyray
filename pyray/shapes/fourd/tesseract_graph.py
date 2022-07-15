@@ -124,6 +124,22 @@ class TsrctFcGraph(oc.GraphCube):
                 self.dfs_flatten(v)
         self.vert_props[u].color = "black"
 
+    def dfs_flatten2(self, u):
+        self.vert_props[u].color = "grey"
+        # Apply all the rotations.
+        st = deque()
+        for kk in self.grey_rots.keys():
+            if self.vert_props[kk].color != "black":
+                args = self.grey_rots[kk]
+                st.append((kk, args))
+        for v in self.adj[u]:
+            if self.vert_props[v].color == "white":
+                # Apply rotations of grey vertices.
+                self.grey_rots[v] = get_rot(self.vert_props[u],
+                                            self.vert_props[v])
+                self.dfs_flatten(v)
+        self.vert_props[u].color = "black"
+
     def dfs_plot(self, u):
         super().dfs_plot_2(u)
 
