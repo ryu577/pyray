@@ -1,5 +1,3 @@
 PIL
-numpy
-scipy
 pyquaternion
-
+pyvis

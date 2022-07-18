@@ -10,6 +10,7 @@ from copy import deepcopy
 
 class Face():
     def __init__(self, val, color="white"):
+        self.dim = 3
         self.val = val
         self.color = color
         self.x = char2coord(val[0])
@@ -24,6 +25,7 @@ class Face():
         else:
             self.vertices = np.insert(vertices, 2, self.z, axis=1)
         self.o_verts = self.vertices.copy()
+        self.o_face_center = self.face_center.copy()
 
     def plot(self, draw, r=np.eye(3),
              shift = np.array([256,256,0]),
@@ -42,6 +44,30 @@ class Face():
     def rotate(self, ax_pt1, ax_pt2, theta):
         self.vertices = rotate_points_about_axis(self.vertices,
                                                  ax_pt1, ax_pt2, theta)
+        self.face_center = self.vertices.mean(axis=0)
+
+    def simple_rotate(self, theta, axes):
+        """
+        args:
+            axes: An array (ex: [0,1]). Identifies axes that will be rotating.
+                  The other two axes will remain unchanged.
+        """
+        r = np.eye(self.dim)
+        r[np.ix_(axes, axes)] = np.array([[np.cos(theta), -np.sin(theta)],
+                                        [np.sin(theta), np.cos(theta)]])
+        self.vertices = np.dot(self.vertices, r)
+        self.face_center = self.vertices.mean(axis=0)
+
+    def shift_and_simpl_rotate(self, theta, axes,
+                               new_orig=np.array([0, 0, 0]),
+                               sign=1):
+        self.vertices = self.vertices - new_orig
+        self.simple_rotate(sign*theta, axes)
+        self.vertices = self.vertices + new_orig
+        self.face_center = self.vertices.mean(axis=0)
+
+    def reset(self):
+        self.vertices = self.o_verts.copy()
         self.face_center = self.vertices.mean(axis=0)
 
 

@@ -8,6 +8,8 @@ from pyray.rotation import general_rotation, rotate_points_about_axis,\
 from pyray.misc import zigzag3
 import pyray.shapes.fourd.tesseract_graph as tg
 from PIL import Image, ImageDraw
+import time
+from pyvis.network import Network
 
 
 def tst():
@@ -19,7 +21,8 @@ def tst():
            shift=np.array([256, 256, 0, 0]),
            rgba=(125, 125, 12, 80),
            wdh=1)
-    im.save("Images//RotatingCube//im" + str(0).rjust(4, '0') + ".png")
+    im.save("Images//RotatingCube//im" +
+            str(0).rjust(4, '0') + ".png")
 
 
 def tst2():
@@ -194,4 +197,104 @@ def tst_specific_faces():
 
         im.save("Images//RotatingCube//im" +
                     str(11+i).rjust(4, '0') + ".png")
+
+
+def open_tsrct_piecemeal(static_lst=False):
+    im = Image.new("RGB", (1024, 1024), (0, 0, 0))
+    tf = tg.TsrctFcGraph(angle=np.pi/2)
+    if static_lst:
+        tf.adj = {
+            '00-+': {'-0-0', '0-0+', '+00+', '0+0+'},
+            '+00+': {'+-00', '00-+', '00++'},
+            '00++': {'-00+', '+00+', '0++0'},
+            '0++0': {'00++', '00+-'},
+            '-00+': {'00++', '--00'},
+            '--00': {'-00+', '-00-'},
+            '-00-': {'--00'},
+            '00+-': {'-0+0', '+0+0'},
+            '-0+0': {'00+-'},
+            '+-00': {'+00-'},
+            '+00-': {'+-00'},
+            '+0+0': {'00+-'},
+            '0+0+': {'00-+','-+00'},
+            '0-0+': {'00-+', '0-+0'},
+            '0-+0': {'0-0+', '0-0-'},
+            '0-0-': {'0-+0'},
+            '-0-0': {'00--', '00-+'},
+            '00--': {'-0-0', '0--0'},
+            '0--0': {'00--', '+0-0'},
+            '+0-0': {'0--0', '0+-0'},
+            '0+-0': {'+0-0'},
+            '-+00': {'0+0+', '0+0-'},
+            '0+0-': {'-+00', '++00'},
+            '++00': {'0+0-'}
+        }
+        tf.adj['00--'].remove('0--0')
+        tf.adj['-0-0'] .add('0--0')
+    tf.draw = ImageDraw.Draw(im, 'RGBA')
+    tf.r = rotation(4, np.pi*17/60.0)
+    tf.reset_vert_col()
+    tf.dfs_flatten2('00-+')
+    tf.reset_vert_col()
+    tf.dfs_plot('00++')
+    im.save("Images//RotatingCube//im" +
+                    str(0).rjust(4, '0') + ".png")
+    i = 1
+    while tf.rot_st:
+        im = Image.new("RGB", (1024, 1024), (0, 0, 0))
+        tf.draw = ImageDraw.Draw(im, 'RGBA')
+        tf.reset_vert_col()
+        (u, rot) = tf.rot_st.pop()
+        tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
+        tf.dfs_plot('00-+')
+        im.save("Images//RotatingCube//im" +
+                    str(i).rjust(4, '0') + ".png")
+        i += 1
+        print("Rotated face: " + str(i))
+        if i % 15 == 0:
+            time.sleep(1)
+
+
+def open_cube_piecemeal():
+    im = Image.new("RGB", (512, 512), (0, 0, 0))
+    tf = tg.CubeFcGraph(angle=np.pi/2)
+    """tf.adj = {
+        '00-':{'0-0', '-00', '+00'},
+        '0-0':{'00+'},
+        '00+':{'0+0'},
+        '+00':{'00-'},
+        '-00':{'00-'},
+        '0+0':{'00+'}
+    }"""
+    tf.draw = ImageDraw.Draw(im, 'RGBA')
+    tf.r = rotation(3, np.pi*17/60.0)
+    #r = general_rotation(np.array([1,1,1]), np.pi/6)
+    tf.dfs_flatten('00-')
+    tf.reset_vert_col()
+    tf.dfs_plot('00-')
+    tf.vert_props['00-'].plot(tf.draw, tf.r, rgba=(220, 126,1, 90))
+    im.save("Images//RotatingCube//im" +
+                    str(0).rjust(4, '0') + ".png")
+    i = 1
+    while tf.rot_st:
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
+        tf.draw = ImageDraw.Draw(im, 'RGBA')
+        tf.reset_vert_col()
+        (u, rot) = tf.rot_st.pop()
+        tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
+        tf.dfs_plot('00-')
+        im.save("Images//RotatingCube//im" +
+                    str(i).rjust(4, '0') + ".png")
+        i += 1
+        print("Rotated face: " + str(i))
+
+
+def plot_tsrct_face_graph():
+    tf = tg.TsrctFcGraph()
+    net = Network()
+    for k in tf.face_map:
+        net.add_node(k, label=k)
+    for ed in tf.g.edges:
+        net.add_edge(ed[0], ed[1])
+    net.show('ex.html')
 
