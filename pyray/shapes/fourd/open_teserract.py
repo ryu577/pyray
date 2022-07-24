@@ -12,7 +12,7 @@ import time
 from pyvis.network import Network
 
 
-def tst():
+def tst1():
     im = Image.new("RGB", (512, 512), (0, 0, 0))
     draw = ImageDraw.Draw(im, 'RGBA')
     r = rotation(4, np.pi/6)

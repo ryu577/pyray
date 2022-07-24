@@ -101,6 +101,7 @@ class TsrctFcGraph(oc.GraphCube):
         else:
             self.g_min_tree = nx.minimum_spanning_tree(self.g, weight='weight')
             self.adj = nx.to_dict_of_dicts(self.g_min_tree)
+        self.make_adj_symm()
         self.vert_props = {}
         for k in self.face_map.keys():
             self.vert_props[k] = Face1(k)
@@ -108,6 +109,15 @@ class TsrctFcGraph(oc.GraphCube):
         self.black_verts = set()
         self.rot_st = deque()
         self.xy_set = set()
+
+    def make_adj_symm(self):
+        adj2 = self.adj.copy()
+        for k in self.adj.keys():
+            for kk in self.adj[k]:
+                if k not in self.adj[kk]:
+                    print("Fixing " + k + "," + kk)
+                adj2[kk].add(k)
+        self.adj = adj2
 
     def constrct(self):
         # Each face is connected to 8 other faces.
@@ -181,11 +191,11 @@ class TsrctFcGraph(oc.GraphCube):
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
 
-    def actually_flatted(self):
+    def actually_flatten(self):
         while self.rot_st:
             self.reset_vert_col()
             (u, rot) = self.rot_st.pop()
-            self.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
+            self.vert_props[u].shift_and_simpl_rotate(self.angle, *rot)
 
     def dfs_plot(self, u):
         super().dfs_plot_2(u)
