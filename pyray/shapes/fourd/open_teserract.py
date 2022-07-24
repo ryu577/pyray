@@ -253,6 +253,8 @@ def open_tsrct_piecemeal(static_lst=False):
         print("Rotated face: " + str(i))
         if i % 15 == 0:
             time.sleep(1)
+    tf.mk_xy_set()
+    print(len(tf.xy_set))
 
 
 def open_cube_piecemeal():

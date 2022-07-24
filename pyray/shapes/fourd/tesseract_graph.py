@@ -59,7 +59,7 @@ class Face1(oc.Face):
 
 
 class TsrctFcGraph(oc.GraphCube):
-    def __init__(self, angle=0):
+    def __init__(self, angle=0, static_lst=True):
         self.dim = 4
         self.face_map = {'--00': 0, '-0-0': 1,
                          '-00-': 2, '-00+': 3, '-0+0': 4, '-+00': 5,
@@ -71,14 +71,43 @@ class TsrctFcGraph(oc.GraphCube):
         self.angle = angle
         self.g = nx.Graph()
         self.constrct()
-        self.g_min_tree = nx.minimum_spanning_tree(self.g, weight='weight')
-        self.adj = nx.to_dict_of_dicts(self.g_min_tree)
+        if static_lst:
+            self.adj = {
+                '00-+': {'-0-0', '0-0+', '+00+', '0+0+'},
+                '+00+': {'+-00', '00-+', '00++'},
+                '00++': {'-00+', '+00+', '0++0'},
+                '0++0': {'00++', '00+-'},
+                '-00+': {'00++', '--00'},
+                '--00': {'-00+', '-00-'},
+                '-00-': {'--00'},
+                '00+-': {'-0+0', '+0+0'},
+                '-0+0': {'00+-'},
+                '+-00': {'+00-'},
+                '+00-': {'+-00'},
+                '+0+0': {'00+-'},
+                '0+0+': {'00-+','-+00'},
+                '0-0+': {'00-+', '0-+0'},
+                '0-+0': {'0-0+', '0-0-'},
+                '0-0-': {'0-+0'},
+                '-0-0': {'00--', '00-+'},
+                '00--': {'-0-0', '0--0'},
+                '0--0': {'00--', '+0-0'},
+                '+0-0': {'0--0', '0+-0'},
+                '0+-0': {'+0-0'},
+                '-+00': {'0+0+', '0+0-'},
+                '0+0-': {'-+00', '++00'},
+                '++00': {'0+0-'}
+            }
+        else:
+            self.g_min_tree = nx.minimum_spanning_tree(self.g, weight='weight')
+            self.adj = nx.to_dict_of_dicts(self.g_min_tree)
         self.vert_props = {}
         for k in self.face_map.keys():
             self.vert_props[k] = Face1(k)
         self.grey_rots = {}
         self.black_verts = set()
         self.rot_st = deque()
+        self.xy_set = set()
 
     def constrct(self):
         # Each face is connected to 8 other faces.
@@ -152,8 +181,25 @@ class TsrctFcGraph(oc.GraphCube):
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
 
+    def actually_flatted(self):
+        while self.rot_st:
+            self.reset_vert_col()
+            (u, rot) = self.rot_st.pop()
+            self.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
+
     def dfs_plot(self, u):
         super().dfs_plot_2(u)
+
+    def mk_xy_set(self):
+        """
+        Should be run after dfs_flatten2 so cube is already
+        flattened.
+        """
+        self.xy_set = set()
+        for u in self.face_map:
+            x = round(self.vert_props[u].face_center[0])
+            y = round(self.vert_props[u].face_center[1])
+            self.xy_set.add((x, y))
 
     def reset_vert_col(self):
         super().reset_vert_col()
@@ -206,6 +252,28 @@ class CubeFcGraph(TsrctFcGraph):
 
     def reset_vert_col(self):
         super().reset_vert_col()
+
+
+def get_edges(fc='00++'):
+    zero_ixs = []
+    non_zero_ixs = []
+    ix = 0
+    for ch in fc:
+        if ch == '0':
+            zero_ixs.append(ix)
+        else:
+            non_zero_ixs.append(ix)
+        ix += 1
+    res = []
+    for zix in zero_ixs:
+        for nix in non_zero_ixs:
+            for repl_ch in ['+', '-']:
+                ch = '0000'
+                ch1 = list(ch)
+                ch1[nix] = fc[nix]
+                ch1[zix] = repl_ch
+                res.append(''.join(ch1))
+    return res
 
 
 def get_physical_edge(f1, f2):
@@ -289,28 +357,6 @@ def get_rot2(f1, f2):
     if dist > 0.3:
         sign = -1
     return axes, new_orig1, sign
-
-
-def get_edges(fc='00++'):
-    zero_ixs = []
-    non_zero_ixs = []
-    ix = 0
-    for ch in fc:
-        if ch == '0':
-            zero_ixs.append(ix)
-        else:
-            non_zero_ixs.append(ix)
-        ix += 1
-    res = []
-    for zix in zero_ixs:
-        for nix in non_zero_ixs:
-            for repl_ch in ['+', '-']:
-                ch = '0000'
-                ch1 = list(ch)
-                ch1[nix] = fc[nix]
-                ch1[zix] = repl_ch
-                res.append(''.join(ch1))
-    return res
 
 
 #############
