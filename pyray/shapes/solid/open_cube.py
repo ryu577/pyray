@@ -163,28 +163,42 @@ class GraphCube():
         """Assumes a draw object attached to graph"""
         self.vert_props[u].color = "grey"
         w = 2
-        x, y = map_to_plot(self.vert_props[u].x, self.vert_props[u].y)
+        shift = (256, 256)
+        scale = 40
+        if "shift" in self.__dict__:
+            shift = self.shift
+        if "scale" in self.__dict__:
+            scale = self.scale
+        x, y = map_to_plot(self.vert_props[u].x, self.vert_props[u].y,
+                           scale, shift=shift)
         self.draw.ellipse((x-w, y-w, x+w, y+w),
                           fill=(255, 0, 0),
                           outline=(0, 0, 0))
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
-                x1, y1 = map_to_plot(self.vert_props[v].x, self.vert_props[v].y)
+                x1, y1 = map_to_plot(self.vert_props[v].x, self.vert_props[v].y,
+                                     scale, shift=shift)
                 self.draw.line((x, y, x1, y1),
                                fill=(255, 255, 0), width=1)
                 self.dfs_plot(v)
 
     def dfs_plot_2(self, u, rgba=(12, 90, 190, 90)):
         """Assumes a draw object and rotation object attached to graph"""
+        shift = (256, 256)
+        scale = 40
+        if "shift" in self.__dict__:
+            shift = self.shift
+        if "scale" in self.__dict__:
+            scale = self.scale
         if "to_plot" in self.__dict__:
             if u in self.to_plot:
                 self.vert_props[u].plot(self.draw, self.r,
-                                scale=40,
-                                rgba=rgba)
+                                scale=scale,
+                                rgba=rgba, shift=shift)
         else:
             self.vert_props[u].plot(self.draw, self.r,
-                                scale=40,
-                                rgba=rgba)
+                                scale=scale,
+                                rgba=rgba, shift=shift)
         self.vert_props[u].color = "grey"
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
@@ -216,9 +230,8 @@ def get_rot_ax(f1, f2):
         return (pt2, pt1)
 
 
-def map_to_plot(x, y):
-    scale = 40
-    return 256 + x * scale, 256 + y * scale
+def map_to_plot(x, y, scale=40, shift=(256, 256)):
+    return shift[0] + x * scale, shift[1] + y * scale
 
 ######################################
 # test cases and money shots.
