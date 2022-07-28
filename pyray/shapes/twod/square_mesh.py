@@ -1,6 +1,7 @@
 import numpy as np
 import pyray.shapes.fourd.tesseract_graph as tg
 from copy import deepcopy
+import operator
 
 
 class SqFace():
@@ -20,10 +21,17 @@ class SqMesh(tg.TsrctFcGraph):
         self.tf = tf
         self.adj = deepcopy(tf.adj)
         self.vert_props = {}
+        self.vertices = []
         for k in self.adj.keys():
             x = round(tf.vert_props[k].face_center[0])
             y = round(tf.vert_props[k].face_center[1])
             self.vert_props[k] = SqFace(x, y, k)
+            self.vertices.append([x, y])
+        self.vertices = np.array(self.vertices)
+        self.vertices = sorted(self.vertices,key=operator.itemgetter(0,1))
+        self.vertices = np.array(self.vertices)
+        self.center_mass = self.vertices.mean(axis=0)
+        self.vertices = self.vertices - self.center_mass
 
     def cut_mesh(self, f1, f2):
         m1 = deepcopy(self)
@@ -48,3 +56,18 @@ class SqMesh(tg.TsrctFcGraph):
         self.vert_props[u].color = "black"
         self.adj2[u] = deepcopy(self.adj[u])
 
+    def equals(self, m2):
+        rot = np.array([[0,1],[-1,0]])
+        for i in range(4):
+            diff = abs(self.vertices-m2.vertices)
+            if sum(sum(diff)) < 0.3:
+                return True
+            m2.vertices = np.dot(m2.vertices, rot)
+        refl = np.array([[1,0],[0,-1]])
+        m2.vertices = np.dot(m2.vertices, refl)
+        for i in range(4):
+            diff = abs(self.vertices-m2.vertices)
+            if sum(sum(diff)) < 0.3:
+                return True
+            m2.vertices = np.dot(m2.vertices, rot)
+        return False
