@@ -38,7 +38,7 @@ def gen_tsrct_meshes():
             found = False
             vs = tg.get_edges(u)
             for v in vs:
-                if (u,v) != (f1,f2):
+                if (u, v) != (f1, f2):
                     if v in m1.adj:
                         old_adj = deepcopy(tf.adj)
                         tf.adj[f1].remove(f2)
@@ -80,9 +80,8 @@ def plot_mesh(ii=90):
     with open(mesh_f1, "r") as file:
         adj_str = file.read()
     adj = json.loads(adj_str)
-    
+
     im = Image.new("RGB", (1024, 1024), (0, 0, 0))
-    
     tf = tg.TsrctFcGraph(angle=np.pi/2)
     tf.adj = adj
     ot.rotate_tsrct_down(tf, im)
