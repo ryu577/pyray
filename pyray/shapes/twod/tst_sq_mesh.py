@@ -85,3 +85,13 @@ def plot_mesh(ii=90):
     tf = tg.TsrctFcGraph(angle=np.pi/2)
     tf.adj = adj
     ot.rotate_tsrct_down(tf, im)
+
+
+def tst_msh_eq():
+    tf = tg.TsrctFcGraph(angle=np.pi/2)
+    m1 = sm.SqMesh(tf)
+    m1.vertices = np.array([[0,0],[0,-2],[0,-4],[-2,-4],[2,-4],[2,-6]])
+    m1.process_verts()
+    m2 = sm.SqMesh(tf)
+    m2.vertices = np.array([[0,0],[0,-2],[0,-4],[-2,-4],[2,-4],[2,-6]])
+

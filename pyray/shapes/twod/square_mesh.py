@@ -27,6 +27,9 @@ class SqMesh(tg.TsrctFcGraph):
             y = round(tf.vert_props[k].face_center[1])
             self.vert_props[k] = SqFace(x, y, k)
             self.vertices.append([x, y])
+        self.process_verts()
+        
+    def process_verts(self):
         self.vertices = np.array(self.vertices)
         self.vertices = sorted(self.vertices,key=operator.itemgetter(0,1))
         self.vertices = np.array(self.vertices)
