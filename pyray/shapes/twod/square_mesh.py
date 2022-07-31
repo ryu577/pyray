@@ -66,11 +66,14 @@ class SqMesh(tg.TsrctFcGraph):
             if sum(sum(diff)) < 0.3:
                 return True
             m2.vertices = np.dot(m2.vertices, rot)
+            m2.process_verts()
         refl = np.array([[1,0],[0,-1]])
         m2.vertices = np.dot(m2.vertices, refl)
+        m2.process_verts()
         for i in range(4):
             diff = abs(self.vertices-m2.vertices)
             if sum(sum(diff)) < 0.3:
                 return True
             m2.vertices = np.dot(m2.vertices, rot)
+            m2.process_verts()
         return False

@@ -199,44 +199,19 @@ def tst_specific_faces():
                     str(11+i).rjust(4, '0') + ".png")
 
 
-def open_tsrct_piecemeal(static_lst=False):
-    im = Image.new("RGB", (1024, 1024), (0, 0, 0))
-    tf = tg.TsrctFcGraph(angle=np.pi/2)
-    if static_lst:
-        tf.adj = {
-            '00-+': {'-0-0', '0-0+', '+00+', '0+0+'},
-            '+00+': {'+-00', '00-+', '00++'},
-            '00++': {'-00+', '+00+', '0++0'},
-            '0++0': {'00++', '00+-'},
-            '-00+': {'00++', '--00'},
-            '--00': {'-00+', '-00-'},
-            '-00-': {'--00'},
-            '00+-': {'-0+0', '+0+0'},
-            '-0+0': {'00+-'},
-            '+-00': {'+00-'},
-            '+00-': {'+-00'},
-            '+0+0': {'00+-'},
-            '0+0+': {'00-+','-+00'},
-            '0-0+': {'00-+', '0-+0'},
-            '0-+0': {'0-0+', '0-0-'},
-            '0-0-': {'0-+0'},
-            '-0-0': {'00--', '00-+'},
-            '00--': {'-0-0', '0--0'},
-            '0--0': {'00--', '+0-0'},
-            '+0-0': {'0--0', '0+-0'},
-            '0+-0': {'+0-0'},
-            '-+00': {'0+0+', '0+0-'},
-            '0+0-': {'-+00', '++00'},
-            '++00': {'0+0-'}
-        }
-        tf.adj['00--'].remove('0--0')
-        tf.adj['-0-0'] .add('0--0')
-    tf.draw = ImageDraw.Draw(im, 'RGBA')
+def open_tsrct_piecemeal():
+    tf = tg.TsrctFcGraph(angle=np.pi/2, static_lst=True)
     tf.r = rotation(4, np.pi*17/60.0)
+    open_given_cube(tf)
+
+
+def open_given_cube(tf, base_fc='00-+'):
+    im = Image.new("RGB", (1024, 1024), (0, 0, 0))
+    tf.draw = ImageDraw.Draw(im, 'RGBA')
     tf.reset_vert_col()
-    tf.dfs_flatten2('00-+')
+    tf.dfs_flatten2(base_fc)
     tf.reset_vert_col()
-    tf.dfs_plot('00++')
+    tf.dfs_plot(base_fc)
     im.save("Images//RotatingCube//im" +
                     str(0).rjust(4, '0') + ".png")
     i = 1
@@ -246,7 +221,7 @@ def open_tsrct_piecemeal(static_lst=False):
         tf.reset_vert_col()
         (u, rot) = tf.rot_st.pop()
         tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
-        tf.dfs_plot('00-+')
+        tf.dfs_plot(base_fc)
         im.save("Images//RotatingCube//im" +
                     str(i).rjust(4, '0') + ".png")
         i += 1
@@ -258,45 +233,9 @@ def open_tsrct_piecemeal(static_lst=False):
 
 
 def open_cube_piecemeal():
-    im = Image.new("RGB", (512, 512), (0, 0, 0))
     tf = tg.CubeFcGraph(angle=np.pi/2)
-    """tf.adj = {
-        '00-':{'0-0', '-00', '+00'},
-        '0-0':{'00+'},
-        '00+':{'0+0'},
-        '+00':{'00-'},
-        '-00':{'00-'},
-        '0+0':{'00+'}
-    }"""
-    rotate_tsrct_down(tf, im)
-
-
-def rotate_tsrct_down(tf, im):
-    tf.draw = ImageDraw.Draw(im, 'RGBA')
-    tf.r = rotation(4, np.pi*17/60.0)
-    tf.shift = (512, 512, 0, 0)
-    tf.reset_vert_col()
-    tf.dfs_flatten2('00-+')
-    tf.reset_vert_col()
-    tf.dfs_plot('00++')
-    im.save("Images//RotatingCube//im" +
-                    str(0).rjust(4, '0') + ".png")
-    i = 1
-    while tf.rot_st:
-        im = Image.new("RGB", (1024, 1024), (0, 0, 0))
-        tf.draw = ImageDraw.Draw(im, 'RGBA')
-        tf.reset_vert_col()
-        (u, rot) = tf.rot_st.pop()
-        tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
-        tf.dfs_plot('00-+')
-        im.save("Images//RotatingCube//im" +
-                    str(i).rjust(4, '0') + ".png")
-        i += 1
-        print("Rotated face: " + str(i))
-        if i % 15 == 0:
-            time.sleep(1)
-    tf.mk_xy_set()
-    print(len(tf.xy_set))
+    tf.r = rotation(3, np.pi*17/60.0)
+    open_given_cube(tf, base_fc='00+')
 
 
 def plot_tsrct_face_graph():

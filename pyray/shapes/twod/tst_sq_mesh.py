@@ -8,6 +8,7 @@ from pyray.rotation import general_rotation, rotate_points_about_axis,\
     rotation
 import time
 import pyray.shapes.fourd.tst_open_tsrct as ot
+import os
 
 
 def refresh_mesh(tf):
@@ -74,6 +75,11 @@ def gen_tsrct_meshes():
                 file.write(json.dumps(adj))
 
 
+def dedup_meshes():
+    msh_files = os.listdir("Data/Meshes")
+    return 1
+
+
 def plot_mesh(ii=90):
     mesh_f1 = "Data//Meshes//mesh" +\
                                 str(ii).rjust(4, '0') + ".txt"
@@ -93,5 +99,17 @@ def tst_msh_eq():
     m1.vertices = np.array([[0,0],[0,-2],[0,-4],[-2,-4],[2,-4],[2,-6]])
     m1.process_verts()
     m2 = sm.SqMesh(tf)
-    m2.vertices = np.array([[0,0],[0,-2],[0,-4],[-2,-4],[2,-4],[2,-6]])
-
+    m2.vertices = np.array([[0,0],[0,-2],[-2,-2],[-2,-4],[-2,-6],[-4,-2]])
+    m2.process_verts()
+    m3 = sm.SqMesh(tf)
+    m3.vertices = np.array([[0,0],[0,-2],[0,-4],[2,-4],[-2,-2],[-4,-2]])
+    m3.process_verts()
+    m4 = sm.SqMesh(tf)
+    m4.vertices = np.array([[-2,2],[-2,0],[0,0],[2,0],[-2,-2],[-4,-2]])
+    m4.process_verts()
+    print(m1.equals(m2))
+    print(m2.equals(m1))
+    print(m3.equals(m1))
+    print(m1.equals(m3))
+    print(m4.equals(m1))
+    print(m1.equals(m4))

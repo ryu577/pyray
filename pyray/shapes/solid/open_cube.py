@@ -33,7 +33,12 @@ class Face():
              rgba = (255, 255, 0, 180),
              wdh=2):
         rotated_face = np.transpose(np.dot(r, np.transpose(self.vertices)))
-        [v1, v2, v3, v4] = shift + scale * rotated_face
+        #rotated_face = np.dot(self.vertices, r)
+        [v1, v2, v3, v4] = scale * rotated_face
+        v1[:2] = v1[:2] + shift[:2]
+        v2[:2] = v2[:2] + shift[:2]
+        v3[:2] = v3[:2] + shift[:2]
+        v4[:2] = v4[:2] + shift[:2]
         draw.polygon([(v1[0], v1[1]), (v2[0], v2[1]), (v4[0], v4[1]),
                       (v3[0], v3[1])], rgba)
         draw.line((v1[0], v1[1], v2[0], v2[1]), fill=rgba[:3], width=wdh)
@@ -88,6 +93,7 @@ def char2coord(ch):
 
 class GraphCube():
     def __init__(self, survive_ros={}, angle=np.pi/2):
+        self.dim = 3
         self.white_verts = set()
         self.grey_verts = set()
         self.grey_rots = {}
@@ -164,6 +170,10 @@ class GraphCube():
         self.vert_props[u].color = "grey"
         w = 2
         shift = (256, 256)
+        if self.dim == 3:
+            shift = (256, 256, 0)
+        elif self.dim == 4:
+            shift = (256, 256, 0, 0)
         scale = 40
         if "shift" in self.__dict__:
             shift = self.shift

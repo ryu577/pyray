@@ -257,6 +257,9 @@ class CubeFcGraph(TsrctFcGraph):
                 self.dfs_flatten(v)
         self.vert_props[u].color = "black"
 
+    def dfs_flatten2(self, u):
+        self.dfs_flatten(u)
+
     def dfs_plot(self, u):
         super().dfs_plot(u)
 
