@@ -59,7 +59,7 @@ class Face1(oc.Face):
 
 
 class TsrctFcGraph(oc.GraphCube):
-    def __init__(self, angle=0, static_lst=True):
+    def __init__(self, angle=0, adj=None):
         self.dim = 4
         self.face_map = {'--00': 0, '-0-0': 1,
                          '-00-': 2, '-00+': 3, '-0+0': 4, '-+00': 5,
@@ -70,8 +70,8 @@ class TsrctFcGraph(oc.GraphCube):
                          '+00+':21, '+0+0':22,'++00':23}
         self.angle = angle
         self.g = nx.Graph()
-        self.constrct()
-        if static_lst:
+        #self.constrct()
+        if adj is None:
             self.adj = {
                 '00-+': {'-0-0', '0-0+', '+00+', '0+0+'},
                 '+00+': {'+-00', '00-+', '00++'},
@@ -99,8 +99,9 @@ class TsrctFcGraph(oc.GraphCube):
                 '++00': {'0+0-'}
             }
         else:
-            self.g_min_tree = nx.minimum_spanning_tree(self.g, weight='weight')
-            self.adj = nx.to_dict_of_dicts(self.g_min_tree)
+            #self.g_min_tree = nx.minimum_spanning_tree(self.g, weight='weight')
+            #self.adj = nx.to_dict_of_dicts(self.g_min_tree)
+            self.adj = adj
         self.make_adj_symm()
         self.vert_props = {}
         for k in self.face_map.keys():

@@ -200,7 +200,7 @@ def tst_specific_faces():
 
 
 def open_tsrct_piecemeal():
-    tf = tg.TsrctFcGraph(angle=np.pi/2, static_lst=True)
+    tf = tg.TsrctFcGraph(angle=np.pi/2, adj=None)
     tf.r = rotation(4, np.pi*17/60.0)
     open_given_cube(tf)
 
