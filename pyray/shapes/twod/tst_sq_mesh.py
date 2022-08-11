@@ -9,6 +9,7 @@ from pyray.rotation import general_rotation, rotate_points_about_axis,\
 import time
 import pyray.shapes.fourd.tst_open_tsrct as ot
 import os
+from collections import defaultdict
 
 
 def refresh_mesh(tf):
@@ -93,15 +94,29 @@ def dedup_meshes(nu_strt_ix=0):
     msh_files = [i for i in msh_files if i.startswith("mesh")]
     msh_files = sorted(msh_files)
     to_del = []
+    same_ones = defaultdict(set)
     for i in range(len(msh_files)):
         m1 = get_msh(msh_files[i])
         for j in range(max(nu_strt_ix,i+1), len(msh_files)):
             m2 = get_msh(msh_files[j])
             if m1.equals(m2):
+                print("Will delete: " + msh_files[j])
                 to_del.append(msh_files[j])
+                same_ones[msh_files[j]].add(msh_files[i])
     for ff in set(to_del):
         f_name = "Data//Meshes//" + ff
         os.remove(f_name)
+    for k in same_ones.keys():
+        i = 0
+        for ff in same_ones[k]:
+            if i>0:
+                f_name = "Data//Meshes//" + ff
+                try:
+                    print("And now deleting " + ff)
+                    os.remove(f_name)
+                except:
+                    pass
+            i += 1
 
 
 def get_msh(filename):
