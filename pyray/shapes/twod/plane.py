@@ -3,6 +3,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageMath
 from pyray.axes import render_scene_4d_axis
 
 from pyray.rotation import *
+from pyray.axes import drawXYGrid, arrowV1
+from pyray.shapes.oned.circle import draw_circle_x_y, project_circle_on_plane
 
 
 def rotated_xz_plane(draw, r, r2, scale=200, shift=np.array([1000,1000,0]), translate=np.array([0,0,0])):
