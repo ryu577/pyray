@@ -145,7 +145,7 @@ class Canvas(object):
         self.draw_line(arr_hd_2,pt2,fill=fill,width=width)
 
     def write_txt(self,pos,txt,rgba,size=18):
-        font = ImageFont.truetype("arial.ttf", size)
+        font = ImageFont.truetype("Arial.ttf", size)
         pos1 = MapCoord.plot_to_im_s(pos[0],pos[1],self.map_crd.origin,scale=64,
                 im_size=self.map_crd.im_size)
         self.draw.text(pos1,txt,rgba,font=font)

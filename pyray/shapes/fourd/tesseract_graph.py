@@ -49,6 +49,16 @@ class Face1(oc.Face):
         super().plot(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
                      shift=shift)
 
+    def plot_perspective(self, draw, r=np.eye(4),
+             shift=np.array([256, 256, 0, 0]),
+             scale=35,
+             rgba=None,
+             wdh=2, e=3, c=7):
+        if rgba is None:
+            rgba = self.rgba
+        super().plot_perspective(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
+                     shift=shift, e=e, c=c)
+
     def shift_and_simpl_rotate(self, theta, axes,
                                new_orig=np.array([0, 0, 0, 0]),
                                sign=1):

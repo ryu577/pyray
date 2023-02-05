@@ -4,7 +4,7 @@ from collections import defaultdict
 from itertools import combinations
 from pyray.shapes.solid.open_cube import char2coord, Face, GraphCube
 from pyray.rotation import general_rotation, rotate_points_about_axis,\
-    rotation
+    rotation, axis_rotation
 from pyray.misc import zigzag3
 import pyray.shapes.fourd.tesseract_graph as tg
 from PIL import Image, ImageDraw
@@ -39,10 +39,37 @@ def tst2():
                     fc[ix1] = p1
                     fc[ix2] = p2
                     f = tg.Face1(''.join(fc))
-                    f.plot(draw, r, scale=40,
+                    #f.plot(draw, r, scale=40,
+                    #       shift=np.array([256, 256, 0, 0]),
+                    #       rgba=(12, 90, 190, 90),
+                    #       wdh=1)
+                    f.plot_perspective(draw, r, scale=40,
                            shift=np.array([256, 256, 0, 0]),
                            rgba=(12, 90, 190, 90),
-                           wdh=1)
+                           wdh=1, e=7, c=4)
+        im.save("Images//RotatingCube//im" + str(ix).rjust(4, '0') + ".png")
+
+
+def tst_perspective(scale=40, e=4, c=-4):
+    for ix in range(60):
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        r = rotation(4, np.pi*ix/60.0)
+        #r = axis_rotation(np.array([0,0,0]), np.array([0,1,0]),
+        #                    ix*2*np.pi/60)
+        for combo in combinations([0, 1, 2, 3], 2):
+            (ix1, ix2) = combo
+            for p1 in ['+', '-']:
+                for p2 in ['+', '-']:
+                    fc_st = '0000'
+                    fc = list(fc_st)
+                    fc[ix1] = p1
+                    fc[ix2] = p2
+                    f = tg.Face1(''.join(fc))
+                    f.plot_perspective(draw, r, scale=scale,
+                           shift=np.array([256, 256, 0, 0]),
+                           rgba=(12, 90, 190, 90),
+                           wdh=1,e=e, c=c)
         im.save("Images//RotatingCube//im" + str(ix).rjust(4, '0') + ".png")
 
 
@@ -200,6 +227,7 @@ def tst_specific_faces():
 
 
 def open_tsrct_piecemeal():
+    """Money shot!"""
     tf = tg.TsrctFcGraph(angle=np.pi/2, adj=None)
     tf.r = rotation(4, np.pi*17/60.0)
     open_given_cube(tf)

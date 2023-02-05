@@ -34,6 +34,14 @@ class Face():
              wdh=2):
         rotated_face = np.transpose(np.dot(r, np.transpose(self.vertices)))
         #rotated_face = np.dot(self.vertices, r)
+        self.plot_face(rotated_face, draw, r, shift,
+                       scale, rgba, wdh)
+
+    def plot_face(self, rotated_face, draw, r=np.eye(3),
+             shift = np.array([256,256,0]),
+             scale = 35,
+             rgba = (255, 255, 0, 180),
+             wdh=2):
         [v1, v2, v3, v4] = scale * rotated_face
         v1[:2] = v1[:2] + shift[:2]
         v2[:2] = v2[:2] + shift[:2]
@@ -45,6 +53,19 @@ class Face():
         draw.line((v2[0], v2[1], v4[0], v4[1]), fill=rgba[:3], width=wdh)
         draw.line((v4[0], v4[1], v3[0], v3[1]), fill=rgba[:3], width=wdh)
         draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=wdh)
+
+    def plot_perspective(self, draw, r=np.eye(3),
+                         shift = np.array([256,256,0]),
+                         scale = 35,
+                         rgba = (255, 255, 0, 180),
+                         wdh=2, e=3, c=7):
+        rotated_face = np.transpose(np.dot(r, np.transpose(self.vertices)))
+        for rot in rotated_face:
+            az = rot[len(rot)-1]
+            for i in range(len(rot)-1):
+                rot[i] = e*rot[i]/(az-c)
+        self.plot_face(rotated_face, draw, r, shift,
+                       scale, rgba, wdh)
 
     def rotate(self, ax_pt1, ax_pt2, theta):
         self.vertices = rotate_points_about_axis(self.vertices,
