@@ -10,7 +10,7 @@ TEST_DEPS = ['pytest']
 DEV_DEPS = []
 
 setup(name='raypy',
-      version='0.0.2',
+      version='0.0.3',
       url='https://github.com/ryu577/pyray',
       license='MIT',
       author='Rohit Pandey',
