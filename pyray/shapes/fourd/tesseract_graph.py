@@ -211,6 +211,9 @@ class TsrctFcGraph(oc.GraphCube):
     def dfs_plot(self, u):
         super().dfs_plot_2(u)
 
+    def dfs_plot_perspective(self, u, persp=4):
+        super().dfs_plot_perspective(u=u, persp=persp)
+
     def mk_xy_set(self):
         """
         Should be run after dfs_flatten2 so cube is already

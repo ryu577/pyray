@@ -58,7 +58,7 @@ class Face():
                          shift = np.array([256,256,0]),
                          scale = 35,
                          rgba = (255, 255, 0, 180),
-                         wdh=2, e=3, c=7):
+                         wdh=2, e=4, c=-4):
         rotated_face = np.transpose(np.dot(r, np.transpose(self.vertices)))
         for rot in rotated_face:
             az = rot[len(rot)-1]
@@ -234,6 +234,24 @@ class GraphCube():
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 self.dfs_plot_2(v, rgba)
+
+    def dfs_plot_perspective(self, u, rgba=(12, 90, 190, 90),\
+                             persp=4):
+        """Assumes a draw object and rotation object attached to graph"""
+        shift = (256, 256)
+        scale = 40
+        if "shift" in self.__dict__:
+            shift = self.shift
+        if "scale" in self.__dict__:
+            scale = self.scale
+        self.vert_props[u].plot_perspective(self.draw, self.r,
+                                scale=scale,
+                                rgba=rgba, shift=shift,
+                                e=persp, c=-persp)
+        self.vert_props[u].color = "grey"
+        for v in self.adj[u]:
+            if self.vert_props[v].color == "white":
+                self.dfs_plot_perspective(u=v, persp=persp)
 
 
 def get_rot_ax(f1, f2):

@@ -226,20 +226,23 @@ def tst_specific_faces():
                     str(11+i).rjust(4, '0') + ".png")
 
 
-def open_tsrct_piecemeal():
+def open_tsrct_piecemeal(persp=17):
     """Money shot!"""
     tf = tg.TsrctFcGraph(angle=np.pi/2, adj=None)
     tf.r = rotation(4, np.pi*17/60.0)
-    open_given_cube(tf)
+    open_given_cube(tf, w_persp=persp)
 
 
-def open_given_cube(tf, base_fc='00-+'):
+def open_given_cube(tf, base_fc='00-+', w_persp=0):
     im = Image.new("RGB", (1024, 1024), (0, 0, 0))
     tf.draw = ImageDraw.Draw(im, 'RGBA')
     tf.reset_vert_col()
     tf.dfs_flatten2(base_fc)
     tf.reset_vert_col()
-    tf.dfs_plot(base_fc)
+    if w_persp>0:
+        tf.dfs_plot_perspective(base_fc, persp=w_persp)
+    else:
+        tf.dfs_plot(base_fc)
     im.save("Images//RotatingCube//im" +
                     str(0).rjust(4, '0') + ".png")
     i = 1
@@ -249,7 +252,10 @@ def open_given_cube(tf, base_fc='00-+'):
         tf.reset_vert_col()
         (u, rot) = tf.rot_st.pop()
         tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
-        tf.dfs_plot(base_fc)
+        if w_persp>0:
+            tf.dfs_plot_perspective(base_fc, persp=w_persp)
+        else:
+            tf.dfs_plot(base_fc)
         im.save("Images//RotatingCube//im" +
                     str(i).rjust(4, '0') + ".png")
         i += 1
