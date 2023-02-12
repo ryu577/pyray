@@ -72,6 +72,10 @@ class Face():
                                                  ax_pt1, ax_pt2, theta)
         self.face_center = self.vertices.mean(axis=0)
 
+    def rotate_face(self, ax_pt1, ax_pt2, theta):
+        """For backwards compatibility"""
+        self.rotate(ax_pt1, ax_pt2, theta)
+
     def simple_rotate(self, theta, axes):
         """
         args:
@@ -351,7 +355,7 @@ def tst_plot_faces():
         im.save("Images//RotatingCube//im" + str(ix) + ".png")
 
 
-def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}, prev_surv={}):
+def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}):
     r = general_rotation(np.array([1,1,1]), np.pi/6)
     for i in range(ix, ix+22):
         im = Image.new("RGB", (512, 512), (0,0,0))
