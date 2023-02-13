@@ -5,6 +5,7 @@ from itertools import combinations
 from pyray.shapes.solid.open_cube import char2coord, Face, GraphCube
 from pyray.rotation import general_rotation, rotate_points_about_axis,\
     rotation, axis_rotation
+from pyray.rotation2.rotn_4d import rotate_points_about_plane
 from pyray.misc import zigzag3
 import pyray.shapes.fourd.tesseract_graph as tg
 from PIL import Image, ImageDraw
@@ -224,6 +225,22 @@ def tst_specific_faces():
 
         im.save("Images//RotatingCube//im" +
                     str(11+i).rjust(4, '0') + ".png")
+
+
+def tst_new_rotation():
+    r = rotation(4, np.pi*17/60.0)
+    f1 = tg.Face1('-00+')
+    f2 = tg.Face1('00-+')
+    f3 = tg.Face1('-0-0')
+    for i in range(10):
+        im = Image.new("RGB", (512, 512), (0, 0, 0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        f1.plot(draw, r)
+        f2.rotate_about_plane(f3.vertices[0], f3.vertices[1],
+                              f3.vertices[2], np.pi/2*1/10.0)
+        f2.plot(draw, r)
+        im.save("Images//RotatingCube//im" +
+                        str(i).rjust(4, '0') + ".png")
 
 
 def open_tsrct_piecemeal(persp=17):

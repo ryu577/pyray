@@ -1,6 +1,7 @@
 import numpy as np
 import networkx as nx
 import pyray.shapes.solid.open_cube as oc
+from pyray.rotation2.rotn_4d import rotate_points_about_plane
 from collections import deque
 from pyvis.network import Network
 
@@ -58,6 +59,11 @@ class Face1(oc.Face):
             rgba = self.rgba
         super().plot_perspective(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
                      shift=shift, e=e, c=c)
+
+    def rotate_about_plane(self, ax1, ax2, ax3, theta):
+        self.vertices = rotate_points_about_plane(self.vertices,
+                            ax1, ax2, ax3, theta)
+        self.face_center = self.vertices.mean(axis=0)
 
     def shift_and_simpl_rotate(self, theta, axes,
                                new_orig=np.array([0, 0, 0, 0]),
