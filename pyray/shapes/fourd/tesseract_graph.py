@@ -2,8 +2,8 @@ import numpy as np
 import networkx as nx
 import pyray.shapes.solid.open_cube as oc
 from pyray.rotation2.rotn_4d import rotate_points_about_plane
+from pyray.shapes.solid.open_cube import char2coord
 from collections import deque
-from pyvis.network import Network
 
 
 def cube_trees():
@@ -60,9 +60,9 @@ class Face1(oc.Face):
         super().plot_perspective(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
                      shift=shift, e=e, c=c)
 
-    def rotate_about_plane(self, ax1, ax2, ax3, theta):
+    def rotate_about_plane(self, ax1, ax2, ax3, theta, ref_pt=None):
         self.vertices = rotate_points_about_plane(self.vertices,
-                            ax1, ax2, ax3, theta)
+                            ax1, ax2, ax3, theta, ref_pt)
         self.face_center = self.vertices.mean(axis=0)
 
     def shift_and_simpl_rotate(self, theta, axes,
@@ -78,12 +78,17 @@ class TsrctFcGraph(oc.GraphCube):
     def __init__(self, angle=0, adj=None):
         self.dim = 4
         self.face_map = {'--00': 0, '-0-0': 1,
-                         '-00-': 2, '-00+': 3, '-0+0': 4, '-+00': 5,
-                         '0--0': 6, '0-0-': 7, '0-0+': 8, '0-+0': 9,
-                         '0+-0':10, '0+0-':11,'0+0+':12, '0++0':13,
-                         '00--':14, '00-+':15, '00+-':16, '00++':17,
-                         '+-00':18, '+0-0':19, '+00-':20,
-                         '+00+':21, '+0+0':22,'++00':23}
+                         '-00-': 2, '-00+': 3, 
+                         '-0+0': 4, '-+00': 5,
+                         '0--0': 6, '0-0-': 7, 
+                         '0-0+': 8, '0-+0': 9,
+                         '0+-0':10, '0+0-':11,
+                         '0+0+':12, '0++0':13,
+                         '00--':14, '00-+':15, 
+                         '00+-':16, '00++':17,
+                         '+-00':18, '+0-0':19, 
+                         '+00-':20, '+00+':21, 
+                         '+0+0':22,'++00':23}
         self.angle = angle
         self.g = nx.Graph()
         #self.constrct()

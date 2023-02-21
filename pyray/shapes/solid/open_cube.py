@@ -185,7 +185,8 @@ class GraphCube():
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
                 # Apply rotations of grey vertices.
-                self.grey_rots[v] = get_rot_ax(self.vert_props[u], self.vert_props[v])
+                self.grey_rots[v] = get_rot_ax(self.vert_props[u], 
+                                               self.vert_props[v])
                 self.dfs_flatten(v)
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
