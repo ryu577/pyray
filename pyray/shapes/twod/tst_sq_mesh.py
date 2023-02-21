@@ -4,10 +4,8 @@ import pyray.shapes.fourd.tesseract_graph as tg
 from copy import deepcopy
 import json
 from PIL import Image, ImageDraw
-from pyray.rotation import general_rotation, rotate_points_about_axis,\
-    rotation
-import time
 import pyray.shapes.fourd.tst_open_tsrct as ot
+from pyray.rotation import rotation
 import os
 from collections import defaultdict
 
