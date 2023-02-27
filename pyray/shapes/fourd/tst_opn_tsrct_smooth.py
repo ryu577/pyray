@@ -2,6 +2,7 @@ import numpy as np
 from pyray.rotation import rotation
 import pyray.shapes.fourd.tesseract_graph as tg
 import pyray.shapes.fourd.tsrct_face_rotation as tfr
+import pyray.shapes.fourd.open_tsrct as ot
 from PIL import Image, ImageDraw
 
 
@@ -100,6 +101,26 @@ def tst_rotation_three_faces2():
         f4.plot(draw, r)
         im.save("Images//RotatingCube//im" +
                         str(i).rjust(4, '0') +
+                        ".png")
+
+
+def tst_problematic_rotation():
+    r = rotation(4, np.pi*17/60.0)
+    f1 = tg.Face1('+00+')
+    f2 = tg.Face1('00-+')
+    f3 = tg.Face1('+0-0')
+    rr = ot.Rotation(f1, f2)
+    tgr = tg.TsrctFcGraph()
+    im = Image.new("RGB", (512, 512), (0, 0, 0))
+    draw = ImageDraw.Draw(im, 'RGBA')
+    for kk in tgr.face_map.keys():
+        ff = tg.Face1(kk)
+        ff.plot(draw, r, rgba=(10,31,190,120))
+    f1.plot(draw, r, rgba=(255,0,0,200))
+    f2.plot(draw, r, rgba=(0,255,0,200))
+    f3.plot(draw, r, rgba=(255,255,0,200))
+    im.save("Images//RotatingCube//im" +
+                        str(0).rjust(4, '0') +
                         ".png")
 
 
