@@ -21,26 +21,35 @@ def rotate_points_about_plane(pts, ax1, ax2, ax3,
 
 def rotate_points_about_plane_helper(pts, ax1, ax2, ax3, v4,
 							  		theta):
-	v1 = ax1 - ax2
-	v2 = ax2 - ax3
-	v3 = np.mean(pts, axis=0) - ax1
+    v1 = ax1 - ax2
+    v2 = ax2 - ax3
+    v3 = np.mean(pts, axis=0) - ax1
 	
-	e = four_vec_gram_schmidt(v1, v2, v3, v4)
+    a = np.array([v1, v2, v3, v4])
+    if np.linalg.cond(a) > 1e5:
+        print("The vectors aren't independent\
+                as we were expecting. \
+				This is often because the points\
+				lie on the very plane of rotation.\
+				Hence, returning the points without rotating.")
+        return pts
+    e = four_vec_gram_schmidt(v1, v2, v3, v4)
+
 	# Make ax1 the origin.
-	pts1 = pts - ax1
+    pts1 = pts - ax1
 	# Express the point in the new basis.
-	pts2 = np.dot(pts1, np.transpose(e))
+    pts2 = np.dot(pts1, np.transpose(e))
 	# Next, do the rotation.
-	rot = np.array([[1,0,0,0],
+    rot = np.array([[1,0,0,0],
 					[0,1,0,0],
 					[0,0,np.cos(theta), np.sin(theta)], 
 					[0,0,-np.sin(theta), np.cos(theta)]])
-	pts2 = np.dot(pts2, rot)
+    pts2 = np.dot(pts2, rot)
 	# Next, undo the change of basis.
-	pts3 = np.dot(pts2, e)
+    pts3 = np.dot(pts2, e)
 	# Undo move of origin.
-	pts4 = pts3 + ax1
-	return pts4
+    pts4 = pts3 + ax1
+    return pts4
 
 
 def two_vec_gram_schmidt(v1, v2):
@@ -52,12 +61,22 @@ def two_vec_gram_schmidt(v1, v2):
 
 
 def four_vec_gram_schmidt(v1, v2, v3, v4):
+	if sum(v4==0) == len(v4):
+		breakpoint()
+	if sum(v3 == 0) == len(v3):
+		breakpoint()
+	if sum(v2 == 0) == len(v2):
+		breakpoint()
+	if sum(v1 == 0) == len(v1):
+		breakpoint()
 	u1 = v1
 	e1 = normalize(u1)
 	u2 = v2 - project(u1, v2)
 	e2 = normalize(u2)
 	u3 = v3 - project(u1, v3) - project(u2, v3)
 	e3 = normalize(u3)
+	if sum(u3 == 0.0) == len(u3):
+		print("Inuput vectors weren't linearly independent.")
 	u4 = v4 - project(u1, v4) - project(u2, v4)\
 			- project(u3, v4)
 	e4 = normalize(u4)
