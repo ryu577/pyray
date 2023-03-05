@@ -15,12 +15,13 @@ class TsrctFcGraph2(TsrctFcGraph):
         self.grey_verts = set()
         self.base_face = Face1(base_face)
         self.random_face = Face1('+00+')
+        self.rot_array = []
 
     def dfs_flatten(self, u):
         self.vert_props[u].color = "grey"
         self.grey_verts.add(u)
         # Apply all the rotations.
-        for kk in self.grey_rots.keys():
+        for kk in self.rot_array:
             if kk not in self.black_verts:
                 rr = self.grey_rots[kk]
                 # Edge conditions.
@@ -38,6 +39,7 @@ class TsrctFcGraph2(TsrctFcGraph):
                 self.grey_rots[v] = Rotation(self.vert_props[u],
                                              self.vert_props[v],
                                              self.angle)
+                self.rot_array.append(v)
                 self.dfs_flatten(v)
         self.vert_props[u].color = "black"
         self.black_verts.add(u)
