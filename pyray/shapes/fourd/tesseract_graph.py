@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 import pyray.shapes.solid.open_cube as oc
-from pyray.rotation2.rotn_4d import rotate_points_about_plane
+from pyray.rotation2.rotn_4d import rotate_points_about_plane, rotate_points_about_plane2
 from pyray.shapes.solid.open_cube import char2coord
 from collections import deque
 
@@ -18,7 +18,8 @@ def cube_trees():
 
 
 class Face1(oc.Face):
-    def __init__(self, val, rgba=(255, 255, 0, 180)):
+    def __init__(self, val, rgba=(255, 255, 0, 180), 
+                rand_vec=np.array([.876, .11247, .9743, .4237])):
         self.dim = 4
         self.val = val
         self.rgba = rgba
@@ -27,6 +28,7 @@ class Face1(oc.Face):
         self.y = oc.char2coord(val[1])
         self.z = oc.char2coord(val[2])
         self.w = oc.char2coord(val[3])
+        self.rand_vec = rand_vec
         self.face_center = np.array([self.x, self.y, self.z, self.w])
         self.vertices = np.array([[1, 1], [1, -1], [-1, 1], [-1, -1]])
         if self.x != 0:
@@ -39,6 +41,7 @@ class Face1(oc.Face):
             self.vertices = np.insert(self.vertices, 3, self.w, axis=1)
         self.o_verts = self.vertices.copy()
         self.o_face_center = self.face_center.copy()
+        self.rot_sign = 0
 
     def plot(self, draw, r=np.eye(4),
              shift=np.array([256, 256, 0, 0]),
@@ -60,9 +63,18 @@ class Face1(oc.Face):
         super().plot_perspective(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
                      shift=shift, e=e, c=c)
 
-    def rotate_about_plane(self, ax1, ax2, ax3, theta, ref_pt=None):
-        self.vertices = rotate_points_about_plane(self.vertices,
-                            ax1, ax2, ax3, theta, ref_pt)
+    def rotate_about_plane(self, ax1, ax2, ax3, theta, ref_pt=None, 
+                           take_farther=False):
+        self.vertices, sign = rotate_points_about_plane(self.vertices,
+                            ax1, ax2, ax3, theta, ref_pt=ref_pt, 
+                            take_farther=take_farther)
+        
+        self.rot_sign = sign
+        self.face_center = self.vertices.mean(axis=0)
+
+    def rotate_about_plane2(self, ax1, ax2, ax3, theta, ref_face=None):
+        self.vertices = rotate_points_about_plane2(self, ax1, ax2, ax3, theta, 
+                                                  ref_face)
         self.face_center = self.vertices.mean(axis=0)
 
     def shift_and_simpl_rotate(self, theta, axes,
@@ -94,30 +106,30 @@ class TsrctFcGraph(oc.GraphCube):
         #self.constrct()
         if adj is None:
             self.adj = {
-                '00-+': {'-0-0', '0-0+', '+00+', '0+0+'},
-                '+00+': {'+-00', '00-+', '00++'},
-                '00++': {'-00+', '+00+', '0++0'},
-                '0++0': {'00++', '00+-'},
-                '-00+': {'00++', '--00'},
-                '--00': {'-00+', '-00-'},
-                '-00-': {'--00'},
-                '00+-': {'-0+0', '+0+0'},
-                '-0+0': {'00+-'},
-                '+-00': {'+00-'},
-                '+00-': {'+-00'},
-                '+0+0': {'00+-'},
-                '0+0+': {'00-+','-+00'},
-                '0-0+': {'00-+', '0-+0'},
-                '0-+0': {'0-0+', '0-0-'},
-                '0-0-': {'0-+0'},
-                '-0-0': {'00--', '00-+'},
-                '00--': {'-0-0', '0--0'},
-                '0--0': {'00--', '+0-0'},
-                '+0-0': {'0--0', '0+-0'},
-                '0+-0': {'+0-0'},
-                '-+00': {'0+0+', '0+0-'},
-                '0+0-': {'-+00', '++00'},
-                '++00': {'0+0-'}
+                '00-+': ['+00+', '-0-0', '0-0+', '0+0+'],
+                '+00+': ['00++', '+-00', '00-+'],
+                '00++': ['-00+', '0++0', '+00+'],
+                '0++0': ['00++', '00+-'],
+                '-00+': ['00++', '--00'],
+                '--00': ['-00+', '-00-'],
+                '-00-': ['--00'],
+                '00+-': ['-0+0', '+0+0'],
+                '-0+0': ['00+-'],
+                '+-00': ['+00-'],
+                '+00-': ['+-00'],
+                '+0+0': ['00+-'],
+                '0+0+': ['00-+','-+00'],
+                '0-0+': ['00-+', '0-+0'],
+                '0-+0': ['0-0+', '0-0-'],
+                '0-0-': ['0-+0'],
+                '-0-0': ['00--', '00-+'],
+                '00--': ['-0-0', '0--0'],
+                '0--0': ['00--', '+0-0'],
+                '+0-0': ['0--0', '0+-0'],
+                '0+-0': ['+0-0'],
+                '-+00': ['0+0+', '0+0-'],
+                '0+0-': ['-+00', '++00'],
+                '++00': ['0+0-']
             }
         else:
             #self.g_min_tree = nx.minimum_spanning_tree(self.g, weight='weight')
@@ -131,6 +143,8 @@ class TsrctFcGraph(oc.GraphCube):
         self.black_verts = set()
         self.rot_st = deque()
         self.xy_set = set()
+        self.d = np.inf
+        self.pi = ''
 
     def make_adj_symm(self):
         adj2 = self.adj.copy()
@@ -138,7 +152,7 @@ class TsrctFcGraph(oc.GraphCube):
             for kk in self.adj[k]:
                 if k not in self.adj[kk]:
                     print("Fixing " + k + "," + kk)
-                adj2[kk].add(k)
+                    adj2[kk].append(k)
         self.adj = adj2
 
     def constrct(self):
