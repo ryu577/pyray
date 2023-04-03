@@ -162,6 +162,7 @@ class GraphCube():
         self.black_verts = set()
         self.grey_verts = set()
         self.grey_rots = {}
+        self.rot_array = []
 
     def print_vert_props(self):
         for k in self.vert_props.keys():

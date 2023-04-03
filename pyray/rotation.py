@@ -59,6 +59,21 @@ def yzrotation(theta=np.pi*3/20.0):
     return r
 
 
+def xyrotation(theta=np.pi*3/20.0):
+    """
+    Returns a simple planar rotation matrix that rotates
+    vectors around the x-axis.
+    args:
+        theta: The angle by which we will perform the rotation.
+    """
+    r = np.eye(3)
+    r[0, 0] = np.cos(theta)
+    r[0, 1] = -np.sin(theta)
+    r[1, 0] = np.sin(theta)
+    r[1, 1] = np.cos(theta)
+    return r
+
+
 def general_rotation(a, theta):
     """
     Applies to 3-d space.

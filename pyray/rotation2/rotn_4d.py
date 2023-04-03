@@ -2,10 +2,48 @@ import numpy as np
 from copy import deepcopy
 
 
+def get_common_verts(verts1, verts2):
+    """
+    Gets the common vertices of two connected faces.
+    Note: This can be made more efficient by storing
+    the vertices in a certain order, etc. But we just
+    have four vertices for each face, so we don't bother.
+    """
+    pts = []
+    for i in range(4):
+        for j in range(4):
+            if sum((verts1[i] - verts2[j])**2) < 0.1:
+                pts.append(verts1[i])
+    if len(pts) != 2:
+        print("Two faces should only have two end\
+               points intersecting.")
+    return np.array(pts)
+
+
+def rotate_points_about_plane2(face, ax1, ax2, ax3,
+							  theta, ref_face=None,
+							  rand_vec=np.array([.187,.226,.745,.401]),):
+	pts = face.vertices
+	v4 = rand_vec
+	pts4 = rotate_points_about_plane_helper(pts, ax1,
+										   ax2, ax3,v4,
+							  			   theta)
+	if ref_face is not None:
+		pts4_prime = rotate_points_about_plane_helper(pts, ax1, 
+										   ax2, ax3,v4,
+							  			   -theta)
+		commons = get_common_verts(pts4, ref_face.vertices)
+		if len(commons) < 2:
+			return pts4_prime
+	return pts4
+
+
 def rotate_points_about_plane(pts, ax1, ax2, ax3,
-							  theta, ref_pt=None):
-	v4 = np.random.uniform(size=4)
-	pts4 = rotate_points_about_plane_helper(pts, ax1, 
+							  theta, ref_pt=None,
+							  rand_vec=np.array([.187,.226,.745,.401]),
+							  take_farther=False):
+	v4 = rand_vec
+	pts4 = rotate_points_about_plane_helper(pts, ax1,
 										   ax2, ax3,v4,
 							  			   theta)
 	if ref_pt is not None:
@@ -14,9 +52,11 @@ def rotate_points_about_plane(pts, ax1, ax2, ax3,
 							  			   -theta)
 		pt4 = np.mean(pts4, axis=0)
 		pt4_prime = np.mean(pts4_prime, axis=0)
-		if np.sum((ref_pt-pt4_prime)**2) >= np.sum((ref_pt-pt4)**2):
-			return pts4_prime
-	return pts4
+		if np.sum((ref_pt-pt4_prime)**2)\
+			 	 > np.sum((pt4-ref_pt)**2)\
+									and take_farther:
+			return pts4_prime, -1
+	return pts4, +1
 
 
 def rotate_points_about_plane_helper(pts, ax1, ax2, ax3, v4,
