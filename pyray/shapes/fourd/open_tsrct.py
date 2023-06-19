@@ -9,7 +9,7 @@ import queue
 class TsrctFcGraph2(TsrctFcGraph):
     """
     This class is being created to open the Tesseract
-    smoothly. Experimental as of now.
+    smoothly.
     """
     def __init__(self, angle=0, adj=None, base_face='00++'):
         super().__init__(angle, adj)
@@ -74,10 +74,16 @@ class TsrctFcGraph2(TsrctFcGraph):
             self.vert_props[u].color = "black"
             self.black_verts.add(u)
 
-    def plot_all_faces(self, draw, r):
+    def plot_all_faces(self, draw, r, persp=0, rgba=(10,31,190,80)):
         for kk in self.face_map.keys():
             ff = self.vert_props[kk]
-            ff.plot(draw, r, rgba=(10,31,190,120))
+            if persp == 0:
+                ff.plot(draw, r, rgba=rgba)
+            else:
+                ff.plot_perspective(draw, r,
+                                    rgba=rgba,
+                                    e=persp,
+                                    c=-persp)
 
     def tst_dfs_rotate(self, u):
         self.vert_props[u].color = "grey"
@@ -239,7 +245,7 @@ def tst_open():
                         ".png")
 
 
-def tst_open2():
+def tst_open2(persp=0):
     tf = TsrctFcGraph2(angle=0.0)
     #tf.adj, tf.face_map = scope_graph(tf.adj, tf.face_map)
     tf.bfs('00++')
@@ -247,7 +253,7 @@ def tst_open2():
     r = rotation(4, np.pi*17/60.0)
     im = Image.new("RGB", (512, 512), (0, 0, 0))
     draw = ImageDraw.Draw(im, 'RGBA')
-    tf.plot_all_faces(draw, r)
+    tf.plot_all_faces(draw, r, persp=persp)
     im.save("Images//RotatingCube//im" +
                         str(0).rjust(4, '0') +
                         ".png")
@@ -259,7 +265,7 @@ def tst_open2():
             tf.reset_vert_col()
             tf.curr_d = j+1
             tf.dfs('00++')
-        tf.plot_all_faces(draw, r)
+        tf.plot_all_faces(draw, r, persp=persp)
         tf.reset()
         im.save("Images//RotatingCube//im" +
                         str(i+1).rjust(4, '0') +

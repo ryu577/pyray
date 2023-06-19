@@ -2,7 +2,7 @@ import numpy as np
 from copy import deepcopy
 
 
-def get_common_verts(verts1, verts2):
+def get_common_verts(verts1, verts2, thresh=0.1):
     """
     Gets the common vertices of two connected faces.
     Note: This can be made more efficient by storing
@@ -10,9 +10,9 @@ def get_common_verts(verts1, verts2):
     have four vertices for each face, so we don't bother.
     """
     pts = []
-    for i in range(4):
-        for j in range(4):
-            if sum((verts1[i] - verts2[j])**2) < 0.1:
+    for i in range(len(verts1)):
+        for j in range(len(verts2)):
+            if sum((verts1[i] - verts2[j])**2) < thresh:
                 pts.append(verts1[i])
     if len(pts) != 2:
         print("Two faces should only have two end\
@@ -23,6 +23,9 @@ def get_common_verts(verts1, verts2):
 def rotate_points_about_plane2(face, ax1, ax2, ax3,
 							  theta, ref_face=None,
 							  rand_vec=np.array([.187,.226,.745,.401]),):
+	"""
+	Keeps the faces connected as rotation is happening.
+	"""
 	pts = face.vertices
 	v4 = rand_vec
 	pts4 = rotate_points_about_plane_helper(pts, ax1,
@@ -140,6 +143,30 @@ def project(u, v):
 	"""Project on u the vector v"""
 	const = np.dot(v, u)/np.dot(u, u)
 	return const*np.array(u)
+
+
+def rotn_1(i=0):
+    """
+	Particularly nice rotation matrices in 4-d space.
+	Close to maximize the shadow in 2-d space. The i revolves
+	the object around.
+	"""
+    r1 = np.eye(4)
+    r1[1:3,1:3] = \
+            np.array([[np.cos(np.pi/4), np.sin(np.pi/4)],
+                    [-np.sin(np.pi/4),np.cos(np.pi/4)]])
+    r2 = np.eye(4)
+    r2[0:2,0:2] = \
+            np.array([[np.cos(np.pi/4), np.sin(np.pi/4)],
+                    [-np.sin(np.pi/4),np.cos(np.pi/4)]])
+    r = np.dot(r1, r2)
+    r3 = np.eye(4)
+    r3[np.ix_([0,3],[0,3])] = \
+            np.array([[np.cos(np.pi/8*i/13), np.sin(np.pi/8*i/13)],
+                    [-np.sin(np.pi/8*i/13),np.cos(np.pi/8*i/13)]])
+    r = np.dot(r1, r2)
+    r = np.dot(r, r3)
+    return r
 
 
 if __name__ == "__main__":

@@ -150,7 +150,9 @@ class TsrctFcGraph(oc.GraphCube):
         adj2 = self.adj.copy()
         for k in self.adj.keys():
             for kk in self.adj[k]:
-                if k not in self.adj[kk]:
+                if kk not in self.adj:
+                    adj2[kk] = [k]
+                elif k not in self.adj[kk]:
                     print("Fixing " + k + "," + kk)
                     adj2[kk].append(k)
         self.adj = adj2
