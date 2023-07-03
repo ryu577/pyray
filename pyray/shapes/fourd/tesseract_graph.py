@@ -98,8 +98,8 @@ class TsrctFcGraph(oc.GraphCube):
                          '0+0+':12, '0++0':13,
                          '00--':14, '00-+':15, 
                          '00+-':16, '00++':17,
-                         '+-00':18, '+0-0':19, 
-                         '+00-':20, '+00+':21, 
+                         '+-00':18, '+0-0':19,
+                         '+00-':20, '+00+':21,
                          '+0+0':22,'++00':23}
         self.angle = angle
         self.g = nx.Graph()
@@ -153,7 +153,7 @@ class TsrctFcGraph(oc.GraphCube):
                 if kk not in self.adj:
                     adj2[kk] = [k]
                 elif k not in self.adj[kk]:
-                    print("Fixing " + k + "," + kk)
+                    #print("Fixing " + k + "," + kk)
                     adj2[kk].append(k)
         self.adj = adj2
 

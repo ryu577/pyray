@@ -59,6 +59,10 @@ def rotate_points_about_plane(pts, ax1, ax2, ax3,
 			 	 > np.sum((pt4-ref_pt)**2)\
 									and take_farther:
 			return pts4_prime, -1
+		elif np.sum((ref_pt-pt4_prime)**2)\
+			 	 < np.sum((pt4-ref_pt)**2)\
+									and not take_farther:
+			return pts4, 1
 	return pts4, +1
 
 
@@ -67,22 +71,57 @@ def rotate_points_about_plane_helper(pts, ax1, ax2, ax3, v4,
     v1 = ax1 - ax2
     v2 = ax2 - ax3
     v3 = np.mean(pts, axis=0) - ax1
-	
+    #v3 = np.random.norma(size=4)
     a = np.array([v1, v2, v3, v4])
     if np.linalg.cond(a) > 1e5:
-        print("The vectors aren't independent\
-                as we were expecting. \
-				This is often because the points\
-				lie on the very plane of rotation.\
-				Hence, returning the points without rotating.")
+        # print("The vectors aren't independent\
+        #         as we were expecting. \
+		# 		This is often because the points\
+		# 		lie on the very plane of rotation.\
+		# 		Hence, returning the points without rotating.")
         return pts
     e = four_vec_gram_schmidt(v1, v2, v3, v4)
-
+    if np.linalg.det(e) < 0:
+        v4 = -v4
+        e = four_vec_gram_schmidt(v1, v2, v3, v4)
 	# Make ax1 the origin.
     pts1 = pts - ax1
 	# Express the point in the new basis.
     pts2 = np.dot(pts1, np.transpose(e))
 	# Next, do the rotation.
+	# e1 and e2 were aligned with the plane.
+	# Now, the rotation should keep points on the plane fixed.
+	# this is the reason only z-w parts of matrix have the rotation.
+    rot = np.array([[1,0,0,0],
+					[0,1,0,0],
+					[0,0,np.cos(theta), np.sin(theta)], 
+					[0,0,-np.sin(theta), np.cos(theta)]])
+    pts2 = np.dot(pts2, rot)
+	# Next, undo the change of basis.
+    pts3 = np.dot(pts2, e)
+	# Undo move of origin.
+    pts4 = pts3 + ax1
+    return pts4
+
+
+def rotate_abt_plane(pts, ax1, ax2, ax3,
+							  		theta):
+    v1 = ax1 - ax2
+    v2 = ax2 - ax3
+    v3 = np.random.normal(size=4)
+    v4 = np.random.normal(size=4)
+    e = four_vec_gram_schmidt(v1, v2, v3, v4)
+    if np.linalg.det(e) < 0:
+        v4 = -v4
+        e = four_vec_gram_schmidt(v1, v2, v3, v4)
+    # Make ax1 the origin.
+    pts1 = pts - ax1
+	# Express the point in the new basis.
+    pts2 = np.dot(pts1, np.transpose(e))
+	# Next, do the rotation.
+	# e1 and e2 were aligned with the plane.
+	# Now, the rotation should keep points on the plane fixed.
+	# this is the reason only z-w parts of matrix have the rotation.
     rot = np.array([[1,0,0,0],
 					[0,1,0,0],
 					[0,0,np.cos(theta), np.sin(theta)], 
