@@ -2,7 +2,7 @@ import numpy as np
 from copy import deepcopy
 
 
-def get_common_verts(verts1, verts2, thresh=0.1):
+def get_common_verts(verts1, verts2, thresh=0.1, verbose=False):
     """
     Gets the common vertices of two connected faces.
     Note: This can be made more efficient by storing
@@ -15,8 +15,10 @@ def get_common_verts(verts1, verts2, thresh=0.1):
             if sum((verts1[i] - verts2[j])**2) < thresh:
                 pts.append(verts1[i])
     if len(pts) != 2:
-        print("Two faces should only have two end\
-               points intersecting.")
+        if verbose:
+            print("Two faces should only have two end\
+                points intersecting.")
+
     return np.array(pts)
 
 
@@ -37,8 +39,8 @@ def rotate_points_about_plane2(face, ax1, ax2, ax3,
 							  			   -theta)
 		commons = get_common_verts(pts4, ref_face.vertices)
 		if len(commons) < 2:
-			return pts4_prime
-	return pts4
+			return pts4_prime, -1
+	return pts4, 1
 
 
 def rotate_points_about_plane(pts, ax1, ax2, ax3,

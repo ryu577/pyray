@@ -3,6 +3,7 @@ import networkx as nx
 import pyray.shapes.solid.open_cube as oc
 from pyray.rotation2.rotn_4d import rotate_points_about_plane, rotate_points_about_plane2
 from pyray.shapes.solid.open_cube import char2coord
+from pyray.rotation2.rotn_4d import rotate_points_about_plane_helper
 from collections import deque
 
 
@@ -22,6 +23,7 @@ class Face1(oc.Face):
                 rand_vec=np.array([.876, .11247, .9743, .4237])):
         self.dim = 4
         self.val = val
+        self.key = val
         self.rgba = rgba
         self.color = "white"
         self.x = oc.char2coord(val[0])
@@ -42,6 +44,7 @@ class Face1(oc.Face):
         self.o_verts = self.vertices.copy()
         self.o_face_center = self.face_center.copy()
         self.rot_sign = 0
+        self.d = 0
 
     def plot(self, draw, r=np.eye(4),
              shift=np.array([256, 256, 0, 0]),
@@ -63,6 +66,16 @@ class Face1(oc.Face):
         super().plot_perspective(r=r, rgba=rgba, scale=scale, wdh=wdh, draw=draw,
                      shift=shift, e=e, c=c)
 
+    def rotate(self, ax1, ax2, ax3, theta):
+        """
+        New method. Just a vanilla rotate with no bells and whistles.
+        """
+        self.vertices = rotate_points_about_plane_helper(self.vertices, 
+                                            ax1, ax2, ax3,
+                                            np.random.normal(size=4),
+                                            theta)
+        self.face_center = self.vertices.mean(axis=0)
+
     def rotate_about_plane(self, ax1, ax2, ax3, theta, ref_pt=None, 
                            take_farther=False):
         self.vertices, sign = rotate_points_about_plane(self.vertices,
@@ -73,7 +86,7 @@ class Face1(oc.Face):
         self.face_center = self.vertices.mean(axis=0)
 
     def rotate_about_plane2(self, ax1, ax2, ax3, theta, ref_face=None):
-        self.vertices = rotate_points_about_plane2(self, ax1, ax2, ax3, theta, 
+        self.vertices, sign = rotate_points_about_plane2(self, ax1, ax2, ax3, theta, 
                                                   ref_face)
         self.face_center = self.vertices.mean(axis=0)
 
@@ -238,8 +251,26 @@ class TsrctFcGraph(oc.GraphCube):
     def dfs_plot(self, u):
         super().dfs_plot_2(u)
 
-    def dfs_plot_perspective(self, u, persp=4):
-        super().dfs_plot_perspective(u=u, persp=persp)
+    def dfs_plot_perspective(self, u, rgba=(12, 90, 190, 90),\
+                             persp=4, shift = (256, 256),
+                             scale = 40):
+        super().dfs_plot_perspective(u=u, persp=persp,
+                                     rgba=rgba, shift=shift,
+                                     scale=scale)
+
+    def plot_all_faces(self, draw, r, persp=0, rgba=(10,31,190,80),
+                       shift=np.array([514, 595, 0, 0]),scale=105):
+        for kk in self.face_map.keys():
+            ff = self.vert_props[kk]
+            if persp == 0:
+                ff.plot(draw, r, rgba=rgba,shift=shift,scale=scale)
+            else:
+                ff.plot_perspective(draw, r,
+                                    rgba=rgba,
+                                    e=persp,
+                                    c=-persp,
+                                    shift=shift,
+                                    scale=scale)
 
     def mk_xy_set(self):
         """

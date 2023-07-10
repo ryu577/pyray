@@ -112,18 +112,12 @@ class TsrctCubeTree(TsrctFcGraph):
             pi_name = self.cube_map[cu.key].pi
             pi = self.cube_map[pi_name]
             if cc not in self.black_verts and cc in self.grey_verts:
-                # if u == '0+00':
-                #     print("Rotation for 0+00:" +
-                #           self.rot_arr[i].c0.key + "," +
-                #           self.rot_arr[i].c1.key)
-                #     print(str(self.rot_arr[i].ax1)+","+ str(self.rot_arr[i].ax2)+
-                #           "," + str(self.rot_arr[i].ax3))
                 rot1 = self.rot_arr[i]
                 if self.free_rot:
                     rot1.do_rotate(u_cube, theta=self.theta)
                 else:
-                    rot1.do_rotate(u_cube, theta=self.theta, 
-                               ref_pt=pi.cube_center, 
+                    rot1.do_rotate(u_cube, theta=self.theta,
+                               ref_pt=pi.cube_center,
                                take_further=self.take_further)
 
         if u in self.adj:

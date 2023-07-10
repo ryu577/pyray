@@ -2,8 +2,127 @@ import numpy as np
 from pyray.shapes.fourd.tesseract_graph import TsrctFcGraph, Face1
 import pyray.shapes.fourd.tsrct_face_rotation as tfr
 from pyray.rotation import rotation
+from pyray.rotation2.rotn_4d import rotate_points_about_plane_helper
 from PIL import Image, ImageDraw
 import queue
+
+
+class TsrctFcGraph3(TsrctFcGraph):
+    def __init__(self, angle, adj=None):
+        super().__init__(angle, adj)
+        self.theta = angle
+        self.face_arr = []
+        self.rot_array = []
+        self.max_depth = 0
+        self.face_map = self.vert_props
+        self.black_verts = set()
+        self.grey_verts = set()
+
+    def bfs(self, s):
+        self.face_map[s].color = "grey"
+        self.face_map[s].d = 0
+        q = queue.Queue()
+        q.put(s)
+        while q.qsize() > 0:
+            u = q.get()
+            if u in self.adj:
+                for v in self.adj[u]:
+                    if self.face_map[v].color == "white":
+                        self.face_map[v].color = "grey"
+                        self.face_map[v].d = self.face_map[v].d + 1
+                        if self.max_depth < self.face_map[v].d:
+                            self.max_depth = self.face_map[v].d
+                        self.face_map[v].pi = u
+                        self.face_map[v].rot_sign = get_rot_sign(u, v)
+                        q.put(v)
+            self.face_map[u].color = "black"
+            self.black_verts.add(u)
+
+    def dfs1(self, u):
+        self.face_map[u].color = "grey"
+        self.grey_verts.add(u)
+        u_face = self.face_map[u]
+        for i in range(len(self.face_arr)):
+            fc = self.face_arr[i]
+            fu = self.face_map[fc]
+            pi_name = self.face_map[fu.key].pi
+            pi = self.face_map[pi_name]
+            if fc not in self.black_verts and fc in self.grey_verts:
+                rot1 = self.rot_array[i]
+                rot1.do_rotate(u_face, theta=self.theta)
+        if u in self.adj:
+            for v in self.adj[u]:
+                if self.face_map[v].color == "white":
+                    self.face_arr.append(v)
+                    f0 = self.face_map[u]
+                    f1 = self.face_map[v]
+                    sign = self.face_map[v].rot_sign
+                    rot1 = Rotation1(f0, f1, sign)
+                    self.rot_array.append(rot1)
+                    self.dfs1(v)
+        self.face_map[u].color = "black"
+        self.black_verts.add(u)
+
+    def plot(self, draw, r, persp=0, rgba=(10,31,190,80),
+                       shift=np.array([514, 595, 0, 0]),scale=105):
+        for kk in self.face_map.keys():
+            ff = self.vert_props[kk]
+            if persp == 0:
+                ff.plot(draw, r, rgba=rgba,shift=shift,scale=scale)
+            else:
+                ff.plot_perspective(draw, r,
+                                    rgba=rgba,
+                                    e=persp,
+                                    c=-persp,shift=shift,scale=scale)
+
+    def reset(self):
+        for u in self.face_map.keys():
+            #self.face_map[u].reset()
+            self.face_map[u].color = "white"
+        self.black_verts = set()
+        self.grey_verts = set()
+
+    def dfs(self, u):
+        self.vert_props[u].color = "grey"
+        for v in self.adj[u]:
+            if self.vert_props[v].color == "white":
+                self.do_rotn(v)
+                self.dfs(v)
+        self.vert_props[u].color = "black"
+
+    def do_rotn(self, v):
+        pi_face = self.face_map[self.face_map[v].pi]
+        if self.face_map[v].d >= self.curr_d:
+            # First get the rotation.
+            pt1, pt2, pt3 = tfr.get_rotation_plane(pi_face,
+                                                   self.face_map[v])
+            self.rotn = pt1, pt2, pt3
+            # Now rotate that face
+            self.face_map[v].rotate(pt1, pt2, pt3,
+                                      self.theta*self.face_map[v].rot_sign)
+
+
+def get_rot_sign(u, v):
+    fu = Face1(u)
+    fv = Face1(v)
+    pt1, pt2, pt3 = tfr.get_rotation_plane(fu, fv)
+    pts2 = rotate_points_about_plane_helper(np.array([pt1]), 
+                                            pt1, pt2, pt3,
+                                            np.random.normal(size=4),
+                                            np.pi/2)
+    if sum((pts2[0] - fu.face_center)**2) < 1:
+        return -1
+    return 1
+
+class Rotation1():
+    def __init__(self, f0, f1, sign=1):
+        self.f0 = f0
+        self.f1 = f1
+        self.ax1, self.ax2, self.ax3 = tfr.get_rotation_plane(f0, f1)
+        self.sign = sign
+    
+    def do_rotate(self, fc, theta):
+        fc.rotate(self.ax1, self.ax2, self.ax3, theta*self.sign)
 
 
 class TsrctFcGraph2(TsrctFcGraph):
@@ -74,16 +193,17 @@ class TsrctFcGraph2(TsrctFcGraph):
             self.vert_props[u].color = "black"
             self.black_verts.add(u)
 
-    def plot_all_faces(self, draw, r, persp=0, rgba=(10,31,190,80)):
+    def plot_all_faces(self, draw, r, persp=0, rgba=(10,31,190,80),
+                       shift=np.array([514, 595, 0, 0]),scale=105):
         for kk in self.face_map.keys():
             ff = self.vert_props[kk]
             if persp == 0:
-                ff.plot(draw, r, rgba=rgba)
+                ff.plot(draw, r, rgba=rgba,shift=shift,scale=scale)
             else:
                 ff.plot_perspective(draw, r,
                                     rgba=rgba,
                                     e=persp,
-                                    c=-persp)
+                                    c=-persp,shift=shift,scale=scale)
 
     def tst_dfs_rotate(self, u):
         self.vert_props[u].color = "grey"
@@ -106,7 +226,7 @@ class TsrctFcGraph2(TsrctFcGraph):
 
     def dfs1(self, u):
         """
-        Assumes BFS has already run. 
+        Assumes BFS has already run.
         Then vertex colors should be reset.
         TODO: This approach doesn't currently work.
         """
@@ -272,7 +392,7 @@ def tst_open2(persp=0):
                         ".png")
 
 
-if __name__ == "__main__":
-    #tf = TsrctFcGraph2()
-    #tf.dfs_flatten('00++')
-    tst_open2()
+# if __name__ == "__main__":
+#     #tf = TsrctFcGraph2()
+#     #tf.dfs_flatten('00++')
+#     tst_open2()
