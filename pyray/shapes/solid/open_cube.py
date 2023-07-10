@@ -34,10 +34,10 @@ class Face():
              wdh=2):
         rotated_face = np.transpose(np.dot(r, np.transpose(self.vertices)))
         #rotated_face = np.dot(self.vertices, r)
-        self.plot_face(rotated_face, draw, r, shift,
+        self.plot_face(rotated_face, draw, shift,
                        scale, rgba, wdh)
 
-    def plot_face(self, rotated_face, draw, r=np.eye(3),
+    def plot_face(self, rotated_face, draw,
              shift = np.array([256,256,0]),
              scale = 35,
              rgba = (255, 255, 0, 180),
@@ -49,10 +49,11 @@ class Face():
         v4[:2] = v4[:2] + shift[:2]
         draw.polygon([(v1[0], v1[1]), (v2[0], v2[1]), (v4[0], v4[1]),
                       (v3[0], v3[1])], rgba)
-        draw.line((v1[0], v1[1], v2[0], v2[1]), fill=rgba[:3], width=wdh)
-        draw.line((v2[0], v2[1], v4[0], v4[1]), fill=rgba[:3], width=wdh)
-        draw.line((v4[0], v4[1], v3[0], v3[1]), fill=rgba[:3], width=wdh)
-        draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=wdh)
+        if wdh > 0:
+            draw.line((v1[0], v1[1], v2[0], v2[1]), fill=rgba[:3], width=wdh)
+            draw.line((v2[0], v2[1], v4[0], v4[1]), fill=rgba[:3], width=wdh)
+            draw.line((v4[0], v4[1], v3[0], v3[1]), fill=rgba[:3], width=wdh)
+            draw.line((v3[0], v3[1], v1[0], v1[1]), fill=rgba[:3], width=wdh)
 
     def plot_perspective(self, draw, r=np.eye(3),
                          shift = np.array([256,256,0]),
@@ -64,7 +65,7 @@ class Face():
             az = rot[len(rot)-1]
             for i in range(len(rot)-1):
                 rot[i] = e*rot[i]/(az-c)
-        self.plot_face(rotated_face, draw, r, shift,
+        self.plot_face(rotated_face, draw, shift,
                        scale, rgba, wdh)
 
     def rotate(self, ax_pt1, ax_pt2, theta):
@@ -141,15 +142,19 @@ class GraphCube():
                       ['+00','00+'],#7
                       ['+00','00-']]
         self.time = 0
+        self.edg_dict = {}
+        self.rev_edg_dict = {}
         for ix in range(len(self.edges)):
             ed = self.edges[ix]
             vert_0 = ed[0]
             vert_1 = ed[1]
+            self.edg_dict[(vert_0, vert_1)] = ix
+            self.rev_edg_dict[(vert_1, vert_0)] = ix
             f0 = Face(vert_0)
             f1 = Face(vert_1)
             self.vert_props[vert_0] = f0
             self.vert_props[vert_1] = f1
-            if ix in survive_ros:
+            if ix in survive_ros or len(survive_ros) == 0:
                 self.white_verts.add(vert_0)
                 self.white_verts.add(vert_1)
                 # Save graph as an adjacency list.
@@ -219,10 +224,9 @@ class GraphCube():
                                fill=(255, 255, 0), width=1)
                 self.dfs_plot(v)
 
-    def dfs_plot_2(self, u, rgba=(12, 90, 190, 90)):
+    def dfs_plot_2(self, u, rgba=(12, 90, 190, 90), 
+                   shift=(256, 256), scale=40):
         """Assumes a draw object and rotation object attached to graph"""
-        shift = (256, 256)
-        scale = 40
         if "shift" in self.__dict__:
             shift = self.shift
         if "scale" in self.__dict__:
@@ -239,13 +243,12 @@ class GraphCube():
         self.vert_props[u].color = "grey"
         for v in self.adj[u]:
             if self.vert_props[v].color == "white":
-                self.dfs_plot_2(v, rgba)
+                self.dfs_plot_2(v, rgba, shift, scale)
 
     def dfs_plot_perspective(self, u, rgba=(12, 90, 190, 90),\
-                             persp=4):
+                             persp=4, shift = (256, 256),
+                             scale = 40):
         """Assumes a draw object and rotation object attached to graph"""
-        shift = (256, 256)
-        scale = 40
         if "shift" in self.__dict__:
             shift = self.shift
         if "scale" in self.__dict__:
@@ -357,8 +360,8 @@ def tst_plot_faces():
         im.save("Images//RotatingCube//im" + str(ix) + ".png")
 
 
-def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}):
-    r = general_rotation(np.array([1,1,1]), np.pi/6)
+def tst_open_cube(ix=0, surv={0, 1, 2, 3, 6}, 
+                  r=general_rotation(np.array([1,1,1]), np.pi/6)):
     for i in range(ix, ix+22):
         im = Image.new("RGB", (512, 512), (0,0,0))
         draw = ImageDraw.Draw(im, 'RGBA')
@@ -380,20 +383,19 @@ def plot_open_cube(draw, r, surv, theta, rgba=(12, 90, 190, 90)):
     gr.dfs_plot_2('0+0', rgba=rgba)
 
 
-def plot_grid(draw, r):
+def plot_grid(draw, r, shift=np.array([256,256,0]), scale=40, 
+              rgba=(180, 132, 12, 10)):
     f = Face('0+0')
     aa = np.array([1,-1,0])
     for x in np.arange(-5,6):
         for z in np.arange(-5,6):
             f.vertices += 2*np.array([x,0,z])
-            f.plot(draw, r, scale=40,
-                   shift=np.array([256,256,0]),
-                   rgba=(180, 132, 12, 10),
+            f.plot(draw, r, scale=scale,
+                   shift=shift,
+                   rgba=rgba,
                    wdh=1)
             f.vertices -= 2*np.array([x,0,z])
 
 
 # ffmpeg -framerate 24 -f image2 -i "*?png" -vb 20M vid.avi
 # ffmpeg -r 24 -f image2 -pattern_type glob -i "*?png" -vcodec libx264 -crf 20 -pix_fmt yuv420p output.mp4
-
-

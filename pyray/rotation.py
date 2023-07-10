@@ -326,8 +326,22 @@ def angle_btw_planes(face1, face2):
     return np.arccos(np.dot(face1_per_normd, face2_per_normd))
 
 
-## A series of methods relating to 1-d rotation.
+def rotate_matrix_to_another(r1, r2, n=10):
+    """
+    If the current scene is in the state of rotation matrix, r1,
+    and we want to take the scene to rotation matrix r2, this method will
+    provide intermediate matrices that do this gradually. Here n is the
+    desired number of scenes.
+    """
+    rr1 = np.dot(r2, r1.T)
+    #rr1 = np.dot(r_xy, rr1)
+    ee, q = np.linalg.eig(rr1)
+    rr = np.dot(np.dot(q,np.diag(ee**(1/n))),
+                    np.linalg.inv(q))
+    return rr
 
+
+## A series of methods relating to 1-d rotation.
 
 def rotate_abt_x_line(y_line=-3, y_pt=1, theta=np.pi / 2):
     radius = y_line - y_pt
