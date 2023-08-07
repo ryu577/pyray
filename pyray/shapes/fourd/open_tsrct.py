@@ -7,6 +7,22 @@ from PIL import Image, ImageDraw
 import queue
 
 
+def open_given_cube(tf, base_fc='+00+', i=0):
+    """
+    tf: Instance of TesseractFaceGraph.
+    """
+    tf.reset_vert_col()
+    tf.dfs_flatten2(base_fc)
+    tf.reset_vert_col()
+    while tf.rot_st:
+        tf.reset_vert_col()
+        (u, rot) = tf.rot_st.pop()
+        tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
+        print("Rotated face: " + str(i))
+    tf.mk_xy_set()
+    print(len(tf.xy_set))
+
+
 class TsrctFcGraph3(TsrctFcGraph):
     def __init__(self, angle, adj=None):
         super().__init__(angle, adj)

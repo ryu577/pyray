@@ -195,8 +195,8 @@ def plot_msh(msh, draw):
                     shift=shift)
 
 
-meshes = []
 def make_scene6(surv={0, 1, 2, 3, 6}, i1=0, mshno=0):
+    meshes = []
     th = np.pi/2
     r_yz = yzrotation(th)
     r_xy = xyrotation(3*th)

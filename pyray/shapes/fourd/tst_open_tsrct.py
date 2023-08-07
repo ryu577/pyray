@@ -273,6 +273,35 @@ def open_cube_piecemeal():
     open_given_cube(tf, base_fc='00+')
 
 
+def open_given_cube2(tf, base_fc='+00+', i=0):
+    tf.reset_vert_col()
+    tf.dfs_flatten2(base_fc)
+    tf.reset_vert_col()
+    while tf.rot_st:
+        tf.reset_vert_col()
+        (u, rot) = tf.rot_st.pop()
+        tf.vert_props[u].shift_and_simpl_rotate(tf.angle, *rot)
+        print("Rotated face: " + str(i))
+    tf.mk_xy_set()
+    print(len(tf.xy_set))
+
+
+def open_tsrct_2d_smooth():
+    for i in range(13):
+        im = Image.new("RGB", (1024, 1024), (0, 0, 0))
+        draw = ImageDraw.Draw(im, 'RGBA')
+        tf = tg.TsrctFcGraph(angle=np.pi/24*i, adj=None)
+        tf.draw = draw
+        tf.r = rotation(4, np.pi*17/60.0*14/10.0)
+        #tf.r = np.eye(4)
+        open_given_cube2(tf, w_persp=5, i=i, base_fc='+00+')
+        tf.plot_all_faces(tf, tf.draw, tf.r, persp=5,shift=np.array([514, 595, 0, 0]),
+                scale=105-i*2.7, rgba=(100,100,100,40))
+        #print(105-min(i,21)*2.7)
+        im.save("Images//RotatingCube//im" +
+                    str(i).rjust(4, '0') + ".png")
+
+
 def plot_tsrct_face_graph():
     tf = tg.TsrctFcGraph()
     net = Network()

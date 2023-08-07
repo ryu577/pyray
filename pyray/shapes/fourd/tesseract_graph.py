@@ -18,6 +18,26 @@ def cube_trees():
     # >> 384
 
 
+def plot_all_faces2(tf, draw, r, kk1, persp=0, rgba=(10,31,190,80),
+                    rgba2=(255,255,0,10),
+                    shift=np.array([514, 595, 0, 0]),scale=105):
+    """
+    Plots all faces of a TeseractFaceGraph in perspective projection.
+    """
+    for kk in tf.face_map.keys():
+        if kk == kk1:
+            col = rgba2
+        else:
+            col = rgba
+        ff = tf.vert_props[kk]
+        ff.plot_perspective(draw, r,
+                                rgba=col,
+                                e=persp,
+                                c=-persp,
+                                shift=shift,
+                                scale=scale)
+
+
 class Face1(oc.Face):
     def __init__(self, val, rgba=(255, 255, 0, 180), 
                 rand_vec=np.array([.876, .11247, .9743, .4237])):
@@ -105,7 +125,7 @@ class TsrctFcGraph(oc.GraphCube):
         self.face_map = {'--00': 0, '-0-0': 1,
                          '-00-': 2, '-00+': 3, 
                          '-0+0': 4, '-+00': 5,
-                         '0--0': 6, '0-0-': 7, 
+                         '0--0': 6, '0-0-': 7,
                          '0-0+': 8, '0-+0': 9,
                          '0+-0':10, '0+0-':11,
                          '0+0+':12, '0++0':13,
