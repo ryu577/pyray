@@ -2,6 +2,7 @@ import numpy as np
 import pyray.shapes.fourd.tesseract_graph as tg
 from copy import deepcopy
 import operator
+import os
 
 
 class SqFace():
@@ -28,7 +29,7 @@ class SqMesh(tg.TsrctFcGraph):
             self.vert_props[k] = SqFace(x, y, k)
             self.vertices.append([x, y])
         self.process_verts()
-        
+
     def process_verts(self):
         self.vertices = np.array(self.vertices)
         self.vertices = sorted(self.vertices,key=operator.itemgetter(0,1))
@@ -77,3 +78,15 @@ class SqMesh(tg.TsrctFcGraph):
             m2.vertices = np.dot(m2.vertices, rot)
             m2.process_verts()
         return False
+
+
+def is_valid_mesh(adj):
+    tf = tg.TsrctFcGraph(angle=np.pi/2, adj=adj)
+    tf.dfs_flatten2('00-+')
+    tf.reset_vert_col()
+    tf.actually_flatten()
+    tf.mk_xy_set()
+    if len(tf.xy_set) == 24:
+        return True
+    return False
+

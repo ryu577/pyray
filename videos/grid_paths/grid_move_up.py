@@ -6,6 +6,7 @@ from pyray.shapes.twod.plot import Canvas
 from pyray.axes import ZigZagPath
 import pyray.grid as grd
 
+
 def tst(basedir=".\\"):
     for i in range(11):
         im=Image.new("RGB", (512, 512), (0,0,0))
@@ -17,7 +18,7 @@ def tst(basedir=".\\"):
                         center=np.array([0,0]),origin=np.array([40,256]),
                         rot=planar_rotation(-np.pi/4),scale=32)
         pt2=gg.get_grid_pt(end[0],end[1])
-        gg.draw(draw,width=3)
+        gg.draw(draw, width=3)
         ## Draw horizontal line corresponding to the main diagonal.
         pt1=gg.get_grid_pt(0,0)
         pt2=gg.get_grid_pt(6,6)

@@ -186,7 +186,7 @@ class TsrctFcGraph(oc.GraphCube):
                 if kk not in self.adj:
                     adj2[kk] = [k]
                 elif k not in self.adj[kk]:
-                    #print("Fixing " + k + "," + kk)
+                    # print("Fixing " + k + "," + kk)
                     adj2[kk].append(k)
         self.adj = adj2
 
@@ -421,7 +421,7 @@ def get_rot(f1, f2):
     sign = 1
     r[np.ix_(axes, axes)] = np.array([[np.cos(theta), -np.sin(theta)],
                                       [np.sin(theta), np.cos(theta)]])
-    dist = sum( (np.dot(f2.o_face_center, r) - f1.o_face_center)**2 )
+    dist = sum((np.dot(f2.o_face_center, r) - f1.o_face_center)**2)
     if dist > 0.3:
         sign = -1
     return axes, new_orig1, sign

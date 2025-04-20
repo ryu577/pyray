@@ -133,6 +133,17 @@ def get_msh(filename):
     return m1
 
 
+def rand_msh(ii=9):
+    """
+    there are 740 files currently.
+    """
+    msh_files = os.listdir("Data/Meshes")
+    msh_files = [i for i in msh_files if i.startswith("mesh")]
+    msh_files = sorted(msh_files)
+    m1 = get_msh(msh_files[ii])
+    return m1
+
+
 def cnt_mshs():
     files = os.listdir("Data/Meshes")
     files = [i for i in files if i.startswith("mesh")]

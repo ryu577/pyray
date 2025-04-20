@@ -124,10 +124,10 @@ def rotate_abt_plane(pts, ax1, ax2, ax3,
 	# e1 and e2 were aligned with the plane.
 	# Now, the rotation should keep points on the plane fixed.
 	# this is the reason only z-w parts of matrix have the rotation.
-    rot = np.array([[1,0,0,0],
-					[0,1,0,0],
-					[0,0,np.cos(theta), np.sin(theta)], 
-					[0,0,-np.sin(theta), np.cos(theta)]])
+    rot = np.array([[1, 0, 0, 0],
+					[0, 1, 0, 0],
+					[0, 0, np.cos(theta), np.sin(theta)],
+					[0, 0, -np.sin(theta), np.cos(theta)]])
     pts2 = np.dot(pts2, rot)
 	# Next, undo the change of basis.
     pts3 = np.dot(pts2, e)

@@ -294,11 +294,11 @@ def open_tsrct_proper(adj=None):
         tt.dfs_flatten('000-')
         im = Image.new("RGB", (512, 512), (255, 255, 255))
         draw = ImageDraw.Draw(im, 'RGBA')
-        r=rotation(4, np.pi*17/60.0)
-        tt.plot(draw, r, rgba=(100,100,100,40))
+        r = rotation(4, np.pi*17/60.0)
+        tt.plot(draw, r, rgba=(100, 100, 100, 40))
         im.save("Images//RotatingCube//im" +
-                                str(i).rjust(4, '0') +
-                                ".png")
+                str(i).rjust(4, '0') +
+                ".png")
 
 
 def tst():
@@ -317,26 +317,25 @@ def tst():
         draw = ImageDraw.Draw(im, 'RGBA')
         r=np.eye(4)
         r2_3d = axis_rotation(np.array([0,0,0]), np.array([1,1,1]),
-                            np.pi/4+2*np.pi/20.0*i)[:3,:3]
+                              np.pi/4+2*np.pi/20.0*i)[:3,:3]
         r[:3,:3] = r2_3d
         tt.plot(draw, r, rgba=(100,100,100,40))
         tt.cube_map['0-00'].plot_perspective(draw, r, 5,
-                                            rgba=(255,0,0,50), 
-                                            shift=np.array([256, 256, 0, 0]),
-                                            scale=35)
+                                             rgba=(255, 0, 0, 50),
+                                             shift=np.array([256, 256, 0, 0]),
+                                             scale=35)
         tt.cube_map['0+00'].plot_perspective(draw, r, 5,
-                                            rgba=(0,255,0,50),
-                                            shift=np.array([256, 256, 0, 0]),
-                                            scale=35)
+                                             rgba=(0, 255, 0, 50),
+                                             shift=np.array([256, 256, 0, 0]),
+                                             scale=35)
         tt.cube_map['-000'].plot_perspective(draw, r, 5,
-                                            rgba=(255,255,0,50),
-                                            shift=np.array([256, 256, 0, 0]),
-                                            scale=35)
+                                             rgba=(255, 255, 0, 50),
+                                             shift=np.array([256, 256, 0, 0]),
+                                             scale=35)
         tt.cube_map['+000'].plot_perspective(draw, r, 5,
-                                            rgba=(255,255,0,50),
-                                            shift=np.array([256, 256, 0, 0]),
-                                            scale=35)
+                                             rgba=(255, 255, 0, 50),
+                                             shift=np.array([256, 256, 0, 0]),
+                                             scale=35)
         im.save("Images//RotatingCube//im" +
-                                str(i).rjust(4, '0') +
-                                ".png")
-
+                str(i).rjust(4, '0') +
+                ".png")
